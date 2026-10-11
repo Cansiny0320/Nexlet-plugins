@@ -10,7 +10,7 @@
 | --- | --- | --- |
 | 便笺 | 在本机自动保存一段文字，一键复制 | 写入剪贴板 |
 
-剪贴板、计算稿纸、JSON 工具、时间戳、编码转换、UUID、网页快开和 Everything 文件搜索随 Nexlet 预装，不需要从市场下载。Everything 文件搜索需要 Windows 上运行 Everything。
+剪贴板、计算稿纸、JSON 工具、时间戳、编码转换、UUID、网页快开和 Everything 文件搜索随 Nexlet 预装，不需要从市场下载。Nexlet 0.2.0 的 Windows 版同时提供 Everything 便携引擎，无需另行安装；首次建立文件索引可能需要一段时间。
 
 ## 开发与提交
 
