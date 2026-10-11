@@ -1,0 +1,11 @@
+{
+  "id": "org.nexlet.hello",
+  "name": "便笺",
+  "version": "1.0.0",
+  "description": "随手记下一段文字，自动保存在本机，需要时一键复制。",
+  "apiVersion": 1,
+  "main": "index.html",
+  "icon": "icon.png",
+  "permissions": ["clipboard.write"],
+  "features": [{"code":"note","name":"便笺","keywords":["note","便签","记录","hello"]}]
+}
