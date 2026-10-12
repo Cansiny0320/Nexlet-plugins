@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>翻译 · Nexlet</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<main>
+  <header class="topbar"><div class="identity"><span class="mark" aria-hidden="true">文<span>A</span></span><div><h1>翻译</h1><p>让文字跨越语言</p></div></div><button id="settings-toggle" class="quiet" aria-expanded="false" aria-controls="settings">翻译设置</button></header>
+  <section id="settings" class="settings" hidden aria-label="翻译设置">
+    <div class="settings-heading"><h2>LLM 服务</h2><span>OpenAI-compatible</span></div>
+    <label>Base URL<input id="base-url" type="url" placeholder="https://api.example.com/v1" autocomplete="off" spellcheck="false"></label>
+    <div class="settings-row"><label>模型名<input id="model" placeholder="填写服务支持的模型名" autocomplete="off" spellcheck="false"></label><label>API Key<input id="api-key" type="password" placeholder="本地免认证服务可留空" autocomplete="off" spellcheck="false"></label></div>
+    <p class="help">Key 加密保存在本机；系统加密不可用时仅本次会话使用。原文和译文不保存为历史。</p>
+    <div class="settings-actions"><button id="save-settings" class="primary">保存设置</button><button id="clear-key" class="quiet">清除 Key</button><button id="reset-permissions" class="quiet">重置联网授权</button></div>
+    <p id="settings-status" role="status"></p>
+  </section>
+  <div class="engine-row"><div class="segmented" role="group" aria-label="翻译引擎"><button id="engine-google" aria-pressed="true" data-engine="google">Google <small>免 Key</small></button><button id="engine-llm" aria-pressed="false" data-engine="llm">LLM <small>自选模型</small></button></div><span id="engine-note">Google 网页接口</span></div>
+  <section class="workspace" aria-label="翻译工作区">
+    <div class="text-panel source-panel"><div class="panel-heading"><label for="source">原文</label><select id="source" aria-label="源语言"></select></div><textarea id="input" aria-label="原文" placeholder="输入或从启动器带入文字…" spellcheck="false"></textarea><div class="panel-footer"><span id="count">0 / 5000</span><button id="clear-input" class="text-button">清空</button></div></div>
+    <div class="text-panel target-panel"><div class="panel-heading"><label for="target">译文</label><select id="target" aria-label="目标语言"></select></div><textarea id="output" aria-label="译文" readonly placeholder="译文会显示在这里"></textarea><div class="panel-footer"><span id="detected"></span><button id="copy" class="text-button" disabled>复制译文</button></div></div>
+  </section>
+  <footer class="actions"><div class="status-area"><p id="status" role="status" aria-live="polite">准备就绪</p><span id="shortcut">⌘ / Ctrl + Enter 翻译</span></div><div class="action-buttons"><button id="cancel" class="quiet" hidden>取消</button><button id="translate" class="primary" disabled>开始翻译 <span aria-hidden="true">↗</span></button></div></footer>
+  <p class="privacy">仅在发起翻译时发送文字。Google 免 Key 接口可能限流或不可用。</p>
+</main>
+<script type="module" src="main.js"></script>
+</body></html>

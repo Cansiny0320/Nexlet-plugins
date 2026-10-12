@@ -34,4 +34,5 @@ for entry in index['plugins']:
 
 if len(sys.argv) > 1:
     tag = sys.argv[1]
-    assert all('/' + tag + '/' in e['download'] for e in index['plugins']), 'Release tag must match index download URLs'
+    # Unchanged plugins may keep their existing, published download URLs.
+    assert any('/' + tag + '/' in e['download'] for e in index['plugins']), 'Release tag must match at least one index download URL'
