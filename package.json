@@ -1,0 +1,10 @@
+{
+  "name": "nexlet-plugins",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "test:e2e": "node tests/word-count.e2e.mjs"
+  }
+}
