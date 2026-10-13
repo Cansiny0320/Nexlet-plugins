@@ -1,0 +1,10 @@
+{
+  "id": "org.nexlet.typescript-example",
+  "name": "TypeScript 示例",
+  "version": "1.0.0",
+  "description": "使用 TypeScript 接收输入、保存便笺并复制文本",
+  "apiVersion": 1,
+  "main": "index.html",
+  "permissions": ["clipboard.write"],
+  "features": [{ "code": "note", "name": "TypeScript 便笺", "keywords": ["typescript", "ts 示例"], "matches": [{ "type": "text" }] }]
+}

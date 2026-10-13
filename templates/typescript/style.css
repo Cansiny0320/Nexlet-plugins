@@ -1,0 +1,10 @@
+:root { color-scheme: light dark; font: 15px/1.6 system-ui, sans-serif; }
+body { margin: 0; }
+main { max-width: 720px; padding: 24px; margin: auto; }
+h1 { font-size: 24px; margin: 0; }
+p, #status { opacity: .7; }
+label { display: block; margin-bottom: 8px; }
+textarea { box-sizing: border-box; width: 100%; resize: vertical; padding: 12px; border: 1px solid #8888; border-radius: 8px; font: inherit; }
+.actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+button { padding: 6px 20px; border: 1px solid #8888; border-radius: 6px; font: inherit; cursor: pointer; }
+button:disabled { cursor: wait; opacity: .5; }

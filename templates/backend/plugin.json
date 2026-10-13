@@ -1,0 +1,11 @@
+{
+  "id": "org.nexlet.backend-example",
+  "name": "后台能力示例",
+  "version": "1.0.0",
+  "apiVersion": 1,
+  "main": "index.html",
+  "backend": "backend.cjs",
+  "description": "独立 Node.js 后台、进度、取消与文档数据库示例",
+  "permissions": ["backend", "tools", "mcp"],
+  "features": [{ "code": "demo", "name": "后台能力示例", "keywords": ["backend", "sdk"] }]
+}

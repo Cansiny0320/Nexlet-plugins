@@ -2,9 +2,25 @@
   "name": "nexlet-plugins",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=24" },
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.backend.json",
+    "build": "npm run typecheck && node scripts/build.mjs",
+    "dev": "node scripts/build.mjs --watch",
+    "package": "npm run build && python3 scripts/package.py --source-root .build/plugins",
+    "package:example": "npm run build && python3 scripts/package.py --plugin-dir .build/templates/typescript --output dist/typescript-example.nexlet",
     "test": "node --test tests/*.test.mjs",
-    "test:e2e": "node tests/word-count.e2e.mjs"
+    "test:e2e": "node tests/word-count.e2e.mjs",
+    "test:ts:e2e": "node tests/typescript.e2e.mjs",
+    "package:backend": "npm run build && python3 scripts/package.py --plugin-dir .build/templates/backend --output dist/backend-example.nexlet",
+    "test:backend:e2e": "node tests/backend.e2e.mjs"
+  },
+  "devDependencies": {
+    "@nexlet/plugin-api": "file:./sdk",
+    "@types/node": "^24.19.2",
+    "esbuild": "0.28.2",
+    "typescript": "5.9.3"
   }
 }

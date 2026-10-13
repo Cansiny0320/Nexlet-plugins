@@ -1,2 +1,5 @@
 dist/
+dist-examples/
+.build/
+node_modules/
 __pycache__/

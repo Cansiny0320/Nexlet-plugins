@@ -18,16 +18,31 @@
 
 ## 开发与提交
 
-1. 参考 `plugins/hello-nexlet/` 和 [插件 SDK](https://github.com/Cansiny0320/Nexlet/blob/main/docs/plugin-sdk.md) 创建插件。
-2. 在 Nexlet 中使用「加载开发目录」调试。
+1. 参考 `plugins/hello-nexlet/`、[TypeScript 模板](templates/typescript/README.md) 和 [插件 SDK](https://github.com/Cansiny0320/Nexlet/blob/main/docs/plugin-sdk.md) 创建插件。
+2. 执行 `npm ci`、`npm run build`，在 Nexlet 中使用「加载开发目录」选择 `.build/plugins/<name>` 调试。
 3. 将源码放入 `plugins/<name>/`，在 `index.json` 添加条目。ID、版本必须与 `plugin.json` 一致。
-4. 运行 `python scripts/package.py`，提交 Pull Request。
+4. 运行 `npm run package`，提交 Pull Request。
 
-本地验证：使用 Node.js 24+ 运行 `npm test` 检查统计逻辑，运行 `python3 scripts/package.py` 生成 `dist/*.nexlet`。将 `dist/word-count.nexlet` 通过「导入插件包」安装即可体验；市场条目需要对应 Release 发布后才能下载。字数统计使用文本输入与会话 API，最低支持 Nexlet 0.2.6。
+本地验证：使用 Node.js 24+ 运行 `npm test` 检查插件逻辑及构建流程，运行 `npm run package` 生成 `dist/*.nexlet`。将 `dist/word-count.nexlet` 通过「导入插件包」安装即可体验；市场条目需要对应 Release 发布后才能下载。字数统计使用文本输入与会话 API，最低支持 Nexlet 0.2.6。
 
 真实宿主验证：先在相邻的 `../Nexlet` 安装依赖并执行 `npm run build`，再在本仓库运行 `npm run test:e2e`（可用 `NEXLET_HOST_DIR` 指定宿主目录）。测试使用临时用户数据目录导入实际插件包，验证输入、再次激活、清空、分离窗口和大文本，截图保存到 `dist/word-count-preview.png`，不改动日常使用的 Nexlet 数据。
 
 索引使用 `schemaVersion: 1`，条目包含 ID、名称、描述、作者、分类、SemVer 版本、支持平台、最低主程序版本和下载地址。可选 `icon` 是 PNG Data URL。下载地址限定本仓库的 GitHub Releases，插件包不要求 Hash 字段。
+
+### TypeScript
+
+支持 TS 编写插件，打包时编译成浏览器可运行的 JS；宿主不直接执行 `.ts`。共享构建使用 esbuild，`tsc --noEmit` 独立检查类型。`@nexlet/plugin-api` 是本仓库 `sdk/` 提供的本地类型包，安装依赖后可为 `nexlet`、`window.nexlet` 和 manifest 提供类型提示，不依赖宿主源码，也未发布到 npm。
+
+```sh
+npm ci
+npm run package:example
+# 导入 dist/typescript-example.nexlet，或加载 .build/templates/typescript
+npm run dev -- templates/typescript
+```
+
+把 `templates/typescript` 复制到 `plugins/<name>` 并修改 manifest 即可开始开发。约定入口是 `src/main.ts`，构建输出 `main.js`，HTML/CSS/图标等静态文件一起输出到 `.build/`。watch 同时处理 TS 和静态资源变化，退出插件后重新打开生效；manifest/权限改变需要重新导入。`npm run typecheck` 检查类型，正式构建及打包会先执行该检查。产物不含 TS 源码或开发依赖，已有 JS 插件保持原有结构。
+
+真实宿主验证：在相邻宿主仓库完成 `npm run build` 后运行 `npm run package:example && npm run test:ts:e2e`。测试使用临时用户数据，验证打包安装、输入、保存后重新打开、复制桥接、再次激活和权限拒绝；不会修改日常 Nexlet 数据或系统剪贴板。
 
 ## 发版
 
@@ -48,3 +63,9 @@ Google 使用免 Key 网页接口，当前宿主首次联网也无需额外确�
 只保存服务配置与语言偏好，不保存原文/译文历史。翻译请求会将原文发往所选服务；Google 的网页接口以 URL 参数传递文字。对方服务的数据保留规则由服务方决定。
 
 协议测试：`node --test tests/translation.test.mjs`。在相邻宿主目录执行 `npm run build` 后运行 `npm exec -- playwright test tests/translation.spec.ts`，以临时数据目录验证安装、权限、取消及本地 LLM fixture；另用 `NEXLET_TRANSLATION_LIVE=1` 启用 Google 实网用例。插件仓库不在相邻位置时设置 `NEXLET_PLUGINS_DIR`；缺少插件源码的宿主单仓 CI 明确跳过这些跨仓用例。翻译插件 1.1.0 安装包对应 v1.3.0 Release。免确认行为由宿主决定，旧版宿主仍可能显示确认弹窗。
+
+## 扩展 SDK 与 Node.js 后台
+
+当前 checkout 提供 `templates/backend`，运行 `npm run package:backend` 生成 `dist/backend-example.nexlet`。前端保持浏览器沙箱；后台 TypeScript 编译为独立 Node.js 进程入口，需要 manifest 的 `backend` 权限。完整合同由宿主 `src/shared/plugin-api.ts` 和 `sdk/index.d.ts` 同步，宿主仓运行 `node scripts/sync-plugin-sdk.mjs` 更新本仓类型。扩展需要对应宿主构建，尚未作为正式版本发布。
+
+后台模板说明见 [templates/backend/README.md](templates/backend/README.md)。新能力使用 Nexlet API，不以原样运行 uTools 插件为目标。
