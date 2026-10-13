@@ -37,7 +37,7 @@
       "id": "org.nexlet.translate",
       "name": "翻译",
       "description": "Google 免 Key 翻译与可配置的 LLM 翻译，支持自动识别语言、段落翻译和一键复制。",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": "Nexlet",
       "category": "效率",
       "platforms": [
@@ -46,7 +46,7 @@
         "linux"
       ],
       "minHostVersion": "0.2.7",
-      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/v1.2.0/translate.nexlet",
+      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/v1.3.0/translate.nexlet",
       "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAB5UlEQVR4nO3XwU1DMRRE0dRGLRRKJWypAsGODQHFP7af7TlXmiXJj30UlNtNkiRJkiRJkn56//j8sn6rvs/mqg/stFXfZ3PVB3baqu+zueoDO23V99lc9YGdtur7bK76wE5b9X0299cHeXl9s38GQPgACB8A4QMgfACED4DwARA+AMIHwITdq/qZAAAAAAAAAAAAAAAAAAAAAAAAgLwBED4AwgdA+AC4sx0DAAAAAAAAAAAAAMCvAAAAAGAKgJ5fxyNfEwAAAAAAAAAAAAAAAAAAAAAAAAAAgAUvC4ALVQF49AJbmvmsAAAAAAAAAAAAAAAEDoDwAdC4GV/jM/9VALDg5QBwIQAAAAAAAADwKwAAAAB4CsCsr99ez7JrAAAAAAAAAADA488y631nfJZlAaw0AAAAAAAAAAAAAAAAGP76M98LAAAAAAAAAAAAAIAJAFovuTcKAAAAAAAAAAAAAAAAAAAAAAAAAIChAHYfAABcvoDRF/js8wAAAACzAfQOAAAAAGABAKcGQHgAhNcbQMvf9349AC4EQHgAhAdAeACEB0B4AIQHQHgAhAdAeD0vsHoAXAiA8AAID4DwAAjv16kdVPXZblH1JY2s+my3qPqSRlZ9tltUfUkjqz5bSZIkSZIkLdQ3mqJaUmpP1wYAAAAASUVORK5CYII="
     }
   ]

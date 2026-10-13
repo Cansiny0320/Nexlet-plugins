@@ -2,20 +2,28 @@ import {LANGUAGES,MAX_CHARS,buildRequest,parseResponse,validateConfig} from './t
 const $ = id => document.getElementById(id);
 const api = window.nexlet;
 let engine='google',config={baseUrl:'https://api.openai.com/v1',model:''},revision=0,active=null,ready=false,settingsDirty=false,saving=false,saveQueue=Promise.resolve();
+let autoTimer=null,composing=false;
 function status(message,error=false){$('status').textContent=message;$('status').dataset.error=String(error);}
 function settingStatus(message,error=false){$('settings-status').textContent=message;$('settings-status').dataset.error=String(error);}
 function sync(){
   const count=[...$('input').value].length;
   $('count').textContent=`${count} / ${MAX_CHARS}`;$('count').dataset.error=String(count>MAX_CHARS);
-  $('translate').disabled=!ready||!!active||saving||(engine==='llm'&&settingsDirty)||!$('input').value.trim()||count>MAX_CHARS;
+  $('translate').disabled=!ready||composing||!!active||saving||(engine==='llm'&&settingsDirty)||!$('input').value.trim()||count>MAX_CHARS;
   $('cancel').hidden=!active;$('copy').disabled=!$('output').value;
   $('translate').firstChild.textContent=active?'翻译中… ':'开始翻译 ';
 }
 function invalidate(message='准备就绪'){
+  clearTimeout(autoTimer);autoTimer=null;
   revision++;
   const previous=active;active=null;
   if(previous)void api.network.cancel(previous).catch(()=>{});
   $('output').value='';$('detected').textContent='';status(message);sync();
+}
+function scheduleAuto(){
+  clearTimeout(autoTimer);autoTimer=null;
+  if(engine!=='google'||!ready||composing||saving||!$('input').value.trim()||[...$('input').value].length>MAX_CHARS)return;
+  status('等待自动翻译…');
+  autoTimer=setTimeout(()=>{autoTimer=null;void translate();},400);
 }
 function persistPreferences(){
   const value={engine,source:$('source').value,target:$('target').value};
@@ -25,11 +33,12 @@ function selectEngine(value){
   engine=value;
   for(const button of document.querySelectorAll('[data-engine]'))button.setAttribute('aria-pressed',String(button.dataset.engine===engine));
   $('engine-note').textContent=engine==='google'?'Google 网页接口':(config.model||'请先配置模型');
+  $('shortcut').textContent=engine==='google'?'输入后自动翻译 · ⌘ / Ctrl + Enter 立即翻译':'⌘ / Ctrl + Enter 翻译';
   sync();
 }
 function showSettings(visible){$('settings').hidden=!visible;$('settings-toggle').setAttribute('aria-expanded',String(visible));}
 async function translate(){
-  if(!ready||active)return;
+  if($('translate').disabled)return;
   invalidate();const current=revision;
   const input={engine,text:$('input').value,source:$('source').value,target:$('target').value};
   const id=crypto.randomUUID();active=id;status('正在翻译…');sync();
@@ -49,9 +58,11 @@ async function translate(){
 for(const [code,label] of [['auto','自动检测'],...LANGUAGES])$('source').add(new Option(label,code));
 for(const [code,label] of LANGUAGES)$('target').add(new Option(label,code));
 $('target').value='zh-CN';
-$('input').addEventListener('input',()=>invalidate('文字已更新，点击开始翻译'));
-for(const id of ['source','target'])$(id).addEventListener('change',()=>{invalidate();persistPreferences();});
-for(const button of document.querySelectorAll('[data-engine]'))button.addEventListener('click',()=>{if(engine===button.dataset.engine)return;invalidate();selectEngine(button.dataset.engine);persistPreferences();});
+$('input').addEventListener('compositionstart',()=>{composing=true;invalidate('正在输入…');});
+$('input').addEventListener('compositionend',()=>{composing=false;invalidate();scheduleAuto();});
+$('input').addEventListener('input',()=>{invalidate(engine==='llm'?'文字已更新，点击开始翻译':'准备就绪');scheduleAuto();});
+for(const id of ['source','target'])$(id).addEventListener('change',()=>{invalidate();persistPreferences();scheduleAuto();});
+for(const button of document.querySelectorAll('[data-engine]'))button.addEventListener('click',()=>{if(engine===button.dataset.engine)return;invalidate();selectEngine(button.dataset.engine);persistPreferences();scheduleAuto();});
 $('translate').addEventListener('click',translate);
 $('cancel').addEventListener('click',()=>invalidate('已取消翻译'));
 $('clear-input').addEventListener('click',()=>{$('input').value='';invalidate();$('input').focus();});
@@ -71,8 +82,7 @@ $('save-settings').addEventListener('click',async()=>{
   }catch(error){settingStatus(error.message||'保存失败，请重试',true);}finally{saving=false;for(const id of controls)$(id).disabled=false;sync();}
 });
 $('clear-key').addEventListener('click',async()=>{try{invalidate();await api.secrets.set('apiKey',null);$('api-key').value='';$('api-key').placeholder='本地免认证服务可留空';settingStatus('API Key 已清除');}catch{settingStatus('清除失败，请重试',true);}});
-$('reset-permissions').addEventListener('click',async()=>{try{invalidate();await api.network.resetPermissions();settingStatus('联网授权已重置，下次翻译会重新确认地址');}catch{settingStatus('重置失败，请重试',true);}});
-document.addEventListener('keydown',event=>{if((event.metaKey||event.ctrlKey)&&event.key==='Enter'){event.preventDefault();if(!$('translate').disabled)void translate();}});
+document.addEventListener('keydown',event=>{if(!event.isComposing&&!composing&&(event.metaKey||event.ctrlKey)&&event.key==='Enter'){event.preventDefault();if(!$('translate').disabled)void translate();}});
 async function boot(){
   if(!api?.network||!api?.secrets){status('此插件需要 Nexlet 0.2.7 或更高版本，请先升级主程序',true);return;}
   try{
@@ -80,8 +90,8 @@ async function boot(){
     if(saved){try{config=validateConfig(saved);}catch{settingStatus('原有配置无效，请重新填写',true);}}
     if(preferences){if(LANGUAGES.some(([id])=>id===preferences.source)||preferences.source==='auto')$('source').value=preferences.source;if(LANGUAGES.some(([id])=>id===preferences.target))$('target').value=preferences.target;if(['google','llm'].includes(preferences.engine))engine=preferences.engine;}
     $('base-url').value=config.baseUrl;$('model').value=config.model;$('api-key').placeholder='留空保留已有 Key；本地服务可不填';selectEngine(engine);ready=true;sync();
-    api.onEnter(context=>{invalidate();if(context.type==='text'){$('input').value=context.payload;status(context.payload?'文字已带入，点击开始翻译':'准备就绪');}sync();$('input').focus();});
-    api.onOut(()=>{revision++;active=null;});
+    api.onEnter(context=>{ready=true;composing=false;invalidate();if(context.type==='text'){$('input').value=context.payload;status(context.payload?'文字已带入，点击开始翻译':'准备就绪');}sync();scheduleAuto();$('input').focus();});
+    api.onOut(()=>{ready=false;invalidate();});
   }catch{status('读取配置失败，请关闭插件后重试',true);}
 }
 void boot();

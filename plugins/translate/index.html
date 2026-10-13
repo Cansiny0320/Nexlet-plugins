@@ -9,7 +9,7 @@
     <label>Base URL<input id="base-url" type="url" placeholder="https://api.example.com/v1" autocomplete="off" spellcheck="false"></label>
     <div class="settings-row"><label>模型名<input id="model" placeholder="填写服务支持的模型名" autocomplete="off" spellcheck="false"></label><label>API Key<input id="api-key" type="password" placeholder="本地免认证服务可留空" autocomplete="off" spellcheck="false"></label></div>
     <p class="help">Key 加密保存在本机；系统加密不可用时仅本次会话使用。原文和译文不保存为历史。</p>
-    <div class="settings-actions"><button id="save-settings" class="primary">保存设置</button><button id="clear-key" class="quiet">清除 Key</button><button id="reset-permissions" class="quiet">重置联网授权</button></div>
+    <div class="settings-actions"><button id="save-settings" class="primary">保存设置</button><button id="clear-key" class="quiet">清除 Key</button></div>
     <p id="settings-status" role="status"></p>
   </section>
   <div class="engine-row"><div class="segmented" role="group" aria-label="翻译引擎"><button id="engine-google" aria-pressed="true" data-engine="google">Google <small>免 Key</small></button><button id="engine-llm" aria-pressed="false" data-engine="llm">LLM <small>自选模型</small></button></div><span id="engine-note">Google 网页接口</span></div>
@@ -18,7 +18,7 @@
     <div class="text-panel target-panel"><div class="panel-heading"><label for="target">译文</label><select id="target" aria-label="目标语言"></select></div><textarea id="output" aria-label="译文" readonly placeholder="译文会显示在这里"></textarea><div class="panel-footer"><span id="detected"></span><button id="copy" class="text-button" disabled>复制译文</button></div></div>
   </section>
   <footer class="actions"><div class="status-area"><p id="status" role="status" aria-live="polite">准备就绪</p><span id="shortcut">⌘ / Ctrl + Enter 翻译</span></div><div class="action-buttons"><button id="cancel" class="quiet" hidden>取消</button><button id="translate" class="primary" disabled>开始翻译 <span aria-hidden="true">↗</span></button></div></footer>
-  <p class="privacy">仅在发起翻译时发送文字。Google 免 Key 接口可能限流或不可用。</p>
+  <p class="privacy">Google 输入后自动发送文字翻译，LLM 点击后发送。Google 免 Key 接口可能限流或不可用。</p>
 </main>
 <script type="module" src="main.js"></script>
 </body></html>
