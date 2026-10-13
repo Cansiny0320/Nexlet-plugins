@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/baiy/Ctool",
+  "version": "2.4.0",
+  "commit": "4f9255f7caa1049786c98a28fbd7bdcc1aef17dd",
+  "sha256": "7961edb2006e8707dffe251453d4c5e77c159709631c2ec4c1b924cc47649ed5",
+  "archive": "source.tar.gz",
+  "packageManager": "pnpm@9.15.9"
+}

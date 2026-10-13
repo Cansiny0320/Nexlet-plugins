@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noEmit": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "types": ["@nexlet/plugin-api"],
+    "baseUrl": ".",
+    "paths": {
+      "axios": [".build/ctool-source/packages/ctool-core/node_modules/axios"],
+      "vue": [".build/ctool-source/packages/ctool-core/node_modules/vue"],
+      "ctool-config": [".build/ctool-source/packages/ctool-config/dist/index.d.ts"]
+    }
+  },
+  "include": ["integrations/ctool/adapter/**/*"]
+}

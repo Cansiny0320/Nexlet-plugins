@@ -15,7 +15,12 @@
     "test:e2e": "node tests/word-count.e2e.mjs",
     "test:ts:e2e": "node tests/typescript.e2e.mjs",
     "package:backend": "npm run build && python3 scripts/package.py --plugin-dir .build/templates/backend --output dist/backend-example.nexlet",
-    "test:backend:e2e": "node tests/backend.e2e.mjs"
+    "test:backend:e2e": "node tests/backend.e2e.mjs",
+    "build:ctool": "node integrations/ctool/build.mjs",
+    "typecheck:ctool": "tsc --noEmit -p tsconfig.ctool.json",
+    "package:ctool": "npm run build:ctool && python3 scripts/package.py --plugin-dir .build/plugins/ctool --output dist/ctool.nexlet",
+    "test:ctool": "node --test tests/ctool/*.test.mjs tests/ctool-storage.test.mjs",
+    "test:ctool:e2e": "node tests/ctool.e2e.mjs"
   },
   "devDependencies": {
     "@nexlet/plugin-api": "file:./sdk",

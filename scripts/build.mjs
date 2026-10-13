@@ -27,6 +27,11 @@ export async function buildPlugin(source, output) {
       throw new Error('构建目录与源码目录不能互相包含');
     }
   }
+  if (source === path.join(root, 'plugins/ctool')) {
+    const { buildCtool } = await import('../integrations/ctool/build.mjs');
+    await buildCtool(output);
+    return;
+  }
   await rm(output, { recursive: true, force: true });
   try {
     const entry = path.join(source, 'src/main.ts');
