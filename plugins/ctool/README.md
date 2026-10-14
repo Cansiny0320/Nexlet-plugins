@@ -16,7 +16,7 @@ npm run test:ctool
 
 在 Nexlet「插件管理 → 导入插件包」选择 `dist/ctool.nexlet`，或加载开发目录 `.build/plugins/ctool`。`plugins/ctool` 是 manifest 和文档目录，不能直接作为开发目录运行。
 
-**宿主要求：** 需要包含扩展插件 SDK 的 Nexlet 构建，具备 `backend`、`database`、`files`、图片剪贴板与文件对话框 API，以及 `onOut` 期间的数据库/凭据保存和后台停止支持。本次以相邻 Nexlet 源码构建验收；不能将只具有旧版基本插件 API 的已发布宿主视为兼容。尚未添加市场下载地址或发布 Release。
+**宿主要求：** 插件市场最低要求 Nexlet 0.2.21，依赖 `backend`、`database`、`files`、图片剪贴板与文件对话框 API，以及 `onOut` 期间的数据库/凭据保存和后台停止支持。自动发布成功后，可在「插件管理 → 插件市场」直接安装 Ctool。插件随本仓库 main 自动发布，不需要再次发布 Nexlet 主程序；更早宿主不在当前市场兼容承诺内。
 
 搜索 `ctool` 打开全部工具，另提供 29 个常用入口。宿主单个插件最多 30 个入口，其余工具和子功能均可从 Ctool 内部分类/搜索进入。JSON 入口接受文本匹配，其余入口也支持宿主显式带入文本。原 uTools 专属关键词设置由 Nexlet 的指令管理承担。
 

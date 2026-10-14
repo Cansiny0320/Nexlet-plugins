@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "plugins": {
+    "org.nexlet.hello": {
+      "version": "1.0.0",
+      "sourceHash": "fccdccc27abf221d526a1d7170aed379a6948b890c4594e5689b0c2b10b7cbe5"
+    },
+    "org.nexlet.word-count": {
+      "version": "1.0.0",
+      "sourceHash": "1378b3ef8b1eb501ed366a7f9c62875f32ddb84e779fabe865ad14fdff0b265c"
+    },
+    "org.nexlet.translate": {
+      "version": "1.1.0",
+      "sourceHash": "7bb37dae5d48f2c5795fb7d1a6901c77b8ece09c602ea937e001f55c5c311877"
+    }
+  }
+}

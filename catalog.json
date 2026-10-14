@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "plugins": [
+    {
+      "directory": "hello-nexlet",
+      "author": "Nexlet",
+      "category": "效率",
+      "platforms": [
+        "win32",
+        "darwin",
+        "linux"
+      ],
+      "minHostVersion": "0.2.0"
+    },
+    {
+      "directory": "word-count",
+      "author": "Nexlet",
+      "category": "效率",
+      "platforms": [
+        "win32",
+        "darwin",
+        "linux"
+      ],
+      "minHostVersion": "0.2.6"
+    },
+    {
+      "directory": "translate",
+      "author": "Nexlet",
+      "category": "效率",
+      "platforms": [
+        "win32",
+        "darwin",
+        "linux"
+      ],
+      "minHostVersion": "0.2.7"
+    },
+    {
+      "directory": "ctool",
+      "author": "Ctool / Nexlet",
+      "category": "开发",
+      "platforms": [
+        "win32",
+        "darwin",
+        "linux"
+      ],
+      "minHostVersion": "0.2.21"
+    }
+  ]
+}

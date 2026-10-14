@@ -31,6 +31,7 @@ parser.add_argument('tag', nargs='?')
 parser.add_argument('--source-root', default='plugins', help='Directory of catalog plugins, relative to the repository')
 parser.add_argument('--plugin-dir', help='Package one built plugin without adding it to the marketplace index')
 parser.add_argument('--output', help='Output .nexlet file for --plugin-dir')
+parser.add_argument('--index', default='index.json', help='Catalog index to package; CI uses the unpublished candidate index')
 args = parser.parse_args()
 if args.plugin_dir:
     if not args.output or args.tag:
@@ -40,7 +41,7 @@ if args.plugin_dir:
 else:
     if args.output:
         parser.error('--output requires --plugin-dir')
-    index = json.loads((ROOT / 'index.json').read_text(encoding='utf-8'))
+    index = json.loads((ROOT / args.index).read_text(encoding='utf-8'))
     assert index['schemaVersion'] == 1
     if args.tag:
         # Unchanged plugins may keep their existing, published download URLs.

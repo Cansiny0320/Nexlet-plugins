@@ -11,9 +11,9 @@
 | 便笺 | 在本机自动保存一段文字，一键复制 | 写入剪贴板 |
 | 翻译 | Google 免 Key 与可配置的 LLM 翻译 | 写入剪贴板、网络请求、独立加密密钥 |
 | 字数统计 | 实时统计中英文字数、字符数、数字组、行数与段落数 | 无 |
-| Ctool（本地构建） | 完整 50 个工具、74 个功能页面，含联网工具 | 后台、文件、剪贴板、外部链接、加密凭据 |
+| Ctool | 完整 50 个工具、74 个功能页面，含联网工具 | 后台、文件、剪贴板、外部链接、加密凭据 |
 
-Ctool 尚未发布到插件市场。使用 Node.js 24+ 执行 `npm run package:ctool`，导入 `dist/ctool.nexlet`；需要包含扩展插件 SDK 的 Nexlet 构建。功能范围、联网服务、宿主要求和验证说明见 [Ctool README](plugins/ctool/README.md)。
+Ctool 在自动发布成功后出现在插件市场，需要 Nexlet 0.2.21+。也可使用 Node.js 24+ 执行 `npm run package:ctool`，导入 `dist/ctool.nexlet`。功能范围、联网服务、宿主要求和验证说明见 [Ctool README](plugins/ctool/README.md)。
 
 字数统计支持直接输入、粘贴，以及启动器传入的文本。字数按「汉字 + 英文单词 + 数字组」计算，标点和 emoji 只计入字符数；组合 emoji 按一个可见字符统计。空行分隔段落，自动折行不增加行数。文本仅在本机计算，不保存。
 
@@ -23,7 +23,7 @@ Ctool 尚未发布到插件市场。使用 Node.js 24+ 执行 `npm run package:c
 
 1. 参考 `plugins/hello-nexlet/`、[TypeScript 模板](templates/typescript/README.md) 和 [插件 SDK](https://github.com/Cansiny0320/Nexlet/blob/main/docs/plugin-sdk.md) 创建插件。
 2. 执行 `npm ci`、`npm run build`，在 Nexlet 中使用「加载开发目录」选择 `.build/plugins/<name>` 调试。
-3. 将源码放入 `plugins/<name>/`，在 `index.json` 添加条目。ID、版本必须与 `plugin.json` 一致。
+3. 将源码放入 `plugins/<name>/`，在 `catalog.json` 添加目录、作者、分类、平台和最低宿主版本。ID、名称、描述和版本从 `plugin.json` 读取；不要手动编辑 `index.json` 或 `published.json`。
 4. 运行 `npm run package`，提交 Pull Request。
 
 本地验证：使用 Node.js 24+ 运行 `npm test` 检查插件逻辑及构建流程，运行 `npm run package` 生成 `dist/*.nexlet`。将 `dist/word-count.nexlet` 通过「导入插件包」安装即可体验；市场条目需要对应 Release 发布后才能下载。字数统计使用文本输入与会话 API，最低支持 Nexlet 0.2.6。
@@ -49,7 +49,13 @@ npm run dev -- templates/typescript
 
 ## 发版
 
-更新源码、版本和索引下载地址后，提交到 `main`，创建与本次更新条目的下载地址一致的 `v*` 标签并推送；未更新的插件保留已发布的下载地址。发布标签须至少匹配一个目录条目。CI 校验与打包后将 `.nexlet` 上传到公开 GitHub Release。普通推送与 PR 只验证和生成 artifact。
+插件合入 `main` 后自动上架，不需要 Nexlet 主程序发版，也不需要手动打标签或创建 Release。PR 只验证和生成 artifact；在 `main` 手动运行工作流可重试发布。
+
+更新插件源码时递增 `plugin.json` 的稳定版本号（例如 `1.0.0` → `1.0.1`）。同版本的源码变更或版本倒退会被拒绝；共享 SDK、依赖或构建工具改变了插件运行行为时，也应递增受影响插件的版本。`catalog.json` 是待发布清单，`index.json` 是用户实际读取的已发布目录，`published.json` 保存源码版本基线。文档修改不强制更新插件版本。
+
+CI 先测试和打包，再为新增/升级插件创建 `<plugin-id>-v<version>` Release，校验资产 SHA-256 和匿名下载成功后，一次性提交市场目录与发布状态。已有插件保持原下载地址，已公开资产不可覆盖；重复执行复用校验一致的资产。发布串行执行，main 已变化时旧任务停止，普通快进推送进一步防止覆盖新提交。中途失败时保留原市场目录。
+
+本地先执行 `npm run package`，或在完成构建后执行 `npm run publish:preview` 查看候选目录与待发布版本。预览只写 `dist/index.json`，不会访问或修改 GitHub。需要回退目录时，从历史提交同时恢复 `index.json` 和 `published.json`，并同步恢复对应源码及 catalog；不要删除旧 Release。正常修复应使用更高版本，以便已安装用户收到更新。
 
 所有插件在受限的独立窗口运行，不能直接访问 Node.js 或网络；声明联网权限的插件安装后可直接使用宿主 HTTP 桥接，不再逐地址弹窗确认。插件独立数据保存在用户本机，更新不会删除数据，卸载默认保留数据。
 
@@ -69,6 +75,6 @@ Google 使用免 Key 网页接口，当前宿主首次联网也无需额外确�
 
 ## 扩展 SDK 与 Node.js 后台
 
-当前 checkout 提供 `templates/backend`，运行 `npm run package:backend` 生成 `dist/backend-example.nexlet`。前端保持浏览器沙箱；后台 TypeScript 编译为独立 Node.js 进程入口，需要 manifest 的 `backend` 权限。完整合同由宿主 `src/shared/plugin-api.ts` 和 `sdk/index.d.ts` 同步，宿主仓运行 `node scripts/sync-plugin-sdk.mjs` 更新本仓类型。扩展需要对应宿主构建，尚未作为正式版本发布。
+当前 checkout 提供 `templates/backend`，运行 `npm run package:backend` 生成 `dist/backend-example.nexlet`。前端保持浏览器沙箱；后台 TypeScript 编译为独立 Node.js 进程入口，需要 manifest 的 `backend` 权限。完整合同由宿主 `src/shared/plugin-api.ts` 和 `sdk/index.d.ts` 同步，宿主仓运行 `node scripts/sync-plugin-sdk.mjs` 更新本仓类型。Ctool 的市场兼容范围从 Nexlet 0.2.21 起。
 
 后台模板说明见 [templates/backend/README.md](templates/backend/README.md)。新能力使用 Nexlet API，不以原样运行 uTools 插件为目标。
