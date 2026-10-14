@@ -79,6 +79,15 @@ test('release retry verifies and reuses the immutable asset without another uplo
   assert.deepEqual(fixture.events, ['create', 'upload', 'publish', 'download', 'download']);
 });
 
+test('same-source retry reuses verified published bytes when bundler output differs', async () => {
+  const fixture = releaseFixture(), release = initial().releases[0];
+  await ensureRelease(release, 'first-commit', fixture.transport);
+  fixture.transport.readAsset = () => Buffer.from('same source rebuilt with different chunk aliases');
+  await ensureRelease(release, 'retry-commit', fixture.transport);
+  assert.equal(fixture.events.filter(e => e === 'upload').length, 1);
+  await assert.rejects(ensureRelease({ ...release, sourceHash: 'b'.repeat(64) }, 'retry-commit', fixture.transport), /source mismatch/);
+});
+
 test('mismatched existing bytes are never overwritten or advertised', async () => {
   const fixture = releaseFixture(), release = initial().releases[0];
   await ensureRelease(release, 'commit', fixture.transport);
@@ -109,11 +118,20 @@ test('public verification uses the final catalog URL, never the draft asset URL'
 
 test('an interrupted draft upload can be retried without replacing a published asset', async () => {
   const fixture = releaseFixture(), release = initial().releases[0];
-  await fixture.transport.create({ draft: true, body: `Source SHA256: ${release.sourceHash}` });
+  const digest = createHash('sha256').update(fixture.transport.readAsset()).digest('hex');
+  await fixture.transport.create({ draft: true, body: `Source SHA256: ${release.sourceHash}\nAsset SHA256: ${digest}\n` });
   fixture.remote().assets.push({ id: 7, name: release.asset, state: 'starter', size: 0 });
   fixture.transport.removeIncomplete = async id => { assert.equal(id, 7); fixture.remote().assets = []; };
   await ensureRelease(release, 'commit', fixture.transport);
   assert.equal(fixture.remote().draft, false);
+});
+
+test('a draft with no completed asset can record new build bytes before retrying upload', async () => {
+  const fixture = releaseFixture(), release = initial().releases[0];
+  await fixture.transport.create({ draft: true, body: `Source SHA256: ${release.sourceHash}\nAsset SHA256: ${'0'.repeat(64)}\n` });
+  fixture.transport.updateDraft = async (_, data) => { fixture.events.push('receipt'); Object.assign(fixture.remote(), data); };
+  await ensureRelease(release, 'commit', fixture.transport);
+  assert.deepEqual(fixture.events, ['create', 'receipt', 'upload', 'publish', 'download']);
 });
 
 test('source baseline normalizes Windows line endings and includes compiled dependencies', () => {

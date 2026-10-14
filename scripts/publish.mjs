@@ -131,9 +131,13 @@ function releaseByTag(tag) {
 export async function ensureRelease(release, commit, transport) {
   const bytes = transport.readAsset(release.asset), digest = `sha256:${sha256(bytes)}`;
   const marker = `Source SHA256: ${release.sourceHash}`;
+  const body = `Automatically built from ${commit}.\n\n${marker}\nAsset SHA256: ${digest.slice(7)}\n`;
   let remote = await transport.find(release.tag);
-  if (!remote) remote = await transport.create({ tag_name: release.tag, target_commitish: commit, name: `${release.id} ${release.version}`, draft: true, prerelease: false, body: `Automatically built from ${commit}.\n\n${marker}\nAsset SHA256: ${digest.slice(7)}\n` });
+  if (!remote) remote = await transport.create({ tag_name: release.tag, target_commitish: commit, name: `${release.id} ${release.version}`, draft: true, prerelease: false, body });
   check(remote.body?.includes(marker), `Release source mismatch: ${release.tag}`);
+  let expectedDigest = remote.body.match(/^Asset SHA256: ([a-f0-9]{64})$/m)?.[1];
+  check(expectedDigest, `Missing recorded asset SHA256: ${release.tag}`);
+  expectedDigest = `sha256:${expectedDigest}`;
   let asset = remote.assets.find(a => a.name === release.asset);
   // GitHub can leave a zero-byte starter asset after an interrupted upload.
   // Only incomplete draft assets may be removed; published assets are immutable.
@@ -143,17 +147,23 @@ export async function ensureRelease(release, commit, transport) {
   }
   if (!asset) {
     check(remote.draft, `Published release is missing its immutable asset: ${release.tag}`);
+    // No completed asset exists yet. A rebuilt draft may record its new bytes.
+    if (expectedDigest !== digest) await transport.updateDraft(remote.id, { body, target_commitish: commit });
+    expectedDigest = digest;
     await transport.upload(release.tag, release.asset);
     remote = await transport.find(release.tag);
     asset = remote.assets.find(a => a.name === release.asset);
+    check(asset?.size === bytes.length, `Incomplete upload: ${release.asset}`);
   }
-  check(asset && asset.state === 'uploaded' && asset.size === bytes.length, `Incomplete asset: ${release.asset}`);
-  check(asset.digest === digest, `Asset SHA256 mismatch: ${release.asset}; never overwrite a version`);
+  // Existing assets are immutable. Same-source rebuilds can differ in bundler
+  // chunk aliases; verify the original receipt rather than replacing the asset.
+  check(asset && asset.state === 'uploaded' && asset.size > 0, `Incomplete asset: ${release.asset}`);
+  check(asset.digest === expectedDigest, `Asset SHA256 mismatch: ${release.asset}; never overwrite a version`);
   if (remote.draft) await transport.publish(remote.id);
   // Draft assets may retain an untagged URL in this response. Verify exactly
   // the final catalog URL after publishing, not that stale draft URL.
   const downloaded = await transport.download(`${base}${release.tag}/${release.asset}`);
-  check(downloaded.length === bytes.length && `sha256:${sha256(downloaded)}` === digest, `Public download verification failed: ${release.asset}`);
+  check(downloaded.length === asset.size && `sha256:${sha256(downloaded)}` === expectedDigest, `Public download verification failed: ${release.asset}`);
 }
 
 async function main() {
@@ -175,6 +185,7 @@ async function main() {
     find: async tag => releaseByTag(tag),
     create: async data => api(`repos/${repository}/releases`, 'POST', data),
     upload: async (tag, asset) => execFileSync('gh', ['release', 'upload', tag, path.join(root, 'dist', asset), '--repo', repository], { stdio: 'inherit' }),
+    updateDraft: async (id, data) => api(`repos/${repository}/releases/${id}`, 'PATCH', data),
     removeIncomplete: async id => execFileSync('gh', ['api', `repos/${repository}/releases/assets/${id}`, '--method', 'DELETE'], { stdio: 'inherit' }),
     publish: async id => api(`repos/${repository}/releases/${id}`, 'PATCH', { draft: false, make_latest: 'false' }),
     download: async url => {
