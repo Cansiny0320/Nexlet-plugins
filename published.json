@@ -12,6 +12,10 @@
     "org.nexlet.translate": {
       "version": "1.1.0",
       "sourceHash": "7bb37dae5d48f2c5795fb7d1a6901c77b8ece09c602ea937e001f55c5c311877"
+    },
+    "org.nexlet.ctool": {
+      "version": "1.0.0",
+      "sourceHash": "f7f51e2915492127a3c68e975408a72d8c026339198d53ab820d0b8854c23aa4"
     }
   }
 }
