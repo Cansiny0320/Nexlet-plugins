@@ -93,6 +93,20 @@ test('public download failure blocks publication even if GitHub metadata looks v
   await assert.rejects(ensureRelease(initial().releases[0], 'commit', fixture.transport), /Public download verification failed/);
 });
 
+test('public verification uses the final catalog URL, never the draft asset URL', async () => {
+  const fixture = releaseFixture(), release = initial().releases[0];
+  const upload = fixture.transport.upload, download = fixture.transport.download;
+  fixture.transport.upload = async (...args) => {
+    await upload(...args);
+    fixture.remote().assets[0].browser_download_url = 'https://github.com/Cansiny0320/Nexlet-plugins/releases/download/untagged-draft/demo.nexlet';
+  };
+  fixture.transport.download = async url => {
+    assert.equal(url, initial().index.plugins[0].download);
+    return download(url);
+  };
+  await ensureRelease(release, 'commit', fixture.transport);
+});
+
 test('an interrupted draft upload can be retried without replacing a published asset', async () => {
   const fixture = releaseFixture(), release = initial().releases[0];
   await fixture.transport.create({ draft: true, body: `Source SHA256: ${release.sourceHash}` });

@@ -150,8 +150,9 @@ export async function ensureRelease(release, commit, transport) {
   check(asset && asset.state === 'uploaded' && asset.size === bytes.length, `Incomplete asset: ${release.asset}`);
   check(asset.digest === digest, `Asset SHA256 mismatch: ${release.asset}; never overwrite a version`);
   if (remote.draft) await transport.publish(remote.id);
-  // Verify the anonymous URL the existing client will actually use.
-  const downloaded = await transport.download(asset.browser_download_url);
+  // Draft assets may retain an untagged URL in this response. Verify exactly
+  // the final catalog URL after publishing, not that stale draft URL.
+  const downloaded = await transport.download(`${base}${release.tag}/${release.asset}`);
   check(downloaded.length === bytes.length && `sha256:${sha256(downloaded)}` === digest, `Public download verification failed: ${release.asset}`);
 }
 
