@@ -31,7 +31,9 @@ const env = { ...process.env, NEXLET_TEST_MODE: '1', NEXLET_USER_DATA: directory
 let app;
 const errors = [], routes = [];
 try {
-  app = await electron.launch({ args: [host], cwd: host, env });
+  const executablePath = process.env.NEXLET_HOST_EXECUTABLE;
+  app = await electron.launch({ ...(executablePath ? { executablePath, args: [] } : { args: [host] }), cwd: host, env });
+  if (process.env.NEXLET_EXPECT_VERSION) assert.equal(await app.evaluate(({ app }) => app.getVersion()), process.env.NEXLET_EXPECT_VERSION);
   app.context().on('page', p => { p.on('pageerror', error => errors.push(error.message)); p.on('console', message => { if (message.type() === 'error') errors.push(message.text()); }); });
   const page = await app.firstWindow(); await expect(page.getByLabel('搜索功能、应用或快捷方式')).toBeVisible();
   await app.evaluate(({ app, clipboard, dialog }) => {

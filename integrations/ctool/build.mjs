@@ -15,7 +15,11 @@ const run = (command, args, cwd = source) => new Promise((resolve, reject) => {
   const child = spawn(command, args, { cwd, stdio: 'inherit', env: { ...process.env, NODE_OPTIONS: '--max-old-space-size=8192' } });
   child.on('error', reject); child.on('exit', code => code === 0 ? resolve() : reject(new Error(`${command} exited ${code}`)));
 });
-const pnpm = args => run(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['exec', '--yes', '--package=pnpm@9.15.9', '--', 'pnpm', ...args]);
+const pnpm = args => {
+  const npmCli = process.env.npm_execpath;
+  if (!npmCli) throw new Error('Run Ctool builds through npm run build or npm run build:ctool');
+  return run(process.execPath, [npmCli, 'exec', '--yes', '--package=pnpm@9.15.9', '--', 'pnpm', ...args]);
+};
 async function replace(relative, from, to) {
   const file = path.join(core, relative), original = await readFile(file, 'utf8');
   if (!(typeof from === 'string' ? original.includes(from) : from.test(original))) throw new Error(`上游结构变化，无法应用适配：${relative}`);

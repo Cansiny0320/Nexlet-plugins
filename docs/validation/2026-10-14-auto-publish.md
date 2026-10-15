@@ -1,0 +1,29 @@
+# 自动发布与 Ctool 上架验证
+
+## 本地验证
+
+- 宿主：从公开 v0.2.21 Release 下载 Windows x64 便携包并解包运行，运行时 `app.getVersion()` 为 `0.2.21`。原始 EXE 的 SHA-256 为 `0354d7422e7c8dc2ff51f950a325e1b2e119b83a11635198a1f71db4686586d3`，与 GitHub 资产摘要一致。日常安装仍为 0.2.20，未替换。
+- `npm test`：30 项通过（包含 10 项自动发布测试）。覆盖不可覆盖版本、旧 URL 保留、版本倒退、失败不更新目录、过期任务、重复执行、远端摘要、匿名下载验证、未完成草稿上传重试、Windows/Linux 文本摘要一致性。
+- `npm run build`：Node.js 24.19.0 完整类型检查与构建通过。修复 Windows 直接 spawn npm.cmd 的 EINVAL，改用当前 Node 启动 npm CLI。
+- `npm run test:ctool`：9 项通过，包含后台 HTTP/WebSocket、JSON Schema、持久化、完整路由和包限制。
+- `npm run publish:preview`：只新增 Ctool 1.0.0，三个历史插件保留原下载地址。候选目录通过宿主 `validateMarketIndex`；0.2.20 被最低版本限制，0.2.21 允许安装。
+- `python3 scripts/package.py --source-root .build/plugins --index dist/index.json`：四个插件打包通过。本地 Ctool 包 SHA-256 为 `dca100f7208f40968c7d31fd37de015956620691ee5dbbc37154a25a3c6b6a5c`；这是 Windows 本地构建，不代表 Linux CI 最终资产摘要。
+- `npm run test:ctool:e2e`：使用 `NEXLET_HOST_EXECUTABLE` 指向解包后的 0.2.21 正式程序，`NEXLET_EXPECT_VERSION=0.2.21`，临时用户数据。完整 50 个工具、74 个页面通过，错误列表为空。验证 Worker、哈希、Unicode、Monaco、Schema、JSONPath、类型生成、HTTP/WebSocket 桥接、加密凭据、二维码复制/下载/上传/解码、重复激活、保存恢复、退出清理及窗口分离。
+- 联网业务测试使用本地 fixture；不代表 JDoodle 账户已配置或第三方服务已执行真实业务。
+- `git diff --check` 和工作流 YAML 解析通过。
+
+## 上线验收
+
+提交后的 main 工作流必须全部成功，公开 Ctool Release 后才能提交市场目录。上线后检查 raw index、公开资产 SHA-256 和实际下载包，并再次运行宿主 E2E。任何失败不得以本地结果代替线上结果。
+
+首次 CI 的构建与打包通过，Ctool 资产已公开；发布阶段沿用草稿资产 URL 导致匿名下载检查 404，市场目录因此未更新。已补充失败回归测试，改为校验市场目录使用的正式 URL；发布测试增至 11 项，总计 31 项。后续运行必须校验并复用原有不可变资产，不能覆盖 1.0.0。
+
+第二次 CI 揭示相同源码的 Vite 输出会因导出别名顺序而改变 chunk 文件名；两个完整包分别为 7,792,574 和 7,792,479 bytes。重试现已先核对源码摘要，再用首次上传时记录的 SHA-256 校验远端资产和匿名下载，不以重建字节替换已有资产。无完整资产的草稿可在上传前更新摘要。补充两项回归测试，发布测试共 13 项、总计 33 项。用第二次 CI 包及真实公开 Release 执行了只读校验，成功复用首次包，没有 GitHub 写入。
+
+## 最终线上结果
+
+- 源码提交 `104d63d397cff4b908393c41518dd50cde7927ac` 的 [CI 38578534341](https://github.com/Cansiny0320/Nexlet-plugins/actions/runs/38578534341) 全部成功，package 和 publish 均通过。
+- 机器人提交 `dfed6132679934953ac4ae3131a94fe7d78e67ae` 原子更新市场目录与发布状态，包含 Ctool 1.0.0、最低宿主 0.2.21；历史三个插件保留原 URL。
+- [公开 Ctool Release](https://github.com/Cansiny0320/Nexlet-plugins/releases/tag/org.nexlet.ctool-v1.0.0) 的 `ctool.nexlet` 为 7,792,574 bytes，SHA-256 为 `588d16b2ad4309aacbe753470a5f6f3c3f1611ec281679c2dd28d1aee345fe12`。实际匿名下载与 GitHub 摘要一致，245 个文件、展开后 27,863,140 bytes，包含完整后台入口、50 个工具与 74 个页面。
+- 最终 E2E 使用 v0.2.21 正式便携程序、隔离数据，直接调用真实市场刷新和安装。安装记录为 `source: marketplace`、`version: 1.0.0`，再次运行完整 74 页面及上述行为测试，全部通过，错误列表为空。结果保存在本地忽略目录 `dist/ctool-market-validation.json`、`dist/ctool-validation.json` 和运行日志。
+- 同步机器人提交后再次执行 `npm run publish:preview`，待发布列表为空，证明当前版本不会重复发布。日常安装、日常插件与用户数据未修改。
