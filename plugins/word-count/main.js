@@ -1,9 +1,10 @@
+import { t, setText, startLanguage, onLanguageChange, getLocale } from './i18n.js';
 import { countText } from './counter.js';
 
 const input = document.querySelector('#text');
 const clear = document.querySelector('#clear');
 const status = document.querySelector('#status');
-const formatter = new Intl.NumberFormat('zh-CN');
+const formatter = () => new Intl.NumberFormat(getLocale());
 const fields = Object.fromEntries(
   ['words', 'chinese', 'english', 'numbers', 'characters', 'nonWhitespace', 'lines', 'paragraphs']
     .map(key => [key, document.getElementById(key)]),
@@ -14,10 +15,10 @@ function render() {
   clearTimeout(pending);
   const counts = countText(input.value);
   for (const [key, value] of Object.entries(counts)) {
-    fields[key].textContent = formatter.format(value);
+    fields[key].textContent = formatter().format(value);
   }
   clear.disabled = !input.value;
-  status.textContent = input.value ? '统计已更新' : '等待输入';
+  setText(status, input.value ? t("统计已更新") : t("等待输入"));
 }
 
 input.addEventListener('input', () => {
@@ -25,7 +26,7 @@ input.addEventListener('input', () => {
   clearTimeout(pending);
   // Coalesce edits to longer text while keeping ordinary typing immediate.
   if (input.value.length > 10000) {
-    status.textContent = '正在统计…';
+    setText(status, t("正在统计…"));
     pending = setTimeout(render, 120);
   } else {
     render();
@@ -46,5 +47,7 @@ window.nexlet.onEnter(context => {
   input.focus();
 });
 
+onLanguageChange(render);
+void startLanguage();
 render();
 input.focus();

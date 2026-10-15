@@ -57,3 +57,7 @@ test('WebSocket negotiates protocol, exchanges messages, closes and cleans up', 
   await handlers.wsClose({ id, code: 1000, reason: 'done' }, context());
   assert.equal((await poll('close')).code, 1000);
 });
+test('adapter failures follow the requested host language without changing protocol validation', async () => {
+  await assert.rejects(handlers.http({ url: 'file:///not-a-network-url', locale: 'en' }, context()), /^Error: Only HTTP\(S\) \/ WS\(S\)/);
+  await assert.rejects(handlers.http({ url: 'file:///not-a-network-url', locale: 'zh_CN' }, context()), /仅支持 HTTP/);
+});

@@ -30,7 +30,25 @@
           "minLength": 1,
           "maxLength": 10000
         }
-      ]
+      ],
+      "locales": {
+        "en": {
+          "name": "Translate"
+        },
+        "zh-Hant": {
+          "name": "翻譯"
+        }
+      }
     }
-  ]
+  ],
+  "locales": {
+    "en": {
+      "name": "Translate",
+      "description": "Translate with Google or a configurable LLM service"
+    },
+    "zh-Hant": {
+      "name": "翻譯",
+      "description": "使用 Google 或自訂 LLM 服務翻譯"
+    }
+  }
 }

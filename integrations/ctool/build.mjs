@@ -37,10 +37,18 @@ export async function buildCtool(output = defaultOutput) {
     'import { runtime as web } from "@/nexlet/runtime";');
   await replace('src/helper/platform/runtime.ts', 'const platforms = [edge, chrome, firefox, utools, tauri];', 'const platforms = [web];');
   await replace('src/helper/platform/index.ts', '["tauri"].includes(this.name)', '["tauri", "nexlet"].includes(this.name)');
+  await replace('src/i18n/index.ts', 'import event from "@/event";', 'import event from "@/event";\nimport { getHostLocale, onHostLocaleChange } from "@/nexlet/locale";\nimport { ref } from "vue";');
+  await replace('src/i18n/index.ts', 'let currentLocale: Locale = "_default"', 'const currentLocale = ref<Locale>(getHostLocale())');
+  await replace('src/i18n/index.ts', 'locale = currentLocale', 'locale = currentLocale.value');
+  await replace('src/i18n/index.ts', '    currentLocale = value', '    value = getHostLocale();\n    currentLocale.value = value;\n    document.documentElement.lang = value === "en" ? "en" : "zh-CN";');
+  await replace('src/helper/plugin.ts', 'return $t(key, values, locale || useSetting().items.locale)', 'return $t(key, values, locale)');
+  await replace('src/i18n/index.ts', '// 获取当前语言', 'onHostLocaleChange(value => setCurrentLocale(value));\n\n// 获取当前语言');
+  await replace('src/block/Setting.vue', /<Select\s+:model-value="storeSetting.items.locale"[\s\S]*?:options="localeOptions"\s*\/>/, '<span>Nexlet · {{ $t("main_setting_language") }}</span>');
   await replace('src/store/action.ts', 'import { reactive, toRaw } from "vue";', 'import { reactive, toRaw, onUnmounted } from "vue";\nimport { registerSave } from "@/nexlet/state";');
   await replace('src/store/action.ts', '    // 保存历史数据', '    onUnmounted(registerSave(() => historyPush.flush()));\n\n    // 保存历史数据');
   await cp(path.join(core, 'src/nexlet/clipboard.ts'), path.join(core, 'src/helper/clipboard.ts'));
   await replace('src/helper/clipboard.ts', "from './transport'", "from '@/nexlet/transport'");
+  await replace('src/helper/clipboard.ts', "from './locale'", "from '@/nexlet/locale'");
   await replace('tool.html', 'src="/src/tool.ts"', 'src="/src/nexlet/bootstrap.ts"');
   await replace('src/tools/websocket/Websocket.vue', 'import {nextTick} from "vue";', 'import {nextTick, onUnmounted} from "vue";\nimport { BridgeWebSocket as WebSocket } from "@/nexlet/transport";');
   await replace('src/tools/websocket/Websocket.vue', 'const send = () => {', 'onUnmounted(close);\n\nconst send = () => {');

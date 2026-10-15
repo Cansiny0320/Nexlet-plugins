@@ -1,3 +1,5 @@
+[简体中文](README.md) · [繁體中文](README.zh-Hant.md) · [English](README.en.md)
+
 # TypeScript 插件模板
 
 从 **Nexlet-plugins 仓库根目录** 执行（Node.js 24+、Python 3）：
@@ -28,3 +30,5 @@ python3 scripts/package.py --plugin-dir .build/plugins/<name> --output dist/<nam
 加入 `index.json` 后，`npm run package` 会与现有插件一起构建并打包。模板自身不会加入市场或自动发布。
 
 `window.nexlet` 和全局 `nexlet` 均有类型提示；可用 `import type { PluginContext } from '@nexlet/plugin-api'` 引入命名类型。类型包只有声明，不需要在插件运行时加载 JS。
+
+多语言界面可检测 `nexlet.i18n` 并订阅变化，只更新产品文案、不替换用户输入，详见 [SDK](../../sdk/README.md)。

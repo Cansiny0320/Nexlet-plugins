@@ -1,3 +1,4 @@
+import { text } from './locale';
 import { call, report } from './transport';
 export async function download(data: Uint8Array, name: string) {
   try {
@@ -11,6 +12,6 @@ export async function readUrl(url: string) {
     return meta.endsWith(';base64') ? Uint8Array.from(atob(content), c => c.charCodeAt(0)) : new TextEncoder().encode(decodeURIComponent(content));
   }
   const response = await call('http', { url });
-  if (response.status < 200 || response.status >= 300) throw new Error(`下载失败 (${response.status})`);
+  if (response.status < 200 || response.status >= 300) throw new Error(`${text("下载失败")} (${response.status})`);
   return Uint8Array.from(atob(response.body), c => c.charCodeAt(0));
 }

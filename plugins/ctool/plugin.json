@@ -7,37 +7,531 @@
   "main": "tool.html",
   "backend": "backend.cjs",
   "icon": "icon.png",
-  "permissions": ["backend", "files", "clipboard.read", "clipboard.write", "shell.openExternal", "secrets"],
+  "permissions": [
+    "backend",
+    "files",
+    "clipboard.read",
+    "clipboard.write",
+    "shell.openExternal",
+    "secrets"
+  ],
   "features": [
-    { "code": "ctool", "name": "Ctool 开发工具箱", "keywords": ["ctool", "开发工具", "工具箱"] },
-    { "code": "json", "name": "Ctool JSON", "keywords": ["ctool json", "json 格式化"], "matches": [{ "type": "text" }] },
-    { "code": "hash", "name": "Ctool 哈希", "keywords": ["hash", "md5", "sha256", "哈希"] },
-    { "code": "aes", "name": "Ctool 加密解密", "keywords": ["aes", "加密", "解密", "rsa", "sm2", "sm4"] },
-    { "code": "base64", "name": "Ctool Base64", "keywords": ["base64", "编码"] },
-    { "code": "url", "name": "Ctool URL 编解码", "keywords": ["url", "url encode"] },
-    { "code": "time", "name": "Ctool 时间", "keywords": ["时间戳", "timestamp", "时区", "时间计算"] },
-    { "code": "qrCode", "name": "Ctool 二维码", "keywords": ["二维码", "qrcode", "二维码解析"] },
-    { "code": "barcode", "name": "Ctool 条形码", "keywords": ["条形码", "barcode"] },
-    { "code": "regex", "name": "Ctool 正则表达式", "keywords": ["regex", "正则"] },
-    { "code": "code", "name": "Ctool 代码工具", "keywords": ["代码格式化", "代码运行", "code", "prettier"] },
-    { "code": "diffs", "name": "Ctool 文本差异", "keywords": ["diff", "文本对比"] },
-    { "code": "serialize", "name": "Ctool 序列化转换", "keywords": ["yaml", "xml", "序列化", "toml"] },
-    { "code": "text", "name": "Ctool 文本处理", "keywords": ["文本处理", "去重", "大小写"] },
-    { "code": "ip", "name": "Ctool IP 查询", "keywords": ["ip", "IP 地址查询"] },
-    { "code": "ipcalc", "name": "Ctool IP 网络计算", "keywords": ["ipcalc", "子网", "ipv6"] },
-    { "code": "websocket", "name": "Ctool WebSocket", "keywords": ["websocket", "ws", "wss"] },
-    { "code": "arm", "name": "Ctool ARM / HEX", "keywords": ["arm", "hex", "汇编"] },
-    { "code": "httpSnippet", "name": "Ctool HTTP 代码生成", "keywords": ["curl", "http", "请求代码"] },
-    { "code": "crontab", "name": "Ctool Cron", "keywords": ["cron", "crontab", "定时规则"] },
-    { "code": "unit", "name": "Ctool 单位换算", "keywords": ["单位换算", "unit"] },
-    { "code": "uuid", "name": "Ctool UUID", "keywords": ["uuid", "ulid"] },
-    { "code": "jwt", "name": "Ctool JWT", "keywords": ["jwt", "token 解码"] },
-    { "code": "bcrypt", "name": "Ctool Bcrypt", "keywords": ["bcrypt", "密码校验"] },
-    { "code": "sign", "name": "Ctool 签名", "keywords": ["签名", "sign"] },
-    { "code": "pinyin", "name": "Ctool 拼音", "keywords": ["拼音", "pinyin"] },
-    { "code": "radix", "name": "Ctool 进制转换", "keywords": ["进制", "radix"] },
-    { "code": "color", "name": "Ctool 颜色", "keywords": ["颜色", "color"] },
-    { "code": "dockerCompose", "name": "Ctool Docker Compose", "keywords": ["docker", "compose"] },
-    { "code": "dataValidation", "name": "Ctool 数据校验", "keywords": ["crc", "bcc", "lrc", "校验"] }
-  ]
+    {
+      "code": "ctool",
+      "name": "Ctool 开发工具箱",
+      "keywords": [
+        "ctool",
+        "开发工具",
+        "工具箱"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Developer Toolbox"
+        },
+        "zh-Hant": {
+          "name": "Ctool 開發工具箱"
+        }
+      }
+    },
+    {
+      "code": "json",
+      "name": "Ctool JSON",
+      "keywords": [
+        "ctool json",
+        "json 格式化"
+      ],
+      "matches": [
+        {
+          "type": "text"
+        }
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool JSON"
+        },
+        "zh-Hant": {
+          "name": "Ctool JSON"
+        }
+      }
+    },
+    {
+      "code": "hash",
+      "name": "Ctool 哈希",
+      "keywords": [
+        "hash",
+        "md5",
+        "sha256",
+        "哈希"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Hash"
+        },
+        "zh-Hant": {
+          "name": "Ctool 雜湊"
+        }
+      }
+    },
+    {
+      "code": "aes",
+      "name": "Ctool 加密解密",
+      "keywords": [
+        "aes",
+        "加密",
+        "解密",
+        "rsa",
+        "sm2",
+        "sm4"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Encryption"
+        },
+        "zh-Hant": {
+          "name": "Ctool 加密解密"
+        }
+      }
+    },
+    {
+      "code": "base64",
+      "name": "Ctool Base64",
+      "keywords": [
+        "base64",
+        "编码"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Base64"
+        },
+        "zh-Hant": {
+          "name": "Ctool Base64"
+        }
+      }
+    },
+    {
+      "code": "url",
+      "name": "Ctool URL 编解码",
+      "keywords": [
+        "url",
+        "url encode"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool URL Encoding"
+        },
+        "zh-Hant": {
+          "name": "Ctool URL 編解碼"
+        }
+      }
+    },
+    {
+      "code": "time",
+      "name": "Ctool 时间",
+      "keywords": [
+        "时间戳",
+        "timestamp",
+        "时区",
+        "时间计算"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Time"
+        },
+        "zh-Hant": {
+          "name": "Ctool 時間"
+        }
+      }
+    },
+    {
+      "code": "qrCode",
+      "name": "Ctool 二维码",
+      "keywords": [
+        "二维码",
+        "qrcode",
+        "二维码解析"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool QR Code"
+        },
+        "zh-Hant": {
+          "name": "Ctool 二維碼"
+        }
+      }
+    },
+    {
+      "code": "barcode",
+      "name": "Ctool 条形码",
+      "keywords": [
+        "条形码",
+        "barcode"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Barcode"
+        },
+        "zh-Hant": {
+          "name": "Ctool 條形碼"
+        }
+      }
+    },
+    {
+      "code": "regex",
+      "name": "Ctool 正则表达式",
+      "keywords": [
+        "regex",
+        "正则"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Regular Expressions"
+        },
+        "zh-Hant": {
+          "name": "Ctool 正規表示式"
+        }
+      }
+    },
+    {
+      "code": "code",
+      "name": "Ctool 代码工具",
+      "keywords": [
+        "代码格式化",
+        "代码运行",
+        "code",
+        "prettier"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Code"
+        },
+        "zh-Hant": {
+          "name": "Ctool 程式碼工具"
+        }
+      }
+    },
+    {
+      "code": "diffs",
+      "name": "Ctool 文本差异",
+      "keywords": [
+        "diff",
+        "文本对比"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Text Diff"
+        },
+        "zh-Hant": {
+          "name": "Ctool 文字差異"
+        }
+      }
+    },
+    {
+      "code": "serialize",
+      "name": "Ctool 序列化转换",
+      "keywords": [
+        "yaml",
+        "xml",
+        "序列化",
+        "toml"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Serialization"
+        },
+        "zh-Hant": {
+          "name": "Ctool 序列化轉換"
+        }
+      }
+    },
+    {
+      "code": "text",
+      "name": "Ctool 文本处理",
+      "keywords": [
+        "文本处理",
+        "去重",
+        "大小写"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Text"
+        },
+        "zh-Hant": {
+          "name": "Ctool 文字處理"
+        }
+      }
+    },
+    {
+      "code": "ip",
+      "name": "Ctool IP 查询",
+      "keywords": [
+        "ip",
+        "IP 地址查询"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool IP Lookup"
+        },
+        "zh-Hant": {
+          "name": "Ctool IP 查詢"
+        }
+      }
+    },
+    {
+      "code": "ipcalc",
+      "name": "Ctool IP 网络计算",
+      "keywords": [
+        "ipcalc",
+        "子网",
+        "ipv6"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool IP Calculator"
+        },
+        "zh-Hant": {
+          "name": "Ctool IP 網路計算"
+        }
+      }
+    },
+    {
+      "code": "websocket",
+      "name": "Ctool WebSocket",
+      "keywords": [
+        "websocket",
+        "ws",
+        "wss"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool WebSocket"
+        },
+        "zh-Hant": {
+          "name": "Ctool WebSocket"
+        }
+      }
+    },
+    {
+      "code": "arm",
+      "name": "Ctool ARM / HEX",
+      "keywords": [
+        "arm",
+        "hex",
+        "汇编"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool ARM / HEX"
+        },
+        "zh-Hant": {
+          "name": "Ctool ARM / HEX"
+        }
+      }
+    },
+    {
+      "code": "httpSnippet",
+      "name": "Ctool HTTP 代码生成",
+      "keywords": [
+        "curl",
+        "http",
+        "请求代码"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool HTTP Snippets"
+        },
+        "zh-Hant": {
+          "name": "Ctool HTTP 程式碼生成"
+        }
+      }
+    },
+    {
+      "code": "crontab",
+      "name": "Ctool Cron",
+      "keywords": [
+        "cron",
+        "crontab",
+        "定时规则"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Cron"
+        },
+        "zh-Hant": {
+          "name": "Ctool Cron"
+        }
+      }
+    },
+    {
+      "code": "unit",
+      "name": "Ctool 单位换算",
+      "keywords": [
+        "单位换算",
+        "unit"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Unit Conversion"
+        },
+        "zh-Hant": {
+          "name": "Ctool 單位換算"
+        }
+      }
+    },
+    {
+      "code": "uuid",
+      "name": "Ctool UUID",
+      "keywords": [
+        "uuid",
+        "ulid"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool UUID"
+        },
+        "zh-Hant": {
+          "name": "Ctool UUID"
+        }
+      }
+    },
+    {
+      "code": "jwt",
+      "name": "Ctool JWT",
+      "keywords": [
+        "jwt",
+        "token 解码"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool JWT"
+        },
+        "zh-Hant": {
+          "name": "Ctool JWT"
+        }
+      }
+    },
+    {
+      "code": "bcrypt",
+      "name": "Ctool Bcrypt",
+      "keywords": [
+        "bcrypt",
+        "密码校验"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Bcrypt"
+        },
+        "zh-Hant": {
+          "name": "Ctool Bcrypt"
+        }
+      }
+    },
+    {
+      "code": "sign",
+      "name": "Ctool 签名",
+      "keywords": [
+        "签名",
+        "sign"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Signing"
+        },
+        "zh-Hant": {
+          "name": "Ctool 簽名"
+        }
+      }
+    },
+    {
+      "code": "pinyin",
+      "name": "Ctool 拼音",
+      "keywords": [
+        "拼音",
+        "pinyin"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Pinyin"
+        },
+        "zh-Hant": {
+          "name": "Ctool 拼音"
+        }
+      }
+    },
+    {
+      "code": "radix",
+      "name": "Ctool 进制转换",
+      "keywords": [
+        "进制",
+        "radix"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Number Bases"
+        },
+        "zh-Hant": {
+          "name": "Ctool 進位制轉換"
+        }
+      }
+    },
+    {
+      "code": "color",
+      "name": "Ctool 颜色",
+      "keywords": [
+        "颜色",
+        "color"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Color"
+        },
+        "zh-Hant": {
+          "name": "Ctool 顏色"
+        }
+      }
+    },
+    {
+      "code": "dockerCompose",
+      "name": "Ctool Docker Compose",
+      "keywords": [
+        "docker",
+        "compose"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Docker Compose"
+        },
+        "zh-Hant": {
+          "name": "Ctool Docker Compose"
+        }
+      }
+    },
+    {
+      "code": "dataValidation",
+      "name": "Ctool 数据校验",
+      "keywords": [
+        "crc",
+        "bcc",
+        "lrc",
+        "校验"
+      ],
+      "locales": {
+        "en": {
+          "name": "Ctool Data Validation"
+        },
+        "zh-Hant": {
+          "name": "Ctool 資料校驗"
+        }
+      }
+    }
+  ],
+  "locales": {
+    "en": {
+      "name": "Ctool Developer Toolbox",
+      "description": "Ctool developer tools integrated with Nexlet"
+    },
+    "zh-Hant": {
+      "name": "Ctool 開發工具箱",
+      "description": "整合 Ctool 開發工具；繁體介面暫以簡體顯示"
+    }
+  }
 }

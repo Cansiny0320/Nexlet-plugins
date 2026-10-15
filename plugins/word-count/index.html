@@ -3,42 +3,42 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>字数统计 · Nexlet</title>
+    <title data-i18n="字数统计 · Nexlet">字数统计 · Nexlet</title>
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
     <main>
       <header>
-        <div class="heading"><span class="mark" aria-hidden="true">Aa</span><div><h1>字数统计</h1><p>写下或粘贴文字，实时查看统计。</p></div></div>
-        <span class="privacy">仅在本机计算 · 不保存文本</span>
+        <div class="heading"><span class="mark" aria-hidden="true">Aa</span><div><h1><span data-i18n="字数统计">字数统计</span></h1><p><span data-i18n="写下或粘贴文字，实时查看统计。">写下或粘贴文字，实时查看统计。</span></p></div></div>
+        <span class="privacy"><span data-i18n="仅在本机计算 · 不保存文本">仅在本机计算 · 不保存文本</span></span>
       </header>
-      <section class="overview" aria-label="字数概览">
-        <div class="total"><span>字数</span><strong id="words">0</strong></div>
+      <section class="overview" aria-label="字数概览" data-i18n-aria-label="字数概览">
+        <div class="total"><span><span data-i18n="字数">字数</span></span><strong id="words">0</strong></div>
         <div class="breakdown">
-          <div><span>汉字</span><strong id="chinese">0</strong></div>
+          <div><span><span data-i18n="汉字">汉字</span></span><strong id="chinese">0</strong></div>
           <span class="plus" aria-hidden="true">+</span>
-          <div><span>英文单词</span><strong id="english">0</strong></div>
+          <div><span><span data-i18n="英文单词">英文单词</span></span><strong id="english">0</strong></div>
           <span class="plus" aria-hidden="true">+</span>
-          <div><span>数字组</span><strong id="numbers">0</strong></div>
+          <div><span><span data-i18n="数字组">数字组</span></span><strong id="numbers">0</strong></div>
         </div>
       </section>
       <section class="editor">
-        <div class="toolbar"><label for="text">待统计文本</label><button id="clear" type="button" disabled>清空</button></div>
-        <textarea id="text" spellcheck="false" placeholder="在这里输入，或按 ⌘V / Ctrl+V 粘贴文本……" aria-describedby="counting-rules"></textarea>
-        <div class="metrics" aria-label="详细统计">
-          <div><span>字符（不含空白）</span><strong id="nonWhitespace">0</strong></div>
-          <div><span>字符（含空白）</span><strong id="characters">0</strong></div>
-          <div><span>行数</span><strong id="lines">0</strong></div>
-          <div><span>段落</span><strong id="paragraphs">0</strong></div>
+        <div class="toolbar"><label for="text"><span data-i18n="待统计文本">待统计文本</span></label><button id="clear" type="button" disabled><span data-i18n="清空">清空</span></button></div>
+        <textarea id="text" spellcheck="false" placeholder="在这里输入，或按 ⌘V / Ctrl+V 粘贴文本……" data-i18n-placeholder="在这里输入，或按 ⌘V / Ctrl+V 粘贴文本……" aria-describedby="counting-rules"></textarea>
+        <div class="metrics" aria-label="详细统计" data-i18n-aria-label="详细统计">
+          <div><span><span data-i18n="字符（不含空白）">字符（不含空白）</span></span><strong id="nonWhitespace">0</strong></div>
+          <div><span><span data-i18n="字符（含空白）">字符（含空白）</span></span><strong id="characters">0</strong></div>
+          <div><span><span data-i18n="行数">行数</span></span><strong id="lines">0</strong></div>
+          <div><span><span data-i18n="段落">段落</span></span><strong id="paragraphs">0</strong></div>
         </div>
       </section>
       <footer>
         <details id="counting-rules">
-          <summary>统计口径</summary>
-          <p>字数 = 汉字数 + 英文单词数 + 数字组数，不含标点和 emoji。英文按连续拉丁字母计词，词内撇号和连字符不拆分；小数和千分位数字计为一组。其他文字计入字符数。</p>
-          <p>字符按可见字符计数，组合 emoji 计为一个字符。空白包括空格、制表符和换行；不同系统的换行统一计为一个字符。行数包含空行和末尾换行产生的空行，段落由空行分隔，自动折行不增加行数。</p>
+          <summary><span data-i18n="统计口径">统计口径</span></summary>
+          <p><span data-i18n="字数 = 汉字数 + 英文单词数 + 数字组数，不含标点和 emoji。英文按连续拉丁字母计词，词内撇号和连字符不拆分；小数和千分位数字计为一组。其他文字计入字符数。">字数 = 汉字数 + 英文单词数 + 数字组数，不含标点和 emoji。英文按连续拉丁字母计词，词内撇号和连字符不拆分；小数和千分位数字计为一组。其他文字计入字符数。</span></p>
+          <p><span data-i18n="字符按可见字符计数，组合 emoji 计为一个字符。空白包括空格、制表符和换行；不同系统的换行统一计为一个字符。行数包含空行和末尾换行产生的空行，段落由空行分隔，自动折行不增加行数。">字符按可见字符计数，组合 emoji 计为一个字符。空白包括空格、制表符和换行；不同系统的换行统一计为一个字符。行数包含空行和末尾换行产生的空行，段落由空行分隔，自动折行不增加行数。</span></p>
         </details>
-        <span id="status" role="status">等待输入</span>
+        <span id="status" role="status"><span data-i18n="等待输入">等待输入</span></span>
       </footer>
     </main>
     <script type="module" src="main.js"></script>

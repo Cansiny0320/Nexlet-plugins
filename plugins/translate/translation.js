@@ -1,3 +1,4 @@
+import { t } from './i18n.js';
 export const LANGUAGES = [
   ['zh-CN','简体中文'],['zh-TW','繁體中文'],['en','英语'],['ja','日语'],['ko','韩语'],
   ['fr','法语'],['de','德语'],['es','西班牙语'],['pt','葡萄牙语'],['ru','俄语'],['it','意大利语'],['ar','阿拉伯语'],['th','泰语'],['vi','越南语']
@@ -5,16 +6,16 @@ export const LANGUAGES = [
 export const MAX_CHARS = 5000;
 const languageName = code => LANGUAGES.find(([id]) => id === code)?.[1];
 export function validateInput(input) {
-  if (!input || !['google','llm'].includes(input.engine)) throw new Error('请选择翻译引擎');
-  if (typeof input.text !== 'string' || !input.text.trim()) throw new Error('请输入要翻译的文字');
-  if ([...input.text].length > MAX_CHARS) throw new Error('单次最多翻译 5000 个字符，请分段翻译');
-  if (!languageName(input.target) || (input.source !== 'auto' && !languageName(input.source))) throw new Error('请选择有效的语言');
+  if (!input || !['google','llm'].includes(input.engine)) throw new Error(t("请选择翻译引擎"));
+  if (typeof input.text !== 'string' || !input.text.trim()) throw new Error(t("请输入要翻译的文字"));
+  if ([...input.text].length > MAX_CHARS) throw new Error(t("单次最多翻译 5000 个字符，请分段翻译"));
+  if (!languageName(input.target) || (input.source !== 'auto' && !languageName(input.source))) throw new Error(t("请选择有效的语言"));
   return input;
 }
 export function validateConfig(config) {
-  if (!config || typeof config.baseUrl !== 'string' || typeof config.model !== 'string' || !config.model.trim() || config.model.length > 200) throw new Error('请先在设置中填写服务地址和模型名');
-  let url; try { url = new URL(config.baseUrl.trim()); } catch { throw new Error('服务地址格式不正确'); }
-  if ((url.protocol !== 'https:' && !(url.protocol === 'http:' && ['localhost','127.0.0.1','[::1]'].includes(url.hostname))) || url.username || url.password || url.search || url.hash) throw new Error('服务地址需为 HTTPS 或本机 HTTP，不能包含账号、查询参数或片段');
+  if (!config || typeof config.baseUrl !== 'string' || typeof config.model !== 'string' || !config.model.trim() || config.model.length > 200) throw new Error(t("请先在设置中填写服务地址和模型名"));
+  let url; try { url = new URL(config.baseUrl.trim()); } catch { throw new Error(t("服务地址格式不正确")); }
+  if ((url.protocol !== 'https:' && !(url.protocol === 'http:' && ['localhost','127.0.0.1','[::1]'].includes(url.hostname))) || url.username || url.password || url.search || url.hash) throw new Error(t("服务地址需为 HTTPS 或本机 HTTP，不能包含账号、查询参数或片段"));
   return {baseUrl: url.href.replace(/\/+$/, ''), model: config.model.trim()};
 }
 export function buildRequest(input, config, apiKey = '') {
@@ -34,21 +35,21 @@ export function buildRequest(input, config, apiKey = '') {
 export function parseResponse(engine, response) {
   const status = response.status;
   if (status < 200 || status >= 300) {
-    const reason = status === 401 || status === 403 ? (engine === 'google' ? '服务拒绝请求，请稍后重试或手动切换引擎' : '鉴权失败，请检查 API Key 和访问权限') : status === 429 ? '请求过于频繁或额度不足，请稍后重试' : '翻译服务暂时不可用，请稍后重试';
+    const reason = status === 401 || status === 403 ? (engine === 'google' ? t("服务拒绝请求，请稍后重试或手动切换引擎") : t("鉴权失败，请检查 API Key 和访问权限")) : status === 429 ? t("请求过于频繁或额度不足，请稍后重试") : t("翻译服务暂时不可用，请稍后重试");
     throw new Error(`${reason}（HTTP ${status}）`);
   }
-  let data; try { data = JSON.parse(response.body); } catch { throw new Error('翻译服务返回了无法解析的数据'); }
+  let data; try { data = JSON.parse(response.body); } catch { throw new Error(t("翻译服务返回了无法解析的数据")); }
   if (engine === 'google') {
     const parts = data?.[0];
-    if (!Array.isArray(parts) || !parts.length || parts.some(part => !Array.isArray(part) || typeof part[0] !== 'string')) throw new Error('Google 返回格式发生变化，请稍后重试或手动切换引擎');
+    if (!Array.isArray(parts) || !parts.length || parts.some(part => !Array.isArray(part) || typeof part[0] !== 'string')) throw new Error(t("Google 返回格式发生变化，请稍后重试或手动切换引擎"));
     const text = parts.map(part => part[0]).join('');
-    if (!text.trim()) throw new Error('翻译服务未返回译文');
+    if (!text.trim()) throw new Error(t("翻译服务未返回译文"));
     return {text,detected:typeof data[2] === 'string'?data[2]:null};
   }
   const choice = data?.choices?.[0];
-  if (choice?.message?.refusal || choice?.finish_reason === 'content_filter') throw new Error('模型拒绝了这次翻译，请修改文本或更换模型');
-  if (choice?.finish_reason === 'length') throw new Error('译文被模型截断，请缩短原文后重试');
+  if (choice?.message?.refusal || choice?.finish_reason === 'content_filter') throw new Error(t("模型拒绝了这次翻译，请修改文本或更换模型"));
+  if (choice?.finish_reason === 'length') throw new Error(t("译文被模型截断，请缩短原文后重试"));
   const text = choice?.message?.content;
-  if (typeof text !== 'string' || !text.trim()) throw new Error('模型未返回有效译文，请检查模型是否支持 Chat Completions');
+  if (typeof text !== 'string' || !text.trim()) throw new Error(t("模型未返回有效译文，请检查模型是否支持 Chat Completions"));
   return {text,detected:null};
 }

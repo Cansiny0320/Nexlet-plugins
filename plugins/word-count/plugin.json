@@ -11,8 +11,40 @@
     {
       "code": "count",
       "name": "字数统计",
-      "keywords": ["字数", "字符数", "统计字数", "word count", "wordcount", "count", "zishu"],
-      "matches": [{ "type": "text", "minLength": 1, "maxLength": 500000 }]
+      "keywords": [
+        "字数",
+        "字符数",
+        "统计字数",
+        "word count",
+        "wordcount",
+        "count",
+        "zishu"
+      ],
+      "matches": [
+        {
+          "type": "text",
+          "minLength": 1,
+          "maxLength": 500000
+        }
+      ],
+      "locales": {
+        "en": {
+          "name": "Word Count"
+        },
+        "zh-Hant": {
+          "name": "字數統計"
+        }
+      }
     }
-  ]
+  ],
+  "locales": {
+    "en": {
+      "name": "Word Count",
+      "description": "Count words, characters, lines and paragraphs locally"
+    },
+    "zh-Hant": {
+      "name": "字數統計",
+      "description": "在本機統計字數、字元、行數與段落"
+    }
+  }
 }

@@ -1,3 +1,5 @@
+[简体中文](README.md) · [繁體中文](README.zh-Hant.md) · [English](README.en.md)
+
 # Nexlet Plugins
 
 [Nexlet](https://github.com/Cansiny0320/Nexlet) 的公开插件目录与源码仓库。桌面应用从本仓库读取 `index.json`，从 GitHub Releases 下载插件包。
@@ -72,3 +74,9 @@ Google 使用免 Key 网页接口，当前宿主首次联网也无需额外确�
 当前 checkout 提供 `templates/backend`，运行 `npm run package:backend` 生成 `dist/backend-example.nexlet`。前端保持浏览器沙箱；后台 TypeScript 编译为独立 Node.js 进程入口，需要 manifest 的 `backend` 权限。完整合同由宿主 `src/shared/plugin-api.ts` 和 `sdk/index.d.ts` 同步，宿主仓运行 `node scripts/sync-plugin-sdk.mjs` 更新本仓类型。扩展需要对应宿主构建，尚未作为正式版本发布。
 
 后台模板说明见 [templates/backend/README.md](templates/backend/README.md)。新能力使用 Nexlet API，不以原样运行 uTools 插件为目标。
+
+## 界面语言
+
+便笺、字数统计与翻译跟随宿主的简体中文、繁体中文、English，切换不清空输入。旧宿主没有 `nexlet.i18n` 时回退浏览器语言。Ctool 复用上游中英文，繁体回退简体。当前源码须发布新插件包后才会进入市场。
+
+共用运行时位于 `shared/browser-i18n.js`、词条位于 `shared/plugin-locales.json`；修改后执行 `node scripts/sync-i18n.mjs`，将本地副本同步到三个插件，保持原始开发目录可离线加载。Manifest 与索引的 `locales` 只翻译名称、描述和分类，不改变 ID/code。应用语言用 `nexlet.i18n`，`system.info().locale` 仍为系统信息。

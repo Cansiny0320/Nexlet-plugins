@@ -6,6 +6,37 @@
   "apiVersion": 1,
   "main": "index.html",
   "icon": "icon.png",
-  "permissions": ["clipboard.write"],
-  "features": [{"code":"note","name":"便笺","keywords":["note","便签","记录","hello"]}]
+  "permissions": [
+    "clipboard.write"
+  ],
+  "features": [
+    {
+      "code": "note",
+      "name": "便笺",
+      "keywords": [
+        "note",
+        "便签",
+        "记录",
+        "hello"
+      ],
+      "locales": {
+        "en": {
+          "name": "Notes"
+        },
+        "zh-Hant": {
+          "name": "便箋"
+        }
+      }
+    }
+  ],
+  "locales": {
+    "en": {
+      "name": "Notes",
+      "description": "A note saved locally, with one-click copying"
+    },
+    "zh-Hant": {
+      "name": "便箋",
+      "description": "在本機自動儲存便箋，一鍵複製"
+    }
+  }
 }

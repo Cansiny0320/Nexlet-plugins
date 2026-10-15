@@ -1,3 +1,5 @@
+[简体中文](README.md) · [繁體中文](README.zh-Hant.md) · [English](README.en.md)
+
 # @nexlet/plugin-api
 
 Nexlet Plugin API v1 的类型声明，覆盖当前宿主的全部公开插件方法，不包含尚未实现的能力。只有类型，不注入或模拟运行时对象；运行时由 Nexlet 提供 `window.nexlet`。
@@ -19,3 +21,5 @@ nexlet.onEnter((context: PluginContext) => {
 完整权限、限额、生命周期行为见 [宿主 SDK 文档](https://github.com/Cansiny0320/Nexlet/blob/main/docs/plugin-sdk.md)。这份声明描述 Nexlet 的实际行为，不代表 uTools API 兼容或能力已全部覆盖。
 
 扩展 API 类型在 `extensions.d.ts`，由宿主 `src/shared/plugin-api.ts` 生成；基本 API 在宿主 `sdk/index.d.ts` 维护。请在宿主仓运行 `node scripts/sync-plugin-sdk.mjs` 同步，不手工修改生成文件。新增 backend、数据库、窗口、系统、浏览器、媒体、AI、工具/MCP 和 provider 服务适配，运行需要对应的新宿主构建。
+
+`nexlet.i18n.getLocale()` / `onChange()` 无需额外权限，返回或订阅 `zh-CN`、`zh-Hant`、`en` 应用语言。`system.info().locale` 保持系统语言含义；兼容旧宿主时先检测 `i18n`，不再使用订阅时调用取消函数。

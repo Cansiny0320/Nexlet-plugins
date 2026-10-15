@@ -1,30 +1,31 @@
+import { text, getHostLocale } from './locale';
 import axios, { AxiosError, AxiosHeaders } from 'axios';
 
 interface HttpResponse { status: number; statusText: string; headers: Record<string, string>; body: string; }
 type SocketEvent = { type: 'open'; protocol: string } | { type: 'message'; data: string; binary: boolean } | { type: 'error'; message: string } | { type: 'close'; code: number; reason: string };
 interface BackendResults { http: HttpResponse; schema: string; wsOpen: { id: string }; wsPoll: SocketEvent[]; wsSend: boolean; wsClose: boolean; }
 export const call = async <M extends keyof BackendResults>(method: M, args: any, timeoutMs = 130000): Promise<BackendResults[M]> =>
-  await window.nexlet.backend.call({ id: crypto.randomUUID(), method, args, timeoutMs }) as BackendResults[M];
+  await window.nexlet.backend.call({ id: crypto.randomUUID(), method, args: { ...args, locale: getHostLocale() }, timeoutMs }) as BackendResults[M];
 export const report = (error: unknown) => {
   console.error(error);
   let banner = document.getElementById('nexlet-error');
   if (!banner) { banner = document.createElement('div'); banner.id = 'nexlet-error'; banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#8b2626;color:white;padding:10px;cursor:pointer'; banner.onclick = () => banner?.remove(); document.body.append(banner); }
-  banner.textContent = String(error instanceof Error ? error.message : error);
+  banner.textContent = text(String(error instanceof Error ? error.message : error));
 };
 export function installHttp() {
   axios.defaults.adapter = async config => {
     const url = axios.getUri(config), headers = AxiosHeaders.from(config.headers).toJSON();
     const args: any = { url, method: config.method?.toUpperCase() || 'GET', headers, timeoutMs: config.timeout || 30000 };
     if (config.data !== undefined) args.body = config.data;
-    if (config.signal?.aborted) throw new AxiosError('请求已取消', 'ERR_CANCELED', config);
+    if (config.signal?.aborted) throw new AxiosError(text('请求已取消'), 'ERR_CANCELED', config);
     let response;
     try { response = await call('http', args); }
     catch (error) { throw new AxiosError(String(error), 'ERR_NETWORK', config); }
-    if (config.signal?.aborted) throw new AxiosError('请求已取消', 'ERR_CANCELED', config);
+    if (config.signal?.aborted) throw new AxiosError(text('请求已取消'), 'ERR_CANCELED', config);
     const bytes = Uint8Array.from(atob(response.body), ch => ch.charCodeAt(0));
     const result: any = { status: response.status, statusText: response.statusText, headers: response.headers, config,
       data: config.responseType === 'arraybuffer' ? bytes.buffer : config.responseType === 'blob' ? new Blob([bytes], { type: response.headers['content-type'] }) : new TextDecoder().decode(bytes) };
-    if (config.validateStatus && !config.validateStatus(result.status)) throw new AxiosError(`请求失败 (${result.status})`, 'ERR_BAD_RESPONSE', config, undefined, result);
+    if (config.validateStatus && !config.validateStatus(result.status)) throw new AxiosError(`${text("请求失败")} (${result.status})`, 'ERR_BAD_RESPONSE', config, undefined, result);
     return result;
   };
 }
@@ -54,7 +55,7 @@ export class BridgeWebSocket extends EventTarget {
     } finally { active.delete(this); }
   }
   send(data: string) {
-    if (this.readyState !== 1) throw new Error('WebSocket 尚未连接');
+    if (this.readyState !== 1) throw new Error(text('WebSocket 尚未连接'));
     void call('wsSend', { id: this.id, data }).catch(report);
   }
   close(code = 1000, reason = '') {

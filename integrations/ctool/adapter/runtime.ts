@@ -1,3 +1,4 @@
+import { getHostLocale } from './locale';
 import { storage } from './state';
 import { report } from './transport';
 import { tools } from 'ctool-config';
@@ -7,7 +8,7 @@ export const runtime = {
   is: () => true,
   webSecurity: () => false,
   storage: () => storage,
-  getLocale: () => 'zh_CN',
+  getLocale: getHostLocale,
   openUrl: (url: string) => window.nexlet.openExternal(url).catch(report),
   initialize(initializer: any) {
     window.nexlet.onEnter(async (context: any) => {

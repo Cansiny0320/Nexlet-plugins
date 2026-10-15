@@ -1,3 +1,5 @@
+[简体中文](README.md) · [繁體中文](README.zh-Hant.md) · [English](README.en.md)
+
 # Ctool 开发工具箱
 
 将 [baiy/Ctool](https://github.com/baiy/Ctool) 2.4.0 的全部 50 个工具、74 个功能页面集成到 Nexlet。保留上游界面、工具算法、分类、内部搜索、历史和设置。包括 JSON / JSON Schema / JSONPath / 类型生成、哈希和加解密、编解码、代码格式化、在线代码运行、IP 查询、WebSocket、ARM / HEX、二维码、条形码、文本、时间、单位换算等。
@@ -38,3 +40,7 @@ npm run test:ctool:e2e
 E2E 使用临时数据导入实际安装包，遍历 74 个功能页面，并验证离线计算、Worker、Monaco、联网桥接、文件和图片、持久化及会话行为。测试使用剪贴板 mock 和本地 HTTP / WebSocket fixture，不改日常 Nexlet 数据。JDoodle fixture 通过不代表账户已配置或完成实网代码执行。验收记录写入 `dist/ctool-validation.json`。
 
 上游源码：`4f9255f7caa1049786c98a28fbd7bdcc1aef17dd`。许可证见包内 `LICENSE` 和 `THIRD_PARTY_NOTICES.txt`。
+
+## 界面语言
+
+跟随 Nexlet 设置，复用上游 English 与简体中文；繁体中文明确回退简体，并非完整繁体翻译。宿主入口名称提供三语。适配层更新语言时不重载页面，保留输入；上游独立语言选择改为跟随 Nexlet 的说明，请在宿主设置中更改。上游源码归档保持不变。

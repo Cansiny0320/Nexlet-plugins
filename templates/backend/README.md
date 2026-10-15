@@ -1,3 +1,5 @@
+[简体中文](README.md) · [繁體中文](README.zh-Hant.md) · [English](README.en.md)
+
 # TypeScript backend 模板
 
 在插件仓库根目录运行 `npm ci`、`npm run package:backend`，将 `dist/backend-example.nexlet` 导入 Nexlet，或加载 `.build/templates/backend` 开发目录。运行需要包含扩展 SDK 的宿主构建；尚未声明可用的正式发布版本。
@@ -9,3 +11,5 @@
 后台导出 `handlers`，参数为 `unknown`，需自行校验。第二个参数提供 `signal`、`emit(value)` 和插件独立 `dataDirectory`。取消后台任务会终止该插件后台进程，其他同时运行的调用也会失败；后续调用自动启动新进程。关闭前端时取消其 RPC，已保存的调度仍可唤起后台。停用、卸载、升级、退出宿主会停止后台。
 
 第三方 JavaScript 依赖会由 esbuild 合并进后台产物；Node 内置模块保持原样。原生 addon 和任意外部 `node_modules` 不会自动打包，不能依赖开发机器上的隐式搜索路径。媒体处理可直接使用 `nexlet.media`。
+
+应用语言通过前端 `nexlet.i18n` 读取；后台业务需要语言时，由前端显式作为参数传入。

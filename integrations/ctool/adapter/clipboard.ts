@@ -1,3 +1,4 @@
+import { text } from './locale';
 import { ref } from 'vue';
 import { report } from './transport';
 export let permission: PermissionState = 'granted';
@@ -7,12 +8,12 @@ export const copy = (data: string, callback?: () => void) => { if (data) void wi
 export const paste = async () => window.nexlet.clipboard.readText();
 export const copyImage = (data: string, callback?: () => void) => {
   const image = new Image();
-  image.onerror = () => report(new Error('图片加载失败'));
+  image.onerror = () => report(new Error(text('图片加载失败')));
   image.onload = () => {
     const canvas = document.createElement('canvas'); canvas.width = image.width; canvas.height = image.height;
     canvas.getContext('2d')!.drawImage(image, 0, 0);
     canvas.toBlob(blob => {
-      if (!blob) { report(new Error('图片转换失败')); return; }
+      if (!blob) { report(new Error(text('图片转换失败'))); return; }
       void blob.arrayBuffer().then(bytes => window.nexlet.clipboard.writeImage(new Uint8Array(bytes))).then(callback).catch(report);
     }, 'image/png');
   };
