@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const repository = 'Cansiny0320/Nexlet-plugins';
 const base = `https://github.com/${repository}/releases/download/`;
-const json = file => JSON.parse(readFileSync(path.join(root, file), 'utf8'));
+const json = (file, workspace = root) => JSON.parse(readFileSync(path.join(workspace, file), 'utf8'));
 const serialize = value => JSON.stringify(value, null, 2) + '\n';
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const stableVersion = value => typeof value === 'string' && /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(value);
@@ -89,22 +89,22 @@ export async function publishPlan(plan, services) {
   await services.updateIndex(plan.index, plan.state);
 }
 
-function candidates() {
-  const catalog = json('catalog.json');
+export function candidates(workspace = root) {
+  const catalog = json('catalog.json', workspace);
   check(catalog.schemaVersion === 1 && Array.isArray(catalog.plugins) && catalog.plugins.length <= 200, 'Invalid catalog');
   return catalog.plugins.map(metadata => {
     const { directory, author, category, platforms, minHostVersion } = metadata;
     check(/^[a-zA-Z0-9_-]+$/.test(directory), 'Invalid catalog directory');
-    const manifest = json(`plugins/${directory}/plugin.json`), built = json(`.build/plugins/${directory}/plugin.json`);
+    const manifest = json(`plugins/${directory}/plugin.json`, workspace), built = json(`.build/plugins/${directory}/plugin.json`, workspace);
     check(JSON.stringify(manifest) === JSON.stringify(built), `Stale build: ${directory}`);
     const { id, name, description, version } = manifest;
-    const entry = { id, name, description, version, author, category, platforms, ...(minHostVersion ? { minHostVersion } : {}) };
+    const entry = { id, name, description, version, author, category, platforms, ...(minHostVersion ? { minHostVersion } : {}), ...(manifest.locales ? { locales: manifest.locales } : {}) };
     if (manifest.icon) {
       check(/^[a-zA-Z0-9._-]+\.png$/.test(manifest.icon), 'Catalog icons must be root PNG files');
-      const icon = 'data:image/png;base64,' + readFileSync(path.join(root, '.build/plugins', directory, manifest.icon)).toString('base64');
+      const icon = 'data:image/png;base64,' + readFileSync(path.join(workspace, '.build/plugins', directory, manifest.icon)).toString('base64');
       if (icon.length <= 100000) entry.icon = icon;
     }
-    return { entry, directory, sourceHash: sourceHash(directory) };
+    return { entry, directory, sourceHash: sourceHash(directory, workspace) };
   });
 }
 

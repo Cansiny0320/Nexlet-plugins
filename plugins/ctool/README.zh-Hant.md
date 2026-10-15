@@ -18,7 +18,7 @@ npm run test:ctool
 
 在 Nexlet「外掛管理 → 匯入外掛包」選擇 `dist/ctool.nexlet`，或載入開發目錄 `.build/plugins/ctool`。`plugins/ctool` 是 manifest 和文件目錄，不能直接作為開發目錄執行。
 
-**宿主要求：** 需要包含擴充套件外掛 SDK 的 Nexlet 構建，具備 `backend`、`database`、`files`、圖片剪貼簿與檔案對話方塊 API，以及 `onOut` 期間的資料庫/憑據儲存和後臺停止支援。本次以相鄰 Nexlet 原始碼構建驗收；不能將只具有舊版基本外掛 API 的已釋出宿主視為相容。尚未新增市場下載地址或釋出 Release。
+**宿主要求：** 外掛市場最低要求 Nexlet 0.2.21，依賴 `backend`、`database`、`files`、圖片剪貼簿與檔案對話方塊 API，以及 `onOut` 期間的資料庫/憑據儲存和後臺停止支援。自動釋出成功後，可在「外掛管理 → 外掛市場」直接安裝 Ctool。外掛隨本倉庫 main 自動釋出，不需要再次釋出 Nexlet 主程式；更早宿主不在當前市場相容承諾內。
 
 搜尋 `ctool` 開啟全部工具，另提供 29 個常用入口。宿主單個外掛最多 30 個入口，其餘工具和子功能均可從 Ctool 內部分類/搜尋進入。JSON 入口接受文字匹配，其餘入口也支援宿主顯式帶入文字。原 uTools 專屬關鍵詞設定由 Nexlet 的指令管理承擔。
 

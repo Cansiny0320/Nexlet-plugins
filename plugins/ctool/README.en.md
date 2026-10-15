@@ -18,7 +18,7 @@ The first build uses pinned pnpm 9.15.9 through npm and the upstream lockfile; n
 
 Import `dist/ctool.nexlet` through Nexlet Plugins, or load `.build/plugins/ctool`. `plugins/ctool` contains manifest/documentation and cannot run directly.
 
-**Host requirements:** a build with extended SDK, including backend, database, files, image clipboard, file dialogs, saving database/secrets during `onOut`, and backend shutdown. Validation uses adjacent Nexlet source; released hosts with only the old basic API are not compatible. No marketplace download URL or Release has been published.
+**Host requirements:** The marketplace requires Nexlet 0.2.21 or later, including backend, database, files, image clipboard, file dialogs, and persistence/cleanup during `onOut`. Once automatically published, Ctool installs directly from Plugins → Marketplace. Plugins publish from this repository's `main` independently of host releases; earlier hosts are outside the supported compatibility range.
 
 Search `ctool` for all tools or use 29 common shortcuts. The host allows 30 features per plugin; all remaining tools/subpages remain available inside Ctool. JSON matches text automatically; other entries also accept explicitly supplied text. Nexlet command management replaces uTools-specific keyword settings.
 

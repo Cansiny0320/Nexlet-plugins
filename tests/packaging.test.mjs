@@ -14,6 +14,7 @@ test('release packaging accepts retained historical URLs and rejects an unrelate
   // This compatibility test packages the prebuilt JS plugins. Ctool's generated
   // output is covered by its dedicated package tests and the publishing workflow.
   index.plugins=index.plugins.filter(p=>p.id!=='org.nexlet.ctool');
+  index.plugins.forEach(p=>{const folderName={'org.nexlet.hello':'hello-nexlet','org.nexlet.word-count':'word-count','org.nexlet.translate':'translate'}[p.id];p.version=JSON.parse(readFileSync(path.join(folder,'plugins',folderName,'plugin.json'),'utf8')).version;});
   index.plugins.forEach((p,i)=>p.download=p.download.replace(/\/download\/[^/]+\//,`/download/${i===0?'v9.9.9':'v1.0.0'}/`));
   writeFileSync(path.join(folder,'index.json'),JSON.stringify(index));
   const run=tag=>spawnSync('python3',['scripts/package.py',tag],{cwd:folder,encoding:'utf8'});

@@ -13,9 +13,9 @@
 | 便箋 | 在本機自動儲存一段文字，一鍵複製 | 寫入剪貼簿 |
 | 翻譯 | Google 免 Key 與可配置的 LLM 翻譯 | 寫入剪貼簿、網路請求、獨立加密金鑰 |
 | 字數統計 | 實時統計中英文字數、字元數、數字組、行數與段落數 | 無 |
-| Ctool（本地構建） | 完整 50 個工具、74 個功能頁面，含聯網工具 | 後臺、檔案、剪貼簿、外部連結、加密憑據 |
+| Ctool | 完整 50 個工具、74 個功能頁面，含聯網工具 | 後臺、檔案、剪貼簿、外部連結、加密憑據 |
 
-Ctool 尚未釋出到外掛市場。使用 Node.js 24+ 執行 `npm run package:ctool`，匯入 `dist/ctool.nexlet`；需要包含擴充套件外掛 SDK 的 Nexlet 構建。功能範圍、聯網服務、宿主要求和驗證說明見 [Ctool README](plugins/ctool/README.zh-Hant.md)。
+Ctool 在自動釋出成功後出現在外掛市場，需要 Nexlet 0.2.21+。也可使用 Node.js 24+ 執行 `npm run package:ctool`，匯入 `dist/ctool.nexlet`。功能範圍、聯網服務、宿主要求和驗證說明見 [Ctool README](plugins/ctool/README.zh-Hant.md)。
 
 字數統計支援直接輸入、貼上，以及啟動器傳入的文字。字數按「漢字 + 英文單詞 + 數字組」計算，標點和 emoji 只計入字元數；組合 emoji 按一個可見字元統計。空行分隔段落，自動折行不增加行數。文字僅在本機計算，不儲存。
 
@@ -25,7 +25,7 @@ Ctool 尚未釋出到外掛市場。使用 Node.js 24+ 執行 `npm run package:c
 
 1. 參考 `plugins/hello-nexlet/`、[TypeScript 模板](templates/typescript/README.zh-Hant.md) 和 [外掛 SDK](https://github.com/Cansiny0320/Nexlet/blob/main/docs/plugin-sdk.zh-Hant.md) 建立外掛。
 2. 執行 `npm ci`、`npm run build`，在 Nexlet 中使用「載入開發目錄」選擇 `.build/plugins/<name>` 除錯。
-3. 將原始碼放入 `plugins/<name>/`，在 `index.json` 新增條目。ID、版本必須與 `plugin.json` 一致。
+3. 將原始碼放入 `plugins/<name>/`，在 `catalog.json` 新增目錄、作者、分類、平臺和最低宿主版本。ID、名稱、描述和版本從 `plugin.json` 讀取；不要手動編輯 `index.json` 或 `published.json`。
 4. 執行 `npm run package`，提交 Pull Request。
 
 本地驗證：使用 Node.js 24+ 執行 `npm test` 檢查外掛邏輯及構建流程，執行 `npm run package` 生成 `dist/*.nexlet`。將 `dist/word-count.nexlet` 透過「匯入外掛包」安裝即可體驗；市場條目需要對應 Release 釋出後才能下載。字數統計使用文字輸入與會話 API，最低支援 Nexlet 0.2.6。
@@ -51,7 +51,13 @@ npm run dev -- templates/typescript
 
 ## 發版
 
-更新原始碼、版本和索引下載地址後，提交到 `main`，建立與本次更新條目的下載地址一致的 `v*` 標籤並推送；未更新的外掛保留已釋出的下載地址。釋出標籤須至少匹配一個目錄條目。CI 校驗與打包後將 `.nexlet` 上傳到公開 GitHub Release。普通推送與 PR 只驗證和生成 artifact。
+外掛合入 `main` 後自動上架，不需要 Nexlet 主程式發版，也不需要手動打標籤或建立 Release。PR 只驗證和生成 artifact；在 `main` 手動執行工作流可重試釋出。
+
+更新外掛原始碼時遞增 `plugin.json` 的穩定版本號（例如 `1.0.0` → `1.0.1`）。同版本的原始碼變更或版本倒退會被拒絕；共享 SDK、依賴或構建工具改變了外掛執行行為時，也應遞增受影響外掛的版本。`catalog.json` 是待發布清單，`index.json` 是使用者實際讀取的已釋出目錄，`published.json` 儲存原始碼版本基線。文件修改不強制更新外掛版本。
+
+CI 先測試和打包，再為新增/升級外掛建立 `<plugin-id>-v<version>` Release，校驗資產 SHA-256 和匿名下載成功後，一次性提交市場目錄與釋出狀態。已有外掛保持原下載地址，已公開資產不可覆蓋；重複執行復用校驗一致的資產。釋出序列執行，main 已變化時舊任務停止，普通快進推送進一步防止覆蓋新提交。中途失敗時保留原市場目錄。
+
+本地先執行 `npm run package`，或在完成構建後執行 `npm run publish:preview` 檢視候選目錄與待發布版本。預覽只寫 `dist/index.json`，不會訪問或修改 GitHub。需要回退目錄時，從歷史提交同時恢復 `index.json` 和 `published.json`，並同步恢復對應原始碼及 catalog；不要刪除舊 Release。正常修復應使用更高版本，以便已安裝使用者收到更新。
 
 所有外掛在受限的獨立視窗執行，不能直接訪問 Node.js 或網路；宣告聯網許可權的外掛安裝後可直接使用宿主 HTTP 橋接，不再逐地址彈窗確認。外掛獨立資料儲存在使用者本機，更新不會刪除資料，解除安裝預設保留資料。
 
@@ -71,7 +77,7 @@ Google 使用免 Key 網頁介面，當前宿主首次聯網也無需額外確�
 
 ## 擴充套件 SDK 與 Node.js 後臺
 
-當前 checkout 提供 `templates/backend`，執行 `npm run package:backend` 生成 `dist/backend-example.nexlet`。前端保持瀏覽器沙箱；後臺 TypeScript 編譯為獨立 Node.js 程序入口，需要 manifest 的 `backend` 許可權。完整合同由宿主 `src/shared/plugin-api.ts` 和 `sdk/index.d.ts` 同步，宿主倉執行 `node scripts/sync-plugin-sdk.mjs` 更新本倉型別。擴充套件需要對應宿主構建，尚未作為正式版本釋出。
+當前 checkout 提供 `templates/backend`，執行 `npm run package:backend` 生成 `dist/backend-example.nexlet`。前端保持瀏覽器沙箱；後臺 TypeScript 編譯為獨立 Node.js 程序入口，需要 manifest 的 `backend` 許可權。完整合同由宿主 `src/shared/plugin-api.ts` 和 `sdk/index.d.ts` 同步，宿主倉執行 `node scripts/sync-plugin-sdk.mjs` 更新本倉型別。Ctool 的市場相容範圍從 Nexlet 0.2.21 起。
 
 後臺模板說明見 [templates/backend/README.md](templates/backend/README.zh-Hant.md)。新能力使用 Nexlet API，不以原樣執行 uTools 外掛為目標。
 

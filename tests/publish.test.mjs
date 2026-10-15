@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { planPublication, publishPlan, ensureRelease, sourceHash } from '../scripts/publish.mjs';
+import { planPublication, publishPlan, ensureRelease, sourceHash, candidates } from '../scripts/publish.mjs';
 import { createHash } from 'node:crypto';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -10,6 +10,22 @@ const entry = { id: 'org.nexlet.demo', name: 'Demo', description: 'Demo plugin',
 const candidate = { entry, directory: 'demo', sourceHash: 'a'.repeat(64) };
 const empty = { schemaVersion: 1, plugins: [] };
 const initial = () => planPublication([candidate], empty, { schemaVersion: 1, plugins: {} });
+
+test('published catalog retains localized manifest labels through candidate generation', () => {
+  const workspace = mkdtempSync(path.join(tmpdir(), 'nexlet-localized-catalog-'));
+  try {
+    const locales = { en: { name: 'Notes' }, 'zh-Hant': { name: '便箋' } };
+    const manifest = { ...entry, locales };
+    for (const directory of ['plugins/demo', '.build/plugins/demo']) {
+      mkdirSync(path.join(workspace, directory), { recursive: true });
+      writeFileSync(path.join(workspace, directory, 'plugin.json'), JSON.stringify(manifest));
+    }
+    writeFileSync(path.join(workspace, 'catalog.json'), JSON.stringify({ schemaVersion: 1, plugins: [{ ...entry, directory: 'demo' }] }));
+    const plan = planPublication(candidates(workspace), empty, { schemaVersion: 1, plugins: {} });
+    assert.deepEqual(plan.index.plugins[0].locales, locales);
+    assert.match(plan.index.plugins[0].download, /org.nexlet.demo-v1.0.0/);
+  } finally { rmSync(workspace, { recursive: true, force: true }); }
+});
 
 test('new plugin gets an immutable per-plugin download URL', () => {
   const plan = initial();
