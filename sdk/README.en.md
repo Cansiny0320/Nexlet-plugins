@@ -23,3 +23,5 @@ See [host SDK documentation](https://github.com/Cansiny0320/Nexlet/blob/main/doc
 `extensions.d.ts` is generated from host `src/shared/plugin-api.ts`; base APIs are maintained in host `sdk/index.d.ts`. Run `node scripts/sync-plugin-sdk.mjs` in the host instead of hand-editing generated declarations. Backend, documents, windows, system, browsers, media, AI, tools/MCP, and service adapters need a matching new host build.
 
 `nexlet.i18n.getLocale()` and `onChange()` expose application language (`zh-CN`, `zh-Hant`, `en`) without another permission. `system.info().locale` remains the OS language. Feature-detect `i18n` for older hosts and unsubscribe when no longer needed.
+
+Marketplace discovery reads `plugins/*/plugin.json`. Published plugins require `author`, `category`, `platforms` and optional `minHostVersion`. Templates are excluded.

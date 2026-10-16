@@ -30,8 +30,8 @@ Shared browser code is in `shared/browser-i18n.js`, messages in `shared/plugin-l
 ## Develop and contribute
 
 1. Start with `plugins/hello-nexlet/`, the [TS template](templates/typescript/README.en.md), and [Plugin SDK](https://github.com/Cansiny0320/Nexlet/blob/main/docs/plugin-sdk.en.md).
-2. Run `npm ci`, then `npm run build`. Load `.build/plugins/<name>` as a development directory.
-3. Put source in `plugins/<name>/` and add its directory, author, category, platforms, and minimum host version to `catalog.json`. ID, name, description, version, and optional localized labels come from `plugin.json`. Do not edit `index.json` or `published.json` manually.
+2. Run `npm ci`, `npm ci --prefix integrations/ocr --ignore-scripts`, then `npm run build`. Load `.build/plugins/<name>` as a development directory.
+3. Put source in `plugins/<name>/`. Its `plugin.json` supplies ID, name, description, version, author, category, platforms, optional minHostVersion and localized labels. CI discovers the directory automatically; there is no central catalog to maintain. Do not edit `index.json` or `published.json` manually.
 4. Run `npm run package` and submit a pull request.
 
 Node.js 24+ is required. `npm test` checks logic/build behavior; `npm run package` writes `dist/*.nexlet`. Import `dist/word-count.nexlet` to try it. Catalog downloads work only after the corresponding release is published. Word count uses content/lifecycle APIs and requires Nexlet 0.2.6+.
@@ -46,6 +46,7 @@ TS compiles to browser JS; the host does not execute `.ts`. esbuild bundles; `ts
 
 ```sh
 npm ci
+npm ci --prefix integrations/ocr --ignore-scripts
 npm run package:example
 # 导入 dist/typescript-example.nexlet，或加载 .build/templates/typescript
 npm run dev -- templates/typescript
@@ -59,11 +60,11 @@ After building the adjacent host, `npm run package:example && npm run test:ts:e2
 
 Plugins publish automatically when merged into `main`; no host release or manual tag is required. PRs only validate and produce artifacts. A manual workflow run on `main` retries publication.
 
-Increment the stable version in `plugin.json` whenever plugin source changes. Same-version source changes and downgrades are rejected. Shared SDK, dependency, or build changes that affect a plugin also require a version increase. `catalog.json` is the intended catalog, `index.json` is the published catalog read by users, and `published.json` records source baselines.
+Increment the stable version in `plugin.json` whenever plugin source changes. Same-version source changes and downgrades are rejected. Shared SDK, dependency, or build changes that affect a plugin also require a version increase. `plugins/*/plugin.json` is the single source of plugin and market metadata; templates are excluded. `index.json` is the published catalog read by users, and `published.json` records source baselines.
 
 CI tests and packages first, creates immutable `<plugin-id>-v<version>` releases for new versions, checks SHA-256 and anonymous downloads, then commits the catalog and publication state together. Existing assets are never overwritten. Retries reuse matching verified assets; stale runs cannot update the catalog. Failed publication retains the previous catalog.
 
-Run `npm run package`, or `npm run publish:preview` after building, to inspect proposed releases. Preview writes only `dist/index.json` and does not contact GitHub. A catalog rollback must restore source, catalog, index, and publication state consistently without deleting old releases; normal fixes should use a higher version.
+Run `npm run package`, or `npm run publish:preview` after building, to inspect proposed releases. Preview writes only `dist/index.json` and does not contact GitHub. A catalog rollback must restore source manifests, index, and publication state consistently without deleting old releases; normal fixes should use a higher version.
 
 Plugin frontends run in isolated sandboxes without direct Node/network access. Declared networking uses the host bridge without per-address prompts. Data is local and retained through updates and, by default, uninstall.
 
@@ -84,3 +85,7 @@ Protocol tests: `node --test tests/translation.test.mjs`. In the adjacent host, 
 ## Extended SDK and Node.js backends
 
 `npm run package:backend` builds `templates/backend` into `dist/backend-example.nexlet`. The frontend remains sandboxed; backend TS becomes an independent Node.js entry requiring the `backend` permission. Contracts are synchronized between host `src/shared/plugin-api.ts` and `sdk/index.d.ts`; run `node scripts/sync-plugin-sdk.mjs` in the host. The marketplace compatibility requirement for Ctool starts at Nexlet 0.2.21. See [backend template](templates/backend/README.en.md). New capabilities use Nexlet APIs, not unchanged uTools plugins.
+
+## Offline OCR
+
+OCR requires Nexlet 0.2.30+. Source and models live in `plugins/ocr`; locked build dependencies live in `integrations/ocr`. Run `npm run build:ocr`, then `python3 scripts/package.py --plugin-dir .build/plugins/ocr --output dist/ocr.nexlet`. A main push automatically discovers and publishes it like other plugins. Package limits are 32 MiB per file, 128 MiB extracted and 64 MiB compressed. Invalid metadata, duplicate IDs or missing builds stop publication and retain the previous index.

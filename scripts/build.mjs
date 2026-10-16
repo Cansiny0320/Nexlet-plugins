@@ -3,6 +3,7 @@ import { watch } from 'node:fs';
 import { access, mkdir, readdir, readFile, writeFile, copyFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { discoverPlugins } from './discover.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const excluded = new Set(['src', 'node_modules', '.git', '.build', 'dist', 'package.json', 'package-lock.json', 'tsconfig.json', 'README.md']);
@@ -30,6 +31,11 @@ export async function buildPlugin(source, output) {
   if (source === path.join(root, 'plugins/ctool')) {
     const { buildCtool } = await import('../integrations/ctool/build.mjs');
     await buildCtool(output);
+    return;
+  }
+  if (source === path.join(root, 'plugins/ocr')) {
+    const { buildOcr } = await import('../integrations/ocr/build.mjs');
+    await buildOcr(output);
     return;
   }
   await rm(output, { recursive: true, force: true });
@@ -65,9 +71,7 @@ async function main() {
     if (watching) throw new Error('请指定开发目录，例如 npm run dev -- templates/typescript');
     targets = [];
     for (const group of ['plugins', 'templates']) {
-      for (const entry of await readdir(path.join(root, group), { withFileTypes: true })) {
-        if (entry.isDirectory() && await exists(path.join(root, group, entry.name, 'plugin.json'))) targets.push(`${group}/${entry.name}`);
-      }
+      for (const directory of discoverPlugins(root, group)) targets.push(`${group}/${directory}`);
     }
   }
   if (watching && targets.length !== 1) throw new Error('watch 模式每次只处理一个插件');

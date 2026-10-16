@@ -24,8 +24,8 @@ Ctool 在自動釋出成功後出現在外掛市場，需要 Nexlet 0.2.21+。�
 ## 開發與提交
 
 1. 參考 `plugins/hello-nexlet/`、[TypeScript 模板](templates/typescript/README.zh-Hant.md) 和 [外掛 SDK](https://github.com/Cansiny0320/Nexlet/blob/main/docs/plugin-sdk.zh-Hant.md) 建立外掛。
-2. 執行 `npm ci`、`npm run build`，在 Nexlet 中使用「載入開發目錄」選擇 `.build/plugins/<name>` 除錯。
-3. 將原始碼放入 `plugins/<name>/`，在 `catalog.json` 新增目錄、作者、分類、平臺和最低宿主版本。ID、名稱、描述和版本從 `plugin.json` 讀取；不要手動編輯 `index.json` 或 `published.json`。
+2. 執行 `npm ci`、`npm ci --prefix integrations/ocr --ignore-scripts`、`npm run build`，在 Nexlet 中使用「載入開發目錄」選擇 `.build/plugins/<name>` 除錯。
+3. 將原始碼放入 `plugins/<name>/`，在 `plugin.json` 填寫 ID、名稱、描述、版本、`author`、`category`、`platforms` 及可選的 `minHostVersion`。CI 自動發現該目錄，不需中央清單；不要手動編輯 `index.json` 或 `published.json`。
 4. 執行 `npm run package`，提交 Pull Request。
 
 本地驗證：使用 Node.js 24+ 執行 `npm test` 檢查外掛邏輯及構建流程，執行 `npm run package` 生成 `dist/*.nexlet`。將 `dist/word-count.nexlet` 透過「匯入外掛包」安裝即可體驗；市場條目需要對應 Release 釋出後才能下載。字數統計使用文字輸入與會話 API，最低支援 Nexlet 0.2.6。
@@ -40,6 +40,7 @@ Ctool 在自動釋出成功後出現在外掛市場，需要 Nexlet 0.2.21+。�
 
 ```sh
 npm ci
+npm ci --prefix integrations/ocr --ignore-scripts
 npm run package:example
 # 导入 dist/typescript-example.nexlet，或加载 .build/templates/typescript
 npm run dev -- templates/typescript
@@ -53,11 +54,11 @@ npm run dev -- templates/typescript
 
 外掛合入 `main` 後自動上架，不需要 Nexlet 主程式發版，也不需要手動打標籤或建立 Release。PR 只驗證和生成 artifact；在 `main` 手動執行工作流可重試釋出。
 
-更新外掛原始碼時遞增 `plugin.json` 的穩定版本號（例如 `1.0.0` → `1.0.1`）。同版本的原始碼變更或版本倒退會被拒絕；共享 SDK、依賴或構建工具改變了外掛執行行為時，也應遞增受影響外掛的版本。`catalog.json` 是待發布清單，`index.json` 是使用者實際讀取的已釋出目錄，`published.json` 儲存原始碼版本基線。文件修改不強制更新外掛版本。
+更新外掛原始碼時遞增 `plugin.json` 的穩定版本號（例如 `1.0.0` → `1.0.1`）。同版本的原始碼變更或版本倒退會被拒絕；共享 SDK、依賴或構建工具改變了外掛執行行為時，也應遞增受影響外掛的版本。`plugins/*/plugin.json` 是唯一的外掛與市場中繼資料來源，`templates/` 不進入市場；`index.json` 是使用者實際讀取的已釋出目錄，`published.json` 儲存原始碼版本基線。文件修改不強制更新外掛版本。
 
 CI 先測試和打包，再為新增/升級外掛建立 `<plugin-id>-v<version>` Release，校驗資產 SHA-256 和匿名下載成功後，一次性提交市場目錄與釋出狀態。已有外掛保持原下載地址，已公開資產不可覆蓋；重複執行復用校驗一致的資產。釋出序列執行，main 已變化時舊任務停止，普通快進推送進一步防止覆蓋新提交。中途失敗時保留原市場目錄。
 
-本地先執行 `npm run package`，或在完成構建後執行 `npm run publish:preview` 檢視候選目錄與待發布版本。預覽只寫 `dist/index.json`，不會訪問或修改 GitHub。需要回退目錄時，從歷史提交同時恢復 `index.json` 和 `published.json`，並同步恢復對應原始碼及 catalog；不要刪除舊 Release。正常修復應使用更高版本，以便已安裝使用者收到更新。
+本地先執行 `npm run package`，或在完成構建後執行 `npm run publish:preview` 檢視候選目錄與待發布版本。預覽只寫 `dist/index.json`，不會訪問或修改 GitHub。需要回退目錄時，從歷史提交同時恢復 `index.json` 和 `published.json`，並同步恢復對應原始碼及 manifest；不要刪除舊 Release。正常修復應使用更高版本，以便已安裝使用者收到更新。
 
 所有外掛在受限的獨立視窗執行，不能直接訪問 Node.js 或網路；宣告聯網許可權的外掛安裝後可直接使用宿主 HTTP 橋接，不再逐地址彈窗確認。外掛獨立資料儲存在使用者本機，更新不會刪除資料，解除安裝預設保留資料。
 
@@ -86,3 +87,7 @@ Google 使用免 Key 網頁介面，當前宿主首次聯網也無需額外確�
 便箋、字數統計與翻譯跟隨宿主的簡體中文、繁體中文、English，切換不清空輸入。舊宿主沒有 `nexlet.i18n` 時回退瀏覽器語言。Ctool 複用上游中英文，繁體回退簡體。當前原始碼鬚髮布新外掛包後才會進入市場。
 
 共用執行時位於 `shared/browser-i18n.js`、詞條位於 `shared/plugin-locales.json`；修改後執行 `node scripts/sync-i18n.mjs`，將本地副本同步到三個外掛，保持原始開發目錄可離線載入。Manifest 與索引的 `locales` 只翻譯名稱、描述和分類，不改變 ID/code。應用語言用 `nexlet.i18n`，`system.info().locale` 仍為系統資訊。
+
+## 離線 OCR
+
+OCR 需要 Nexlet 0.2.30+。原始碼與模型位於 `plugins/ocr`，鎖定的構建依賴位於 `integrations/ocr`。執行 `npm run build:ocr`，再用 `python3 scripts/package.py --plugin-dir .build/plugins/ocr --output dist/ocr.nexlet` 打包。提交至 main 後自動發現並發布，不需額外上架。限制為單檔 32 MiB、解壓總量 128 MiB、壓縮包 64 MiB。無效資料、重複 ID 或缺失構建會阻止發布，並保留既有索引。

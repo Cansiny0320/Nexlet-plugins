@@ -3,6 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { discoverPlugins } from './discover.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const repository = 'Cansiny0320/Nexlet-plugins';
@@ -42,7 +43,7 @@ export function sourceHash(directory, workspace = root) {
   // Compiled plugins also depend on the shared SDK, compiler and locked tools.
   if (existsSync(path.join(workspace, 'plugins', directory, 'src')) || existsSync(path.join(workspace, 'integrations', directory))) {
     visit('sdk');
-    for (const file of ['scripts/build.mjs', 'package-lock.json', 'tsconfig.json', 'tsconfig.backend.json', `tsconfig.${directory}.json`]) if (existsSync(path.join(workspace, file))) addFile(file);
+    for (const file of ['scripts/build.mjs', 'scripts/discover.mjs', 'package-lock.json', 'tsconfig.json', 'tsconfig.backend.json', `tsconfig.${directory}.json`]) if (existsSync(path.join(workspace, file))) addFile(file);
   }
   return hash.digest('hex');
 }
@@ -90,14 +91,10 @@ export async function publishPlan(plan, services) {
 }
 
 export function candidates(workspace = root) {
-  const catalog = json('catalog.json', workspace);
-  check(catalog.schemaVersion === 1 && Array.isArray(catalog.plugins) && catalog.plugins.length <= 200, 'Invalid catalog');
-  return catalog.plugins.map(metadata => {
-    const { directory, author, category, platforms, minHostVersion } = metadata;
-    check(/^[a-zA-Z0-9_-]+$/.test(directory), 'Invalid catalog directory');
+  return discoverPlugins(workspace).map(directory => {
     const manifest = json(`plugins/${directory}/plugin.json`, workspace), built = json(`.build/plugins/${directory}/plugin.json`, workspace);
     check(JSON.stringify(manifest) === JSON.stringify(built), `Stale build: ${directory}`);
-    const { id, name, description, version } = manifest;
+    const { id, name, description, version, author, category, platforms, minHostVersion } = manifest;
     const entry = { id, name, description, version, author, category, platforms, ...(minHostVersion ? { minHostVersion } : {}), ...(manifest.locales ? { locales: manifest.locales } : {}) };
     if (manifest.icon) {
       check(/^[a-zA-Z0-9._-]+\.png$/.test(manifest.icon), 'Catalog icons must be root PNG files');

@@ -1,0 +1,26 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": [
+      "ES2023",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "skipLibCheck": true,
+    "types": [
+      "node",
+      "@nexlet/plugin-api"
+    ],
+    "paths": {
+      "@paddleocr/paddleocr-js": [
+        "./integrations/ocr/node_modules/@paddleocr/paddleocr-js/dist/index.d.ts"
+      ]
+    }
+  },
+  "include": [
+    "plugins/ocr/**/*.ts",
+    "sdk"
+  ],
+  "exclude": []
+}

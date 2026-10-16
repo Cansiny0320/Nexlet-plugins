@@ -11,9 +11,9 @@ test('release packaging accepts retained historical URLs and rejects an unrelate
  try{
   for(const name of ['scripts','plugins','index.json'])cpSync(path.join(root,name),path.join(folder,name),{recursive:true});
   const index=JSON.parse(readFileSync(path.join(folder,'index.json'),'utf8'));
-  // This compatibility test packages the prebuilt JS plugins. Ctool's generated
+  // This compatibility test packages the prebuilt JS plugins. Ctool/OCR generated
   // output is covered by its dedicated package tests and the publishing workflow.
-  index.plugins=index.plugins.filter(p=>p.id!=='org.nexlet.ctool');
+  index.plugins=index.plugins.filter(p=>!['org.nexlet.ctool','org.nexlet.ocr'].includes(p.id));
   index.plugins.forEach(p=>{const folderName={'org.nexlet.hello':'hello-nexlet','org.nexlet.word-count':'word-count','org.nexlet.translate':'translate'}[p.id];p.version=JSON.parse(readFileSync(path.join(folder,'plugins',folderName,'plugin.json'),'utf8')).version;});
   index.plugins.forEach((p,i)=>p.download=p.download.replace(/\/download\/[^/]+\//,`/download/${i===0?'v9.9.9':'v1.0.0'}/`));
   writeFileSync(path.join(folder,'index.json'),JSON.stringify(index));

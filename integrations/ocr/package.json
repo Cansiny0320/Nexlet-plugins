@@ -1,0 +1,10 @@
+{
+  "name": "nexlet-ocr-build",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@paddleocr/paddleocr-js": "0.4.2",
+    "onnxruntime-web": "1.24.3",
+    "vite": "8.3.4"
+  }
+}

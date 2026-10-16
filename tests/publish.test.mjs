@@ -20,7 +20,6 @@ test('published catalog retains localized manifest labels through candidate gene
       mkdirSync(path.join(workspace, directory), { recursive: true });
       writeFileSync(path.join(workspace, directory, 'plugin.json'), JSON.stringify(manifest));
     }
-    writeFileSync(path.join(workspace, 'catalog.json'), JSON.stringify({ schemaVersion: 1, plugins: [{ ...entry, directory: 'demo' }] }));
     const plan = planPublication(candidates(workspace), empty, { schemaVersion: 1, plugins: {} });
     assert.deepEqual(plan.index.plugins[0].locales, locales);
     assert.match(plan.index.plugins[0].download, /org.nexlet.demo-v1.0.0/);

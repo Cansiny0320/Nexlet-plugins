@@ -22,6 +22,7 @@
     "tests/types/**/*.ts"
   ],
   "exclude": [
-    "**/src/backend.ts"
+    "**/src/backend.ts",
+    "plugins/ocr/**"
   ]
 }

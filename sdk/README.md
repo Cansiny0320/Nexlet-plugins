@@ -23,3 +23,5 @@ nexlet.onEnter((context: PluginContext) => {
 扩展 API 类型在 `extensions.d.ts`，由宿主 `src/shared/plugin-api.ts` 生成；基本 API 在宿主 `sdk/index.d.ts` 维护。请在宿主仓运行 `node scripts/sync-plugin-sdk.mjs` 同步，不手工修改生成文件。新增 backend、数据库、窗口、系统、浏览器、媒体、AI、工具/MCP 和 provider 服务适配，运行需要对应的新宿主构建。
 
 `nexlet.i18n.getLocale()` / `onChange()` 无需额外权限，返回或订阅 `zh-CN`、`zh-Hant`、`en` 应用语言。`system.info().locale` 保持系统语言含义；兼容旧宿主时先检测 `i18n`，不再使用订阅时调用取消函数。
+
+市场自动发现读取 `plugins/*/plugin.json`；正式插件需填写 `author`、`category`、`platforms` 和可选 `minHostVersion`。`templates/` 不发布。

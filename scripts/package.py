@@ -2,27 +2,44 @@ import json
 import pathlib
 import argparse
 import zipfile
+import os
+import tempfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 
 def package(source, target):
-    assert not any((source / file).exists() for file in ('src/main.ts', 'src/backend.ts')), 'TypeScript plugin must be built first; run npm run build and package .build output'
+    assert not any((source / file).exists() for file in ('main.ts', 'src/main.ts', 'src/backend.ts')), 'TypeScript plugin must be built first; run npm run build and package .build output'
     assert source.resolve() not in target.resolve().parents, 'Output archive must be outside the plugin directory'
     manifest = json.loads((source / 'plugin.json').read_text(encoding='utf-8'))
     assert (source / manifest['main']).is_file()
     if manifest.get('icon'):
         assert (source / manifest['icon']).is_file()
+    files = []
+    total = 0
+    for file in sorted(source.rglob('*')):
+        assert not file.is_symlink(), 'Plugin cannot contain symlinks'
+        if file.is_file():
+            size = file.stat().st_size
+            assert size <= 32 * 1024 * 1024, 'Plugin file exceeds 32 MiB'
+            total += size
+            assert total <= 128 * 1024 * 1024, 'Extracted plugin exceeds 128 MiB'
+            files.append(file)
     target.parent.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(target, 'w', zipfile.ZIP_DEFLATED) as archive:
-        for file in sorted(source.rglob('*')):
-            assert not file.is_symlink()
-            if file.is_file():
-                assert file.stat().st_size <= 10 * 1024 * 1024
+    descriptor, temporary = tempfile.mkstemp(prefix=target.name + '.', suffix='.tmp', dir=target.parent)
+    os.close(descriptor)
+    temporary = pathlib.Path(temporary)
+    try:
+        with zipfile.ZipFile(temporary, 'w', zipfile.ZIP_DEFLATED) as archive:
+            for file in files:
                 info = zipfile.ZipInfo(file.relative_to(source).as_posix(), date_time=(2026, 1, 1, 0, 0, 0))
                 info.compress_type = zipfile.ZIP_DEFLATED
                 info.external_attr = 0o100644 << 16
                 archive.writestr(info, file.read_bytes())
+        assert temporary.stat().st_size <= 64 * 1024 * 1024, 'Compressed plugin exceeds 64 MiB'
+        temporary.replace(target)
+    finally:
+        temporary.unlink(missing_ok=True)
     print(f"Packaged {manifest['id']} {manifest['version']}: {target.name}")
 
 

@@ -1,7 +1,7 @@
 {
   "id": "org.nexlet.ctool",
   "name": "Ctool 开发工具箱",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "集成 Ctool 完整开发工具：加解密、编码、JSON、代码、网络、图像、文本与转换。联网请求由插件后台执行。",
   "apiVersion": 1,
   "main": "tool.html",
@@ -533,5 +533,13 @@
       "name": "Ctool 開發工具箱",
       "description": "整合 Ctool 開發工具；繁體介面暫以簡體顯示"
     }
-  }
+  },
+  "author": "Ctool / Nexlet",
+  "category": "开发",
+  "platforms": [
+    "win32",
+    "darwin",
+    "linux"
+  ],
+  "minHostVersion": "0.2.21"
 }

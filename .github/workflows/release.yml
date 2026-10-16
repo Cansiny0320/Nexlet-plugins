@@ -20,7 +20,9 @@ jobs:
           node-version: '24'
           package-manager-cache: false
       - name: Install build dependencies
-        run: npm ci
+        run: |
+          npm ci
+          npm ci --prefix integrations/ocr --ignore-scripts
       - name: Test plugins and publishing safeguards
         run: npm test
       - name: Typecheck and build plugins

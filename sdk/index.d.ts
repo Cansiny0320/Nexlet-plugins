@@ -39,6 +39,11 @@ export interface PluginFeature {
 }
 
 export interface PluginManifest {
+  /** Required by this repository's automatic marketplace publishing. */
+  author?: string;
+  category?: string;
+  platforms?: ('win32' | 'darwin' | 'linux')[];
+  minHostVersion?: string;
   locales?: PluginLocales;
   id: string;
   name: string;

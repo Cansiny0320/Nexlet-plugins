@@ -6,7 +6,7 @@
     "node": ">=24"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.backend.json",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.backend.json && tsc --noEmit -p tsconfig.ocr.json",
     "build": "npm run typecheck && node scripts/build.mjs",
     "dev": "node scripts/build.mjs --watch",
     "package": "npm run build && node scripts/publish.mjs --prepare && python3 scripts/package.py --source-root .build/plugins --index dist/index.json",
@@ -22,7 +22,9 @@
     "test:ctool": "node --test tests/ctool/*.test.mjs tests/ctool-storage.test.mjs",
     "test:ctool:e2e": "node tests/ctool.e2e.mjs",
     "test:i18n:e2e": "node tests/i18n.e2e.mjs",
-    "publish:preview": "node scripts/publish.mjs --prepare"
+    "publish:preview": "node scripts/publish.mjs --prepare",
+    "build:ocr": "node scripts/build.mjs plugins/ocr",
+    "test:ocr:e2e": "node tests/ocr.e2e.mjs"
   },
   "devDependencies": {
     "@nexlet/plugin-api": "file:./sdk",

@@ -1,6 +1,6 @@
 // Generated from Nexlet/src/shared/plugin-api.ts.
 /** Public extension contract. No dependency on the host renderer API. */
-declare const SDK_PERMISSIONS: readonly ["files", "process", "backend", "browser", "screen", "input.simulate", "windows", "notifications", "ai", "services", "tools", "mcp", "media"];
+declare const SDK_PERMISSIONS: readonly ["files", "process", "backend", "browser", "screen", "input.simulate", "windows", "notifications", "ai", "services", "tools", "mcp", "media", "runtime.compute"];
 export type SdkPermission = typeof SDK_PERMISSIONS[number];
 export type SdkJson = null | boolean | number | string | SdkJson[] | {
     [key: string]: SdkJson;
@@ -90,6 +90,7 @@ export interface PluginSdkExtensions {
         }): Promise<true>;
     };
     search: {
+        returnToLauncher(text: string): Promise<true>;
         set(options: {
             text?: string;
             placeholder?: string;
@@ -432,6 +433,8 @@ export interface PluginInputExtensions {
     }): Promise<true>;
 }
 export interface PluginClipboardExtensions {
+    snapshot(): Promise<string | null>;
+    writeTextIfUnchanged(token: string, text: string): Promise<boolean>;
     readImage(): Promise<Uint8Array | null>;
     writeImage(data: Uint8Array): Promise<true>;
     readFiles(): Promise<string[]>;

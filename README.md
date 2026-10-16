@@ -24,8 +24,8 @@ Ctool 在自动发布成功后出现在插件市场，需要 Nexlet 0.2.21+。�
 ## 开发与提交
 
 1. 参考 `plugins/hello-nexlet/`、[TypeScript 模板](templates/typescript/README.md) 和 [插件 SDK](https://github.com/Cansiny0320/Nexlet/blob/main/docs/plugin-sdk.md) 创建插件。
-2. 执行 `npm ci`、`npm run build`，在 Nexlet 中使用「加载开发目录」选择 `.build/plugins/<name>` 调试。
-3. 将源码放入 `plugins/<name>/`，在 `catalog.json` 添加目录、作者、分类、平台和最低宿主版本。ID、名称、描述和版本从 `plugin.json` 读取；不要手动编辑 `index.json` 或 `published.json`。
+2. 执行 `npm ci`、`npm ci --prefix integrations/ocr --ignore-scripts`、`npm run build`，在 Nexlet 中使用「加载开发目录」选择 `.build/plugins/<name>` 调试。
+3. 将源码放入 `plugins/<name>/`，在 `plugin.json` 中填写 ID、名称、描述、版本、`author`、`category`、`platforms` 和可选的 `minHostVersion`。CI 自动扫描该目录，无需中央清单；不要手动编辑 `index.json` 或 `published.json`。
 4. 运行 `npm run package`，提交 Pull Request。
 
 本地验证：使用 Node.js 24+ 运行 `npm test` 检查插件逻辑及构建流程，运行 `npm run package` 生成 `dist/*.nexlet`。将 `dist/word-count.nexlet` 通过「导入插件包」安装即可体验；市场条目需要对应 Release 发布后才能下载。字数统计使用文本输入与会话 API，最低支持 Nexlet 0.2.6。
@@ -40,6 +40,7 @@ Ctool 在自动发布成功后出现在插件市场，需要 Nexlet 0.2.21+。�
 
 ```sh
 npm ci
+npm ci --prefix integrations/ocr --ignore-scripts
 npm run package:example
 # 导入 dist/typescript-example.nexlet，或加载 .build/templates/typescript
 npm run dev -- templates/typescript
@@ -53,11 +54,11 @@ npm run dev -- templates/typescript
 
 插件合入 `main` 后自动上架，不需要 Nexlet 主程序发版，也不需要手动打标签或创建 Release。PR 只验证和生成 artifact；在 `main` 手动运行工作流可重试发布。
 
-更新插件源码时递增 `plugin.json` 的稳定版本号（例如 `1.0.0` → `1.0.1`）。同版本的源码变更或版本倒退会被拒绝；共享 SDK、依赖或构建工具改变了插件运行行为时，也应递增受影响插件的版本。`catalog.json` 是待发布清单，`index.json` 是用户实际读取的已发布目录，`published.json` 保存源码版本基线。文档修改不强制更新插件版本。
+更新插件源码时递增 `plugin.json` 的稳定版本号（例如 `1.0.0` → `1.0.1`）。同版本的源码变更或版本倒退会被拒绝；共享 SDK、依赖或构建工具改变了插件运行行为时，也应递增受影响插件的版本。`plugins/*/plugin.json` 是唯一的插件及市场元数据来源，`templates/` 不进入市场；`index.json` 是用户实际读取的已发布目录，`published.json` 保存源码版本基线。文档修改不强制更新插件版本。
 
 CI 先测试和打包，再为新增/升级插件创建 `<plugin-id>-v<version>` Release，校验资产 SHA-256 和匿名下载成功后，一次性提交市场目录与发布状态。已有插件保持原下载地址，已公开资产不可覆盖；重复执行复用校验一致的资产。发布串行执行，main 已变化时旧任务停止，普通快进推送进一步防止覆盖新提交。中途失败时保留原市场目录。
 
-本地先执行 `npm run package`，或在完成构建后执行 `npm run publish:preview` 查看候选目录与待发布版本。预览只写 `dist/index.json`，不会访问或修改 GitHub。需要回退目录时，从历史提交同时恢复 `index.json` 和 `published.json`，并同步恢复对应源码及 catalog；不要删除旧 Release。正常修复应使用更高版本，以便已安装用户收到更新。
+本地先执行 `npm run package`，或在完成构建后执行 `npm run publish:preview` 查看候选目录与待发布版本。预览只写 `dist/index.json`，不会访问或修改 GitHub。需要回退目录时，从历史提交同时恢复 `index.json` 和 `published.json`，并同步恢复对应源码和 manifest；不要删除旧 Release。正常修复应使用更高版本，以便已安装用户收到更新。
 
 所有插件在受限的独立窗口运行，不能直接访问 Node.js 或网络；声明联网权限的插件安装后可直接使用宿主 HTTP 桥接，不再逐地址弹窗确认。插件独立数据保存在用户本机，更新不会删除数据，卸载默认保留数据。
 
@@ -86,3 +87,9 @@ Google 使用免 Key 网页接口，当前宿主首次联网也无需额外确�
 便笺、字数统计与翻译跟随宿主的简体中文、繁体中文、English，切换不清空输入。旧宿主没有 `nexlet.i18n` 时回退浏览器语言。Ctool 复用上游中英文，繁体回退简体。当前源码须发布新插件包后才会进入市场。
 
 共用运行时位于 `shared/browser-i18n.js`、词条位于 `shared/plugin-locales.json`；修改后执行 `node scripts/sync-i18n.mjs`，将本地副本同步到三个插件，保持原始开发目录可离线加载。Manifest 与索引的 `locales` 只翻译名称、描述和分类，不改变 ID/code。应用语言用 `nexlet.i18n`，`system.info().locale` 仍为系统信息。
+
+## 离线 OCR
+
+OCR 需要 Nexlet 0.2.30+，源码和模型位于 `plugins/ocr/`，独立构建依赖位于 `integrations/ocr/`。安装构建依赖后运行 `npm run build:ocr`，使用 `.build/plugins/ocr` 开发，或执行 `python3 scripts/package.py --plugin-dir .build/plugins/ocr --output dist/ocr.nexlet`。合入 main 后由同一自动发现流程发布到市场，不需要另行上架。详见 [OCR README](plugins/ocr/README.md)。
+
+发布包限制与宿主一致：单文件 32 MiB、解压总量 128 MiB、压缩包 64 MiB；校验失败时保留原产物和线上索引。无效元数据、重复 ID 或缺失构建会阻止整次发布，不生成不完整索引。
