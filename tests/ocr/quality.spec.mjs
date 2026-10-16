@@ -11,13 +11,19 @@ const id = "org.nexlet.ocr";
 const host = (action, payload) => main.evaluate(({ action: action2, payload: payload2 }) => window.nexlet.call(action2, payload2), { action, payload });
 const read = (script) => app.evaluate(async (_, script2) => {
   const active = globalThis.__nexlet.plugins.runtime.sessions.get("org.nexlet.ocr");
-  return active.view.webContents.executeJavaScript(script2);
+  return active ? active.view.webContents.executeJavaScript(script2) : null;
 }, script);
 async function launch(file, code = "recognize") {
+  const previousImage = await read('document.querySelector("#image")?.src');
   const data = "data:image/png;base64," + (await readFile(path.join("docs/screenshots", file))).toString("base64");
   const input = await host("launchInput", { type: "image", from: "paste", data });
   await host("launch", { id: `plugin:${id}:${code}`, inputId: input.id });
-  await expect.poll(() => read('document.querySelector("#status").textContent')).not.toBe("图片在本机处理");
+  // onEnter/load briefly cancel the previous task before decoding the next image.
+  // Wait for this input's preview instead of mistaking that transition for done.
+  await expect.poll(async () => {
+    const currentImage = await read('document.querySelector("#image")?.src');
+    return typeof currentImage === "string" && currentImage.startsWith("blob:") && currentImage !== previousImage;
+  }).toBe(true);
 }
 async function done() {
   await expect.poll(() => read('document.querySelector("#stop").hidden'), { timeout: 6e4 }).toBe(true);
@@ -44,11 +50,17 @@ test.beforeAll(async () => {
 });
 test.afterAll(async () => {
   if (app) {
-    await app.evaluate(async () => {
-      const g = globalThis, n = g.__nexlet;
-      if (g.savedClipboard && g.clipboardVersion !== void 0 && n.platform.sequence() === g.clipboardVersion) await n.selectionPlatform.restore(g.savedClipboard, g.clipboardVersion);
-    });
-    await app.close();
+    try {
+      await app.evaluate(async ({ clipboard }) => {
+        const g = globalThis, n = g.__nexlet;
+        if (!g.savedClipboard || g.clipboardVersion === void 0 || n.platform.sequence() !== g.clipboardVersion) return;
+        // Electron can report an empty CI clipboard as one item with no MIME types.
+        // Preserve populated formats; empty snapshots restore to an empty clipboard.
+        const data = g.savedClipboard.data?.filter(value => Object.keys(value).length > 0);
+        if (data?.length === 0) clipboard.clear();
+        else await n.selectionPlatform.restore(data ? { ...g.savedClipboard, data } : g.savedClipboard, g.clipboardVersion);
+      });
+    } finally { await app.close(); }
   }
 });
 const samples = [
