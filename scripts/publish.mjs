@@ -148,7 +148,10 @@ export async function ensureRelease(release, commit, transport) {
     if (expectedDigest !== digest) await transport.updateDraft(remote.id, { body, target_commitish: commit });
     expectedDigest = digest;
     await transport.upload(release.tag, release.asset);
-    remote = await transport.find(release.tag);
+    // A new draft can be absent from tag lookup and release-list caches even
+    // after upload succeeds. Its returned ID is already stable and addressable.
+    remote = await transport.refresh(remote.id);
+    check(remote && Array.isArray(remote.assets), `Cannot refresh uploaded release: ${release.tag}`);
     asset = remote.assets.find(a => a.name === release.asset);
     check(asset?.size === bytes.length, `Incomplete upload: ${release.asset}`);
   }
@@ -180,6 +183,7 @@ async function main() {
   const transport = {
     readAsset: asset => readFileSync(path.join(root, 'dist', asset)),
     find: async tag => releaseByTag(tag),
+    refresh: async id => api(`repos/${repository}/releases/${id}`),
     create: async data => api(`repos/${repository}/releases`, 'POST', data),
     upload: async (tag, asset) => execFileSync('gh', ['release', 'upload', tag, path.join(root, 'dist', asset), '--repo', repository], { stdio: 'inherit' }),
     updateDraft: async (id, data) => api(`repos/${repository}/releases/${id}`, 'PATCH', data),

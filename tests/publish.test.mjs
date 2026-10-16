@@ -79,6 +79,7 @@ function releaseFixture() {
   const transport = {
     readAsset: () => bytes,
     find: async () => remote,
+    refresh: async id => { assert.equal(id, remote.id); return remote; },
     create: async data => { events.push('create'); return remote = { ...data, id: 1, assets: [] }; },
     upload: async (_, name) => { events.push('upload'); remote.assets.push({ name, state: 'uploaded', size: bytes.length, digest, browser_download_url: 'https://example.test/asset' }); },
     publish: async () => { events.push('publish'); remote.draft = false; },
@@ -92,6 +93,13 @@ test('release retry verifies and reuses the immutable asset without another uplo
   await ensureRelease(release, 'commit', fixture.transport);
   await ensureRelease(release, 'commit', fixture.transport);
   assert.deepEqual(fixture.events, ['create', 'upload', 'publish', 'download', 'download']);
+});
+
+test('post-upload verification reads the known release ID when draft tag discovery is delayed', async () => {
+  const fixture = releaseFixture();
+  fixture.transport.find = async () => null;
+  await ensureRelease(initial().releases[0], 'commit', fixture.transport);
+  assert.deepEqual(fixture.events, ['create', 'upload', 'publish', 'download']);
 });
 
 test('same-source retry reuses verified published bytes when bundler output differs', async () => {
