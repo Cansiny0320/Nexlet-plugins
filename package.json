@@ -24,7 +24,8 @@
     "test:i18n:e2e": "node tests/i18n.e2e.mjs",
     "publish:preview": "node scripts/publish.mjs --prepare",
     "build:ocr": "node scripts/build.mjs plugins/ocr",
-    "test:ocr:e2e": "node tests/ocr.e2e.mjs"
+    "test:ocr:e2e": "node tests/ocr.e2e.mjs",
+    "test:ocr:quality": "node tests/ocr/run.mjs"
   },
   "devDependencies": {
     "@nexlet/plugin-api": "file:./sdk",

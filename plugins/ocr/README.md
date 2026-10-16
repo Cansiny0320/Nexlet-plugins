@@ -18,3 +18,7 @@ python3 scripts/package.py --plugin-dir .build/plugins/ocr --output dist/ocr.nex
 1.0.1 在宿主 Release 附件 1.0.0 的基础上接入独立插件仓库与自动发现，识别行为保持一致。
 
 端到端验证使用相邻 Nexlet 仓库的 Playwright 和公开截图 fixture；可通过 `NEXLET_HOST_DIR` 指定仓库、`NEXLET_HOST_EXECUTABLE` 指定正式版宿主。`npm run test:ocr:e2e` 检查本地包安装、中文和 English 识别、取消及回填搜索；发布后运行 `npm run test:ocr:e2e -- --market`，验证实际市场下载、安装来源和最低宿主版本限制。测试使用临时用户目录，不替换日常安装。
+
+OCR 专属测试也在本仓库维护：`npm test` 包含识别任务的取消、超时、空结果和 Worker 清理测试；`npm run test:ocr:quality` 运行四张截图识别、沙箱隔离、剪贴板保护、截图、偏好保留、文件错误和缺失模型等 12 项完整集成场景。运行前构建 `dist/ocr.nexlet` 及相邻 Nexlet 宿主，或用 `NEXLET_HOST_EXECUTABLE` 指定已构建宿主。宿主仓库只保留插件 SDK、权限边界、旧命令迁移和通用截图能力的测试。
+
+本仓库 CI 在 Windows 上使用最低支持版本 `v0.2.30` 的宿主运行完整 OCR 场景；验证对象为本次流水线已构建的插件包。集成测试通过后才执行市场发布，无需在宿主仓库安装或构建 OCR 依赖。
