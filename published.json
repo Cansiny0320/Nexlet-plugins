@@ -14,12 +14,16 @@
       "sourceHash": "68bdb8c3800b382d4213db17259c0be8ee7095765e60b0b90bab23c23f830d44"
     },
     "org.nexlet.ctool": {
-      "version": "1.1.1",
-      "sourceHash": "294fe8bec4029ee211d5119a723fb2b086c826e8da706aa71c4b94c13f13ce3f"
+      "version": "1.1.2",
+      "sourceHash": "4899bbcafcd844516aa3a62161dfc39e51467f69aaecca4f95187f0d5d64e243"
     },
     "org.nexlet.ocr": {
-      "version": "1.0.1",
-      "sourceHash": "2617225550158a431e3c7542856a946886334faef5471ab22d6a7aa1d7838244"
+      "version": "1.0.2",
+      "sourceHash": "be30a94d313f80117089ac7b402197b758871d3055bf731b0e2ec34d0bf3cc36"
+    },
+    "org.nexlet.text-image": {
+      "version": "1.0.0",
+      "sourceHash": "c1cef06c7c75e354e3a7b7fa1480e99150e38d966e2e5fb12a89c1a15bf09a04"
     }
   }
 }
