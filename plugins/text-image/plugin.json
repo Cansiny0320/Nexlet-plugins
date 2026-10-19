@@ -1,0 +1,28 @@
+{
+  "id": "org.nexlet.text-image",
+  "name": "文字表格转图片",
+  "version": "1.0.0",
+  "description": "复制文字或 Excel 单元格，预览并生成高清 PNG，支持复制图片和保存文件，全部本地处理。",
+  "apiVersion": 1,
+  "main": "index.html",
+  "icon": "icon.png",
+  "permissions": ["clipboard.read", "clipboard.write", "files"],
+  "features": [{
+    "code": "convert",
+    "name": "文字表格转图片",
+    "keywords": ["转图片", "文字转图片", "表格转图片", "Excel", "text to image", "table to image", "png", "zhuantupian"],
+    "matches": [{"type": "text", "minLength": 1, "maxLength": 100000}],
+    "locales": {
+      "en": {"name": "Text & Table to Image"},
+      "zh-Hant": {"name": "文字表格轉圖片"}
+    }
+  }],
+  "author": "Nexlet",
+  "category": "效率",
+  "platforms": ["win32", "darwin", "linux"],
+  "minHostVersion": "0.2.30",
+  "locales": {
+    "en": {"name": "Text & Table to Image", "description": "Turn copied text or Excel cells into a high-resolution PNG. Copy or save locally."},
+    "zh-Hant": {"name": "文字表格轉圖片", "description": "複製文字或 Excel 儲存格，預覽並產生高清 PNG，支援複製圖片及儲存檔案，全部本機處理。"}
+  }
+}
