@@ -56,7 +56,7 @@ try {
   assert.equal((await read()).characters, '0');
   assert.equal(await plugin("document.activeElement.id"), 'text');
 
-  // A second activation must deliver the full input, beyond the old 65,536 limit.
+  // Reactivation must deliver the full input even when the legacy payload is truncated.
   const large = '中文 a\n'.repeat(100_000);
   const largeSearch = await call('search', { query: large });
   await launch({ inputId: largeSearch.input.id });

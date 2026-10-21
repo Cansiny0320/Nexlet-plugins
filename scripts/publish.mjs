@@ -19,7 +19,7 @@ const compare = (a, b) => {
 };
 function check(condition, message) { if (!condition) throw new Error(message); }
 
-// Normalize text line endings so Windows checkouts and Linux CI share a baseline.
+// CRLF checkouts and LF checkouts must produce the same source hash.
 export function sourceHash(directory, workspace = root) {
   check(/^[a-zA-Z0-9_-]+$/.test(directory), 'Invalid plugin directory');
   const hash = createHash('sha256');

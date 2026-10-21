@@ -1,7 +1,6 @@
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 
-// Preserve license text for the locked dependency graph, including transitive packages.
 export async function dependencyNotices(source) {
   const parts = [], seen = new Set();
   const directory = path.join(source, 'node_modules/.pnpm');

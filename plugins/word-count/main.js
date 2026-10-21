@@ -24,7 +24,6 @@ function render() {
 input.addEventListener('input', () => {
   clear.disabled = !input.value;
   clearTimeout(pending);
-  // Coalesce edits to longer text while keeping ordinary typing immediate.
   if (input.value.length > 10000) {
     setText(status, t("正在统计…"));
     pending = setTimeout(render, 120);
