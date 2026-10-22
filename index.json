@@ -2,10 +2,35 @@
   "schemaVersion": 1,
   "plugins": [
     {
+      "id": "org.nexlet.ai-actions",
+      "name": "AI 动作",
+      "description": "用自己的模型解释报错、润色文字、提炼待办或生成提交说明。支持自定义 Prompt、流式输出与继续处理。",
+      "version": "1.0.0",
+      "author": "Nexlet",
+      "category": "效率",
+      "platforms": [
+        "win32",
+        "darwin",
+        "linux"
+      ],
+      "minHostVersion": "0.2.41",
+      "locales": {
+        "en": {
+          "name": "AI actions",
+          "description": "Explain errors, polish text, extract tasks and draft commit messages with your own model."
+        },
+        "zh-Hant": {
+          "name": "AI 動作",
+          "description": "使用自己的模型解釋錯誤、潤飾文字、整理待辦或產生提交說明。支援自訂 Prompt 與串流輸出。"
+        }
+      },
+      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.ai-actions-v1.0.0/ai-actions.nexlet"
+    },
+    {
       "id": "org.nexlet.ctool",
       "name": "Ctool 开发工具箱",
       "description": "集成 Ctool 完整开发工具：加解密、编码、JSON、代码、网络、图像、文本与转换。联网请求由插件后台执行。",
-      "version": "1.1.2",
+      "version": "1.1.3",
       "author": "Ctool / Nexlet",
       "category": "开发",
       "platforms": [
@@ -24,7 +49,7 @@
           "description": "整合 Ctool 開發工具；繁體介面暫以簡體顯示"
         }
       },
-      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.ctool-v1.1.2/ctool.nexlet"
+      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.ctool-v1.1.3/ctool.nexlet"
     },
     {
       "id": "org.nexlet.hello",
@@ -56,7 +81,7 @@
       "id": "org.nexlet.ocr",
       "name": "离线 OCR",
       "description": "本机识别图片和截图中的中英文文字。模型随插件提供，无需联网。",
-      "version": "1.0.2",
+      "version": "1.1.0",
       "author": "Nexlet",
       "category": "效率",
       "platforms": [
@@ -64,7 +89,7 @@
         "darwin",
         "linux"
       ],
-      "minHostVersion": "0.2.30",
+      "minHostVersion": "0.2.41",
       "locales": {
         "en": {
           "name": "Offline OCR",
@@ -75,13 +100,13 @@
           "description": "在本機辨識圖片與截圖中的中英文文字，無需連線。"
         }
       },
-      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.ocr-v1.0.2/ocr.nexlet"
+      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.ocr-v1.1.0/ocr.nexlet"
     },
     {
       "id": "org.nexlet.text-image",
       "name": "文字表格转图片",
       "description": "复制文字或 Excel 单元格，预览并生成高清 PNG，支持复制图片和保存文件，全部本地处理。",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": "Nexlet",
       "category": "效率",
       "platforms": [
@@ -89,7 +114,7 @@
         "darwin",
         "linux"
       ],
-      "minHostVersion": "0.2.30",
+      "minHostVersion": "0.2.41",
       "locales": {
         "en": {
           "name": "Text & Table to Image",
@@ -101,13 +126,13 @@
         }
       },
       "icon": "data:image/png;base64,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",
-      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.text-image-v1.0.0/text-image.nexlet"
+      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.text-image-v1.1.0/text-image.nexlet"
     },
     {
       "id": "org.nexlet.translate",
       "name": "翻译",
       "description": "Google 免 Key 翻译与可配置的 LLM 翻译，支持自动识别语言、段落翻译和一键复制。",
-      "version": "1.2.1",
+      "version": "1.3.0",
       "author": "Nexlet",
       "category": "效率",
       "platforms": [
@@ -115,7 +140,7 @@
         "darwin",
         "linux"
       ],
-      "minHostVersion": "0.2.7",
+      "minHostVersion": "0.2.41",
       "locales": {
         "en": {
           "name": "Translate",
@@ -127,13 +152,13 @@
         }
       },
       "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAB5UlEQVR4nO3XwU1DMRRE0dRGLRRKJWypAsGODQHFP7af7TlXmiXJj30UlNtNkiRJkiRJkn56//j8sn6rvs/mqg/stFXfZ3PVB3baqu+zueoDO23V99lc9YGdtur7bK76wE5b9X0299cHeXl9s38GQPgACB8A4QMgfACED4DwARA+AMIHwITdq/qZAAAAAAAAAAAAAAAAAAAAAAAAgLwBED4AwgdA+AC4sx0DAAAAAAAAAAAAAMCvAAAAAGAKgJ5fxyNfEwAAAAAAAAAAAAAAAAAAAAAAAAAAgAUvC4ALVQF49AJbmvmsAAAAAAAAAAAAAAAEDoDwAdC4GV/jM/9VALDg5QBwIQAAAAAAAADwKwAAAAB4CsCsr99ez7JrAAAAAAAAAADA488y631nfJZlAaw0AAAAAAAAAAAAAAAAGP76M98LAAAAAAAAAAAAAIAJAFovuTcKAAAAAAAAAAAAAAAAAAAAAAAAAIChAHYfAABcvoDRF/js8wAAAACzAfQOAAAAAGABAKcGQHgAhNcbQMvf9349AC4EQHgAhAdAeACEB0B4AIQHQHgAhAdAeD0vsHoAXAiA8AAID4DwAAjv16kdVPXZblH1JY2s+my3qPqSRlZ9tltUfUkjqz5bSZIkSZIkLdQ3mqJaUmpP1wYAAAAASUVORK5CYII=",
-      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.translate-v1.2.1/translate.nexlet"
+      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.translate-v1.3.0/translate.nexlet"
     },
     {
       "id": "org.nexlet.word-count",
       "name": "字数统计",
       "description": "实时统计中英文字数、字符数、数字组、行数与段落数，支持粘贴和启动器文本输入。",
-      "version": "1.1.1",
+      "version": "1.1.2",
       "author": "Nexlet",
       "category": "效率",
       "platforms": [
@@ -153,7 +178,7 @@
         }
       },
       "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAChUlEQVR4nO3VTW4UMRSF0V4ra8gOsxwkFpBJojBqQeevyq777HdK+qbG7XuA223y9+f3y6uON3ufYV/6obqV3vvvl34EhTCkf7BCENI/UEEI6R+lIIL0j1EQQfpHKIggfXkFEaQvrSCC9GUVRJC+pMII0hdUEED6cgojSF9MQQDpSymMIH0hAaAUgPRlFEaQvogAEAACQADoYgDpSyiMIH0BASAABIAAEAACQK0BPP16dk5HAO8P9G/OAcA5HQA8eqQjj7XrOQA0PweA5ucA0PwcAJqfA0CDc1IoAAifk/7XAYDQOVX+ewCgIIArEQBQEMCVbw8AAADMOKf68ABMOmeV4QEYfM5qwwMw6Jwjw1cZH4AT5xwdHoDFAYwq/eYAAADATAAj7wNAoXN+8jcbgELDzQYw8z4AXHTOqOEBWAzA6OEBWATArOEBKA7gyPAAbADgzPAALA5gVABsDuCq+6TfHIBP/hwAGgFI3Sf95lsBGDU8AIsBGD08AIsAmDU8AMUBHBkegA0AnBkegMUBjAoAAADYFUDV4QCYDKD6cABMGn+V4QC4aPiqwwFw0fBVhwPg5PCrDwcAAACcGX/14QAYgGDl4QD44jGqPni1c7YAcP8o1R+82jlbAVjhwaudsz2Ajx7LOQA4pwuA+wdzTmMAAkAACAABIAAEgAAQAAJAAAgAASAABIAAEAA6CeD9S19CwfEB6BsAzQOgeQA0D4Dm3e6/9GUUHB+AfgHQvP8AQNCnh+MD0KcPAUCwf5+OD8D+fQkAgn371vgQ7NmPxodgrw6ND8EenRofgrUbMj4EazZ0fAjWasr4INRv+vAg1Ozy4R996UfoVnrvb3/ph1q92fu8AWB9+82S2KVsAAAAAElFTkSuQmCC",
-      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.word-count-v1.1.1/word-count.nexlet"
+      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.word-count-v1.1.2/word-count.nexlet"
     }
   ]
 }

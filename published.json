@@ -6,24 +6,28 @@
       "sourceHash": "44214e488ddddc96709bb6ea4561e3aa876b2652bd02940399f149cc3595121d"
     },
     "org.nexlet.word-count": {
-      "version": "1.1.1",
-      "sourceHash": "8e2a1adacd50f38fdf3fa0679dbe14a89d943ce6246d15ad46760e4419105a43"
+      "version": "1.1.2",
+      "sourceHash": "66ac87ae3016f8b3162c51f3f693db615f1be0a916635c2459efbcdd3444137d"
     },
     "org.nexlet.translate": {
-      "version": "1.2.1",
-      "sourceHash": "68bdb8c3800b382d4213db17259c0be8ee7095765e60b0b90bab23c23f830d44"
+      "version": "1.3.0",
+      "sourceHash": "faeb6c425067f536c581a9ece40fc14e26f361d81dc44945b64a80ae582117fb"
     },
     "org.nexlet.ctool": {
-      "version": "1.1.2",
-      "sourceHash": "4899bbcafcd844516aa3a62161dfc39e51467f69aaecca4f95187f0d5d64e243"
+      "version": "1.1.3",
+      "sourceHash": "5e204683c9e2d93b2aa09f8b61f397400935e149eddf5c1ba6679295ea15c746"
     },
     "org.nexlet.ocr": {
-      "version": "1.0.2",
-      "sourceHash": "be30a94d313f80117089ac7b402197b758871d3055bf731b0e2ec34d0bf3cc36"
+      "version": "1.1.0",
+      "sourceHash": "8d60700dd8d8912da13be99d64413cf7b16e79fbeb33311b3b107b7babc851f8"
     },
     "org.nexlet.text-image": {
+      "version": "1.1.0",
+      "sourceHash": "2b4f086663014b5b8610d5d2b2be49564af110688140f81ab73ee0f49de7aa50"
+    },
+    "org.nexlet.ai-actions": {
       "version": "1.0.0",
-      "sourceHash": "c1cef06c7c75e354e3a7b7fa1480e99150e38d966e2e5fb12a89c1a15bf09a04"
+      "sourceHash": "4bad857a25e987055814bc5d618aedf80a42d53d35b661c631c180e26ebce824"
     }
   }
 }
