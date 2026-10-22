@@ -26,10 +26,10 @@ See [host SDK documentation](https://github.com/Cansiny0320/Nexlet/blob/main/doc
 
 Marketplace discovery reads `plugins/*/plugin.json`. Published plugins require `author`, `category`, `platforms` and optional `minHostVersion`. Templates are excluded.
 
-## Result handoff and drafts (v0.2.40)
+## Result handoff and drafts (v0.2.41)
 
 `nexlet.results.publish(result)` accepts `{ type: 'text', text, html? }`, `{ type: 'image', data }` (a data URL), or `{ type: 'files', resources }` (file tokens held by this plugin), and returns `Promise<true>`. The host opens the launcher for the user to choose the next tool without writing the clipboard. Files are revalidated and granted to the destination; arbitrary paths are not accepted. A text `PluginContext` may include untrusted `html`, which must be sanitized before rendering. Existing `search.returnToLauncher(text)` remains supported.
 
 `nexlet.session.read()` / `save(state)` access JSON drafts isolated by plugin, feature, and window; `readImage()` / `saveImage(Uint8Array)` provide one image slot. JSON is limited to 4 MB, each image to 20 MiB, and the total image cache to 64 MiB. Drafts last for the current run by default. User opt-in permits main-window restart restoration; detached windows are not persisted. Drafts are excluded from configuration export and must not contain API keys. Use `secrets` for credentials.
 
-Restore on `onEnter` only when no explicit new input is present. Return the saving Promise from `onOut`; state and image saves are permitted while closing, but new tasks are not. Restoration must not automatically restart network or compute work. Guard asynchronous results with a generation check. Feature-detect `nexlet.session` and `nexlet.results` for older hosts; plugins using these APIs should declare `minHostVersion: "0.2.40"`.
+Restore on `onEnter` only when no explicit new input is present. Return the saving Promise from `onOut`; state and image saves are permitted while closing, but new tasks are not. Restoration must not automatically restart network or compute work. Guard asynchronous results with a generation check. Feature-detect `nexlet.session` and `nexlet.results` for older hosts; plugins using these APIs should declare `minHostVersion: "0.2.41"`.

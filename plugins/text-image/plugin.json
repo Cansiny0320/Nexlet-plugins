@@ -49,7 +49,7 @@
     "darwin",
     "linux"
   ],
-  "minHostVersion": "0.2.40",
+  "minHostVersion": "0.2.41",
   "locales": {
     "en": {
       "name": "Text & Table to Image",
