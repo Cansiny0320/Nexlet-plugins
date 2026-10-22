@@ -55,7 +55,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           repository: Cansiny0320/Nexlet
-          ref: v0.2.30
+          ref: v0.2.40
           path: .build/nexlet-host
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -70,8 +70,9 @@ jobs:
       - name: Build the test host
         working-directory: .build/nexlet-host
         run: |
-          npm ci
-          npm run build
+          npm install --global pnpm@12.14.0
+          pnpm install --frozen-lockfile
+          pnpm build
       - name: Validate offline OCR behavior
         run: npm run test:ocr:quality
       - name: Upload OCR failure diagnostics

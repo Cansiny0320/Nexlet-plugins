@@ -185,6 +185,22 @@ try {
   const narrow = await app.evaluate(async (_, id) => (await globalThis.__nexlet.plugins.runtime.sessions.get(id).view.webContents.capturePage()).toPNG().toString('base64'), id);
   await writeFile(path.join(root, 'dist/text-image-narrow.png'), Buffer.from(narrow, 'base64'));
 
+  // Draft restoration does not reread the clipboard; explicit historical HTML
+  // still takes precedence when handed to the plugin through the launcher.
+  await call('window', { action: 'exitPlugin' });
+  await clipboard('unrelated current clipboard');
+  await launch(); await ready();
+  assert.equal(await plugin("document.querySelector('#table-size').textContent"), '4 行 · 8 个单元格');
+  await call('window', { action: 'exitPlugin' });
+  await call('continueResult', { type: 'text', text: '历史表格', html: '<table><tr><td>历史 A</td><td>历史 B</td></tr></table>' });
+  await expect(page.getByLabel('待处理输入', { exact: true })).toContainText('历史表格');
+  await page.getByRole('button', { name: '文字表格转图片', exact: true }).click();
+  await ready();
+  assert.equal(await plugin("document.querySelector('#table-size').textContent"), '1 行 · 2 个单元格');
+  await plugin("document.querySelector('#continue').click()");
+  await expect(page.getByLabel('待处理输入', { exact: true })).toContainText('图片');
+  console.log('PASS: table draft restoration, historical HTML input and generated PNG continuation.');
+
   // Run production UI with only readHTML removed from a cloned bridge. This verifies
   // the fallback without mutating the real preload or pretending to run an old binary.
   await call('window', { action: 'exitPlugin' });

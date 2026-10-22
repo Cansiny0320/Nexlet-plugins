@@ -1,0 +1,72 @@
+import assert from 'node:assert/strict';
+import { createServer } from 'node:http';
+import { mkdtemp, rm, mkdir, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { tmpdir } from 'node:os';
+import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+const root=fileURLToPath(new URL('../',import.meta.url)),host=path.resolve(root,'../Nexlet');
+const {_electron:electron,expect}=createRequire(path.join(host,'package.json'))('@playwright/test');
+const directory=await mkdtemp(path.join(tmpdir(),'nexlet-ai-actions-'));let app;
+const requests=[];
+const server=createServer(async(req,res)=>{
+  const chunks=[];for await(const chunk of req)chunks.push(chunk);
+  const body=JSON.parse(Buffer.concat(chunks).toString());requests.push({body,authorization:req.headers.authorization});
+  if(body.messages.at(-1).content==='error'){res.writeHead(503);res.end('fixture');return;}
+  res.writeHead(200,{'Content-Type':'text/event-stream'});
+  const write=text=>res.write('data: '+JSON.stringify({choices:[{delta:{content:text}}]})+'\n\n');
+  write('Hello ');
+  const timer=setTimeout(()=>{if(!res.destroyed){write('世界');res.end('data: [DONE]\n\n');}},body.messages.at(-1).content==='slow'?5000:150);
+  res.on('close',()=>clearTimeout(timer));
+});
+await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+try{
+  const env={...process.env,NEXLET_TEST_MODE:'1',NEXLET_TEST_LOCALE:'en',NEXLET_USER_DATA:directory};delete env.ELECTRON_RUN_AS_NODE;
+  app=await electron.launch({args:[host],cwd:host,env});const page=await app.firstWindow();await expect(page.locator('.launcher-input')).toBeVisible();
+  const call=(action,payload)=>page.evaluate(({action,payload})=>window.nexlet.call(action,payload),{action,payload});
+  await call('settings',{clipboardEnabled:false,hideOnBlur:false,autoCheckUpdates:false});
+  await app.evaluate(({dialog},file)=>{dialog.showOpenDialog=async()=>({canceled:false,filePaths:[file]});dialog.showMessageBox=async()=>({response:1});},path.join(root,'.build/plugins/ai-actions'));
+  await call('pluginInstall',{development:true});
+  const launch=()=>call('launch',{id:'plugin:org.nexlet.ai-actions:actions',mode:'open'});
+  await launch();
+  const plugin=script=>app.evaluate(async(_,script)=>{const session=globalThis.__nexlet.plugins.runtime.sessions.get('org.nexlet.ai-actions');await session.queue;return session.view.webContents.executeJavaScript(script);},script);
+  await expect.poll(()=>plugin("document.querySelector('#list').children.length")).toBe(4);
+  await plugin("document.querySelector('#input').value='explain this';document.querySelector('#input').dispatchEvent(new Event('input'));document.querySelector('#run').click()");
+  await expect.poll(()=>plugin("document.querySelector('details').open")).toBe(true);
+  const baseUrl=`http://127.0.0.1:${server.address().port}/v1`;
+  await plugin(`for(const [id,value] of Object.entries(${JSON.stringify({model:'fixture-model',baseUrl,apiKey:'fixture-secret'})})){const field=document.getElementById(id);field.value=value;field.dispatchEvent(new Event('input'));}document.querySelector('#save').click()`);
+  await expect.poll(()=>plugin("document.querySelector('#run').disabled")).toBe(false);
+  await plugin("document.querySelector('#run').click()");
+  await expect.poll(()=>plugin("document.querySelector('#output').value")).toBe('Hello 世界');
+  assert.equal(requests[0].body.model,'fixture-model');assert.equal(requests[0].authorization,'Bearer fixture-secret');
+  assert.equal(requests[0].body.messages[1].content,'explain this');
+  const stored=await app.evaluate(()=>globalThis.__nexlet.store.get('plugin-data:org.nexlet.ai-actions',{}));
+  assert.ok(!JSON.stringify(stored).includes('fixture-secret'));
+  console.log('PASS model configuration, secret isolation and streamed UTF-8 output');
+  await plugin("document.querySelector('#continue').click()");
+  await expect(page.getByLabel('Pending input',{exact:true})).toContainText('Hello');
+  await launch();await expect.poll(()=>plugin("document.querySelector('#output').value")).toBe('Hello 世界');
+  console.log('PASS continue processing and restored plugin state');
+  await plugin("document.querySelector('#input').value='slow';document.querySelector('#input').dispatchEvent(new Event('input'));document.querySelector('#run').click()");
+  await expect.poll(()=>plugin("document.querySelector('#output').value")).toBe('Hello ');
+  await plugin("document.querySelector('#stop').click()");await new Promise(resolve=>setTimeout(resolve,250));
+  assert.equal(await plugin("document.querySelector('#output').value"),'Hello ');
+  assert.equal(await plugin("document.querySelector('#stop').hidden"),true);
+  await plugin("document.querySelector('#input').value='error';document.querySelector('#input').dispatchEvent(new Event('input'));document.querySelector('#run').click()");
+  await expect.poll(()=>plugin("document.querySelector('#status').textContent")).toContain('503');
+  console.log('PASS request cancellation and visible HTTP errors');
+  await plugin("document.querySelector('#prompt').value='unsaved prompt';document.querySelector('#prompt').dispatchEvent(new Event('input'))");
+  await call('window',{action:'exitPlugin'});await launch();
+  assert.equal(await plugin("document.querySelector('#prompt').value"),'unsaved prompt');
+  assert.equal(await plugin("document.querySelector('#apiKey').value"),'');
+  console.log('PASS unsaved options restored without API key');
+  const pluginPage=app.context().pages().find(page=>page.url().startsWith('nexlet-plugin://org.nexlet.ai-actions/'));
+  assert(pluginPage);await mkdir(path.join(root,'dist'),{recursive:true});
+  for(const [name,width,height,theme] of [['light',960,640,'light'],['dark',960,640,'dark'],['narrow',560,680,'light']]){
+    await pluginPage.emulateMedia({colorScheme:theme});
+    await app.evaluate((_,bounds)=>globalThis.__nexlet.plugins.runtime.sessions.get('org.nexlet.ai-actions').view.setBounds(bounds),{x:0,y:0,width,height});
+    assert.equal(await plugin('document.documentElement.scrollWidth<=innerWidth'),true);
+    const pixels=await app.evaluate(async()=> (await globalThis.__nexlet.plugins.runtime.sessions.get('org.nexlet.ai-actions').view.webContents.capturePage()).toPNG().toString('base64'));
+    await writeFile(path.join(root,`dist/ai-actions-${name}.png`),Buffer.from(pixels,'base64'));
+  }
+}finally{if(app)await app.close();server.closeAllConnections();await new Promise(resolve=>server.close(resolve));await rm(directory,{recursive:true,force:true});}

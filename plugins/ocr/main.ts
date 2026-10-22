@@ -2,9 +2,9 @@ import './style.css';
 import {recognize, cancel} from './engine';
 import type {} from '../../sdk';
 const words = {
- 'zh-CN': {pick:'选择图片',capture:'截图识别',rotate:'旋转',run:'识别文字',stop:'停止识别',original:'原图',result:'识别结果',search:'继续搜索',copy:'复制文字',detach:'独立窗口',drop:'选择或拖入图片\n也可以直接粘贴截图\nPNG、JPEG、WebP、BMP · 最大 20 MB',idle:'图片在本机处理',running:'正在识别…',done:'识别完成',empty:'没有识别到文字，请换用更清晰的图片或缩小截图范围',changed:'识别期间剪贴板已改变，结果已保留，请按需复制',copied:'文字已复制',cancelled:'已取消识别',timeout:'识别超时，请缩小图片后重试',invalid:'请选择不超过 20 MB、3600 万像素的有效图片'},
- en: {pick:'Choose image',capture:'Capture text',rotate:'Rotate',run:'Recognize',stop:'Stop',original:'Original',result:'Recognized text',search:'Continue searching',copy:'Copy text',detach:'Separate window',drop:'Choose or drop an image\nYou can also paste a screenshot\nPNG, JPEG, WebP, BMP · Up to 20 MB',idle:'Images are processed locally',running:'Recognizing…',done:'Recognition complete',empty:'No text found. Use a clearer image or a smaller capture area.',changed:'Clipboard changed during recognition. The result is available to copy.',copied:'Text copied',cancelled:'Recognition cancelled',timeout:'Recognition timed out. Try a smaller image.',invalid:'Choose a valid image up to 20 MB and 36 million pixels'},
- 'zh-Hant': {pick:'選擇圖片',capture:'截圖辨識',rotate:'旋轉',run:'辨識文字',stop:'停止辨識',original:'原圖',result:'辨識結果',search:'繼續搜尋',copy:'複製文字',detach:'獨立視窗',drop:'選擇或拖入圖片\n也可以直接貼上截圖\nPNG、JPEG、WebP、BMP · 最大 20 MB',idle:'圖片在本機處理',running:'正在辨識…',done:'辨識完成',empty:'沒有辨識到文字，請換用更清晰的圖片或縮小截圖範圍',changed:'辨識期間剪貼簿已變更，結果已保留，請按需複製',copied:'文字已複製',cancelled:'已取消辨識',timeout:'辨識逾時，請縮小圖片後重試',invalid:'請選擇不超過 20 MB、3600 萬像素的有效圖片'},
+ 'zh-CN': {pick:'选择图片',capture:'截图识别',rotate:'旋转',run:'识别文字',stop:'停止识别',original:'原图',result:'识别结果',search:'继续处理',copy:'复制文字',detach:'独立窗口',drop:'选择或拖入图片\n也可以直接粘贴截图\nPNG、JPEG、WebP、BMP · 最大 20 MB',idle:'图片在本机处理',running:'正在识别…',done:'识别完成',empty:'没有识别到文字，请换用更清晰的图片或缩小截图范围',changed:'识别期间剪贴板已改变，结果已保留，请按需复制',copied:'文字已复制',cancelled:'已取消识别',timeout:'识别超时，请缩小图片后重试',invalid:'请选择不超过 20 MB、3600 万像素的有效图片'},
+ en: {pick:'Choose image',capture:'Capture text',rotate:'Rotate',run:'Recognize',stop:'Stop',original:'Original',result:'Recognized text',search:'Continue with…',copy:'Copy text',detach:'Separate window',drop:'Choose or drop an image\nYou can also paste a screenshot\nPNG, JPEG, WebP, BMP · Up to 20 MB',idle:'Images are processed locally',running:'Recognizing…',done:'Recognition complete',empty:'No text found. Use a clearer image or a smaller capture area.',changed:'Clipboard changed during recognition. The result is available to copy.',copied:'Text copied',cancelled:'Recognition cancelled',timeout:'Recognition timed out. Try a smaller image.',invalid:'Choose a valid image up to 20 MB and 36 million pixels'},
+ 'zh-Hant': {pick:'選擇圖片',capture:'截圖辨識',rotate:'旋轉',run:'辨識文字',stop:'停止辨識',original:'原圖',result:'辨識結果',search:'繼續處理',copy:'複製文字',detach:'獨立視窗',drop:'選擇或拖入圖片\n也可以直接貼上截圖\nPNG、JPEG、WebP、BMP · 最大 20 MB',idle:'圖片在本機處理',running:'正在辨識…',done:'辨識完成',empty:'沒有辨識到文字，請換用更清晰的圖片或縮小截圖範圍',changed:'辨識期間剪貼簿已變更，結果已保留，請按需複製',copied:'文字已複製',cancelled:'已取消辨識',timeout:'辨識逾時，請縮小圖片後重試',invalid:'請選擇不超過 20 MB、3600 萬像素的有效圖片'},
 };
 let locale: keyof typeof words = 'zh-CN', bytes: Uint8Array | undefined, url = '', generation = 0, running = false;
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -38,7 +38,7 @@ async function run(copy = false) {
  } catch (error) { if (generation === current) status(error instanceof Error ? error.message : String(error)); }
  finally { if (generation === current) { running = false; controls(); } }
 }
-async function load(data: Uint8Array, copy = false) {
+async function load(data: Uint8Array, copy = false, recognize = true) {
  stop(); const current = generation;
  try {
  if (!data.length || data.length > 20 * 1024 * 1024) throw Error(words[locale].invalid);
@@ -48,7 +48,7 @@ async function load(data: Uint8Array, copy = false) {
  if (generation !== current) return;
  bytes = data; if (url) URL.revokeObjectURL(url); url = URL.createObjectURL(new Blob([new Uint8Array(data)]));
  $<HTMLImageElement>('image').src = url; $('image').hidden = false; $('drop').hidden = true;
- await run(copy);
+ if (recognize) await run(copy); else { controls(); status('idle'); }
  } catch(error) { if (generation === current) status(error instanceof Error ? error.message : String(error)); }
 }
 const safely = (work: () => Promise<unknown>) => { void work().catch(error => status(error.message || String(error))); };
@@ -74,7 +74,7 @@ $('pick').onclick = $('drop').onclick = () => file.click();
 file.onchange = () => { const selected = file.files?.[0]; file.value = ''; if (selected) safely(() => loadFile(selected)); };
 $('capture').onclick = () => safely(() => capture()); $('run').onclick = () => safely(() => run()); $('stop').onclick = stop;
 $('copy').onclick = () => safely(async () => { await nexlet.clipboard.writeText(result.value); status('copied'); });
-$('search').onclick = () => safely(() => nexlet.search.returnToLauncher(result.value));
+$('search').onclick = () => safely(() => nexlet.results ? nexlet.results.publish({type:'text',text:result.value}) : nexlet.search.returnToLauncher(result.value));
 $('detach').onclick = () => safely(() => nexlet.window.detach());
 $('rotate').onclick = () => safely(async () => {
  if (!bytes) return; stop(); const current = generation;
@@ -90,7 +90,12 @@ document.ondragover = event => event.preventDefault();
 document.ondrop = event => { event.preventDefault(); const image = event.dataTransfer?.files[0]; if (image) safely(() => loadFile(image)); };
 document.onpaste = event => { const image = [...(event.clipboardData?.items || [])].find(item => item.type.startsWith('image/'))?.getAsFile(); if (image) { event.preventDefault(); safely(() => loadFile(image)); } };
 document.onkeydown = event => { if (event.key === 'Escape') stop(); };
-nexlet.onOut(() => { stop(); void nexlet.tasks.cancel('ocr-capture').catch(() => {}); });
+nexlet.onOut(async () => {
+ const draft = {result:result.value,scroll:result.scrollTop};
+ stop(); void nexlet.tasks.cancel('ocr-capture').catch(() => {});
+ await nexlet.session?.save(draft);
+ if(bytes) await nexlet.session?.saveImage(bytes);
+});
 nexlet.onEnter(context => {
  stop(); const current = generation;
  void (async () => {
@@ -100,6 +105,13 @@ nexlet.onEnter(context => {
   const resource = context.type === 'image' ? context.payload : context.type === 'files' ? context.payload[0] : null;
   if (resource) { const data = await nexlet.input.read(resource.id); if (generation === current) await load(data, context.code === 'copy'); }
   else if (context.code === 'copy') { const image = await nexlet.clipboard.readImage(); if (image && generation === current) await load(image, true); }
+  else if(nexlet.session) {
+   const [draft,image] = await Promise.all([nexlet.session.read(),nexlet.session.readImage()]);
+   if(generation!==current)return;
+   if(image)await load(image,false,false);
+   if(generation!==current+(image?1:0))return;
+   if(draft && typeof draft.result==='string'){result.value=draft.result;result.scrollTop=Number(draft.scroll)||0;controls();}
+  }
  })().catch(error => { if (generation === current) status(error.message || String(error)); });
 });
 nexlet.i18n.onChange(language); language(locale);

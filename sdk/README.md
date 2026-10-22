@@ -25,3 +25,21 @@ nexlet.onEnter((context: PluginContext) => {
 `nexlet.i18n.getLocale()` / `onChange()` 无需额外权限，返回或订阅 `zh-CN`、`zh-Hant`、`en` 应用语言。`system.info().locale` 保持系统语言含义；兼容旧宿主时先检测 `i18n`，不再使用订阅时调用取消函数。
 
 市场自动发现读取 `plugins/*/plugin.json`；正式插件需填写 `author`、`category`、`platforms` 和可选 `minHostVersion`。`templates/` 不发布。
+
+## 结果交接与工具草稿（v0.2.40）
+
+`nexlet.results.publish(result)` 接收 `{ type: 'text', text, html? }`、`{ type: 'image', data }`（data URL）或 `{ type: 'files', resources }`（当前插件持有的文件 token），返回 `Promise<true>`。宿主回到启动器，由用户选择下一工具，不写系统剪贴板。文件交接时重新验证并签发目标授权，不得传入未授权路径。文本激活的 `PluginContext` 可含 `html`；内容不可信，必须清理后再渲染。旧 `search.returnToLauncher(text)` 继续可用。
+
+`nexlet.session.read()` / `save(state)` 读取或保存当前插件、feature 和窗口隔离的 JSON 草稿；`readImage()` / `saveImage(Uint8Array)` 提供一个图片槽。JSON 上限 4 MB，图片上限 20 MiB，总图片缓存上限 64 MiB。默认仅本次运行保留；用户在宿主设置中启用后，主窗口草稿可跨重启恢复，独立窗口不持久化。草稿不进入配置导出，不能用于保存 API Key。敏感值使用 `secrets`。
+
+在 `onEnter` 没有明确新输入时恢复；在 `onOut` 返回保存 Promise，让宿主等待完成。不要在恢复时自动重新发起联网或计算任务；新输入和异步结果须用代次隔离。`onOut` 允许保存状态与图片，其他新任务仍被拒绝。兼容旧宿主应检测 `nexlet.session`、`nexlet.results`；使用本节接口的插件应声明 `minHostVersion: "0.2.40"`。
+
+```js
+nexlet.onOut(async () => {
+  await nexlet.session?.save({ input: input.value, output: output.value });
+});
+async function continueText(text) {
+  if (nexlet.results) await nexlet.results.publish({ type: 'text', text });
+  else await nexlet.search.returnToLauncher(text);
+}
+```

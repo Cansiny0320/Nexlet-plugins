@@ -27,7 +27,7 @@ export async function buildOcr(output = path.join(root, '.build/plugins/ocr')) {
       { find: /^paddle-ocr-worker(?=\?|$)/, replacement: path.join(engine, worker) },
       { find: /^onnxruntime-web$/, replacement: path.join(dependencies, 'onnxruntime-web/dist/ort.wasm.min.mjs') }
     ]
-  }, worker: { format: 'es' }, build: { outDir: output, emptyOutDir: true } });
+  }, worker: { format: 'es' }, build: { outDir: output, emptyOutDir: true, rollupOptions: { input: { main: path.join(source, 'index.html'), indexer: path.join(source, 'ocr-index.html') } } } });
   await cp(models, path.join(output, 'models'), { recursive: true });
   await copyFile(path.join(source, 'plugin.json'), path.join(output, 'plugin.json'));
   await mkdir(path.join(output, 'runtime'), { recursive: true });

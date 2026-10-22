@@ -11,6 +11,7 @@ function sync(){
   $('count').textContent=`${count} / ${MAX_CHARS}`;$('count').dataset.error=String(count>MAX_CHARS);
   $('translate').disabled=!ready||composing||!!active||saving||(engine==='llm'&&settingsDirty)||!$('input').value.trim()||count>MAX_CHARS;
   $('cancel').hidden=!active;$('copy').disabled=!$('output').value;
+  $('continue').disabled=!$('output').value || !api.results;
   $('translate').firstChild.textContent=active?t("翻译中… "):t("开始翻译 ");
 }
 function invalidate(message=t("准备就绪")){
@@ -68,6 +69,7 @@ $('translate').addEventListener('click',translate);
 $('cancel').addEventListener('click',()=>invalidate(t("已取消翻译")));
 $('clear-input').addEventListener('click',()=>{$('input').value='';invalidate();$('input').focus();});
 $('copy').addEventListener('click',async()=>{try{await api.clipboard.writeText($('output').value);status(t("译文已复制"));}catch{status(t("复制失败，请重试"),true);}});
+$('continue').addEventListener('click',async()=>{try{await api.results.publish({type:'text',text:$('output').value});}catch(error){status(error.message,true);}});
 $('settings-toggle').addEventListener('click',()=>showSettings($('settings').hidden));
 for(const id of ['base-url','model','api-key'])$(id).addEventListener('input',()=>{settingsDirty=true;invalidate(t("配置已修改，请保存后翻译"));settingStatus(t("修改尚未保存"));});
 $('save-settings').addEventListener('click',async()=>{
@@ -91,8 +93,24 @@ async function boot(){
     if(saved){try{config=validateConfig(saved);}catch{settingStatus(t("原有配置无效，请重新填写"),true);}}
     if(preferences){if(LANGUAGES.some(([id])=>id===preferences.source)||preferences.source==='auto')$('source').value=preferences.source;if(LANGUAGES.some(([id])=>id===preferences.target))$('target').value=preferences.target;if(['google','llm'].includes(preferences.engine))engine=preferences.engine;}
     $('base-url').value=config.baseUrl;$('model').value=config.model;$('api-key').placeholder=t("留空保留已有 Key；本地服务可不填");selectEngine(engine);ready=true;sync();
-    api.onEnter(context=>{ready=true;composing=false;invalidate();if(context.type==='text'){$('input').value=context.payload;status(context.payload?t("文字已带入，点击开始翻译"):t("准备就绪"));}sync();scheduleAuto();$('input').focus();});
-    api.onOut(()=>{ready=false;invalidate();});
+    api.onEnter(async context=>{
+      ready=true;composing=false;invalidate();const current=revision;
+      if(context.type==='text' && context.payload){$('input').value=context.payload;status(t("文字已带入，点击开始翻译"));sync();scheduleAuto();}
+      else {
+        const draft=await api.session?.read();if(current!==revision)return;
+        if(draft){$('input').value=typeof draft.input==='string'?draft.input:'';$('output').value=typeof draft.output==='string'?draft.output:'';
+          if(typeof draft.source==='string')$('source').value=draft.source;if(typeof draft.target==='string')$('target').value=draft.target;
+          if(['google','llm'].includes(draft.engine))selectEngine(draft.engine);
+          $('input').scrollTop=Number(draft.inputScroll)||0;$('output').scrollTop=Number(draft.outputScroll)||0;
+        }
+        sync();
+      }
+      $('input').focus();
+    });
+    api.onOut(async()=>{
+      const draft={input:$('input').value,output:$('output').value,source:$('source').value,target:$('target').value,engine,inputScroll:$('input').scrollTop,outputScroll:$('output').scrollTop};
+      ready=false;invalidate();await api.session?.save(draft);
+    });
   }catch{status(t("读取配置失败，请关闭插件后重试"),true);}
 }
 onLanguageChange(() => {

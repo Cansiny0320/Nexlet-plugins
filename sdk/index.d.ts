@@ -1,10 +1,27 @@
-import type { PluginSdkExtensions, PluginInputExtensions, PluginClipboardExtensions, SdkPermission } from './extensions';
+import type {
+  PluginSdkExtensions,
+  PluginInputExtensions,
+  PluginClipboardExtensions,
+  SdkPermission,
+} from './extensions';
 export * from './extensions';
 /** Type declarations for the public plugin bridge, not Nexlet's internal HostApi. */
-export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+export type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [key: string]: JsonValue };
 export type Unsubscribe = () => void;
-export type PluginPermission = 'clipboard.read' | 'clipboard.write' | 'shell.openExternal' | 'network.request' | 'secrets' | SdkPermission;
-export type InputSource = 'input' | 'paste' | 'drop' | 'selection';
+export type PluginPermission =
+  | 'clipboard.read'
+  | 'clipboard.write'
+  | 'shell.openExternal'
+  | 'network.request'
+  | 'secrets'
+  | SdkPermission;
+export type InputSource = 'input' | 'paste' | 'drop' | 'selection' | 'capture' | 'result';
 
 export interface InputResource {
   id: string;
@@ -16,7 +33,7 @@ export interface InputResource {
 }
 
 export type PluginContext = { id: string; code: string; from: InputSource } & (
-  | { type: 'text'; payload: string }
+  | { type: 'text'; payload: string; html?: string }
   | { type: 'files'; payload: InputResource[] }
   | { type: 'image'; payload: InputResource }
 );
@@ -25,10 +42,18 @@ export type ContentMatch =
   | { type: 'text'; minLength?: number; maxLength?: number }
   | { type: 'regex'; pattern: string; flags?: string; minLength?: number; maxLength?: number }
   | { type: 'image' }
-  | { type: 'files'; extensions?: string[]; fileType?: 'file' | 'directory'; minCount?: number; maxCount?: number };
+  | {
+      type: 'files';
+      extensions?: string[];
+      fileType?: 'file' | 'directory';
+      minCount?: number;
+      maxCount?: number;
+    };
 
 export type AppLocale = 'zh-CN' | 'zh-Hant' | 'en';
-export type PluginLocales = Partial<Record<AppLocale, { name?: string; description?: string; category?: string }>>;
+export type PluginLocales = Partial<
+  Record<AppLocale, { name?: string; description?: string; category?: string }>
+>;
 
 export interface PluginFeature {
   locales?: PluginLocales;
@@ -39,11 +64,6 @@ export interface PluginFeature {
 }
 
 export interface PluginManifest {
-  /** Required by this repository's automatic marketplace publishing. */
-  author?: string;
-  category?: string;
-  platforms?: ('win32' | 'darwin' | 'linux')[];
-  minHostVersion?: string;
   locales?: PluginLocales;
   id: string;
   name: string;
@@ -132,5 +152,7 @@ export interface PluginApi extends PluginSdkExtensions {
 
 declare global {
   const nexlet: PluginApi;
-  interface Window { nexlet: PluginApi; }
+  interface Window {
+    nexlet: PluginApi;
+  }
 }

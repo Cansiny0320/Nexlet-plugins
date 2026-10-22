@@ -1,5 +1,6 @@
 // Generated from shared/plugin-locales.json by scripts/sync-i18n.mjs.
 export default {
+  "继续处理": { "en": "Continue with…", "zh-Hant": "繼續處理" },
   "Nexlet 便笺示例": {
     "en": "Nexlet Notes example",
     "zh-Hant": "Nexlet 便箋示例"

@@ -72,6 +72,10 @@ try {
   await read(`document.querySelector('#result').value='OCR return 42';document.querySelector('#result').dispatchEvent(new Event('input'));document.querySelector('#search').click()`);
   await expect(page.getByRole('banner')).toContainText('OCR return 42');
   console.log('PASS return result to launcher');
+  await call('launch', { id: `plugin:${id}:recognize` });
+  await expect.poll(() => read('document.querySelector("#result").value')).toBe('OCR return 42');
+  assert.equal(await read('document.querySelector("#stop").hidden'), true);
+  console.log('PASS image and result draft restoration without rerunning recognition');
 } finally {
   if (app) await app.close();
   await rm(directory, { recursive: true, force: true });

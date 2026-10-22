@@ -24,7 +24,7 @@ function setStatus(key: Message, error: unknown = null) {
   status.textContent = error ? errorText(error) : t(key);
   status.dataset.error = String(!!error);
 }
-function buttons() { copy.disabled = save.disabled = !rendered || exporting; }
+function buttons() { copy.disabled = save.disabled = !rendered || exporting; byId<HTMLButtonElement>('continue').disabled = !rendered || exporting || !nexlet.results; }
 function clearPreview() {
   rendered = null; preview.removeAttribute('src'); preview.hidden = true;
   if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -148,15 +148,37 @@ async function exportImage(action: 'copy' | 'save') {
 }
 copy.addEventListener('click', () => { void exportImage('copy'); });
 save.addEventListener('click', () => { void exportImage('save'); });
+byId('continue').addEventListener('click', () => {
+  const image = rendered;
+  if (!image) return;
+  const reader = new FileReader();
+  reader.onload = () => { void nexlet.results.publish({ type: 'image', data: String(reader.result) }).catch(error => setStatus('failed', error)); };
+  reader.readAsDataURL(image.blob);
+});
 document.addEventListener('keydown', event => {
   if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') { event.preventDefault(); void exportImage('copy'); }
 });
-nexlet.onEnter(context => {
+nexlet.onEnter(async context => {
   // Launcher/selection input is authoritative. Never enrich it with separately read clipboard data.
   if (context.type === 'text' && context.payload) {
     contentVersion++;
-    try { importSource(context.payload); } catch (error) { importFailed(error); }
-  } else void readClipboard();
+    try { importSource(context.payload, context.html || ''); } catch (error) { importFailed(error); }
+  } else {
+    const revision = ++contentVersion;
+    const draft = await nexlet.session?.read();
+    if (revision !== contentVersion) return;
+    if (draft?.source && typeof draft.source === 'object' && !Array.isArray(draft.source)) {
+      source = draft.source as unknown as Source;
+      const values = draft.settings as Record<string,string|number> | undefined;
+      if(values)for(const [key,id] of [['width','width'],['fontSize','font-size'],['padding','padding'],['background','background']])byId<HTMLInputElement>(id).value=String(values[key]);
+      sourceValid=true;text.value=source.kind==='text'?source.text:'';labels();schedule();
+      text.scrollTop=Number(draft.scroll)||0;
+    } else void readClipboard();
+  }
+});
+nexlet.onOut(async () => {
+  generation++; contentVersion++; clearTimeout(timer); queued=false;
+  await nexlet.session?.save(JSON.parse(JSON.stringify({source,settings:settings(),scroll:text.scrollTop})));
 });
 window.addEventListener('unload', () => { if (previewUrl) URL.revokeObjectURL(previewUrl); });
 startLanguage(labels); labels(); buttons();

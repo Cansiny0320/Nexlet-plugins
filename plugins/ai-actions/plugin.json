@@ -1,0 +1,61 @@
+{
+  "id": "org.nexlet.ai-actions",
+  "name": "AI 动作",
+  "version": "1.0.0",
+  "description": "用自己的模型解释报错、润色文字、提炼待办或生成提交说明。支持自定义 Prompt、流式输出与继续处理。",
+  "apiVersion": 1,
+  "main": "index.html",
+  "permissions": [
+    "ai",
+    "secrets",
+    "clipboard.write",
+    "input.simulate"
+  ],
+  "features": [
+    {
+      "code": "actions",
+      "name": "AI 动作",
+      "keywords": [
+        "AI",
+        "prompt",
+        "润色",
+        "解释报错",
+        "待办",
+        "commit"
+      ],
+      "matches": [
+        {
+          "type": "text",
+          "minLength": 1,
+          "maxLength": 100000
+        }
+      ],
+      "locales": {
+        "en": {
+          "name": "AI actions"
+        },
+        "zh-Hant": {
+          "name": "AI 動作"
+        }
+      }
+    }
+  ],
+  "author": "Nexlet",
+  "category": "效率",
+  "platforms": [
+    "win32",
+    "darwin",
+    "linux"
+  ],
+  "minHostVersion": "0.2.40",
+  "locales": {
+    "en": {
+      "name": "AI actions",
+      "description": "Explain errors, polish text, extract tasks and draft commit messages with your own model."
+    },
+    "zh-Hant": {
+      "name": "AI 動作",
+      "description": "使用自己的模型解釋錯誤、潤飾文字、整理待辦或產生提交說明。支援自訂 Prompt 與串流輸出。"
+    }
+  }
+}

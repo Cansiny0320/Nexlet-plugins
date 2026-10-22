@@ -1,7 +1,7 @@
 {
   "id": "org.nexlet.translate",
   "name": "翻译",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "Google 免 Key 翻译与可配置的 LLM 翻译，支持自动识别语言、段落翻译和一键复制。",
   "apiVersion": 1,
   "main": "index.html",
@@ -58,5 +58,5 @@
     "darwin",
     "linux"
   ],
-  "minHostVersion": "0.2.7"
+  "minHostVersion": "0.2.40"
 }

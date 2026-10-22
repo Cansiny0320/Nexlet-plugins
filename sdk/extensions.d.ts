@@ -5,6 +5,17 @@ export type SdkPermission = (typeof SDK_PERMISSIONS)[number];
 export type SdkJson = null | boolean | number | string | SdkJson[] | {
     [key: string]: SdkJson;
 };
+export type PluginResult = {
+    type: 'text';
+    text: string;
+    html?: string;
+} | {
+    type: 'image';
+    data: string;
+} | {
+    type: 'files';
+    resources: string[];
+};
 export interface TaskOptions {
     id: string;
     timeoutMs?: number;
@@ -36,6 +47,16 @@ export interface BackendContext {
 /** Export an object named handlers from backend.cjs. Backend runs with full local Node privileges. */
 export type BackendHandlers = Record<string, (args: unknown, context: BackendContext) => unknown | Promise<unknown>>;
 export interface PluginSdkExtensions {
+    results: {
+        publish(result: PluginResult): Promise<true>;
+    };
+    /** Session drafts are local; restart retention is controlled by the host setting. */
+    session: {
+        read(): Promise<Record<string, SdkJson> | null>;
+        save(state: Record<string, SdkJson>): Promise<true>;
+        readImage(): Promise<Uint8Array | null>;
+        saveImage(data: Uint8Array): Promise<true>;
+    };
     /** Application UI language; system.info().locale remains the OS locale. */
     i18n: {
         getLocale(): Promise<'zh-CN' | 'zh-Hant' | 'en'>;
