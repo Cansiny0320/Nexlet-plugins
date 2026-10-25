@@ -28,9 +28,12 @@
     "test:ocr:quality": "node tests/ocr/run.mjs"
   },
   "devDependencies": {
+    "@napi-rs/canvas": "^1.0.13",
     "@nexlet/plugin-api": "file:./sdk",
     "@types/node": "^24.19.2",
     "esbuild": "0.28.2",
+    "pdf-lib": "1.17.1",
+    "pdfjs-dist": "6.4.299",
     "typescript": "5.9.3"
   }
 }

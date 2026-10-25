@@ -5,6 +5,15 @@ const field = (id: string) => $<HTMLInputElement>(id);
 const input = $<HTMLTextAreaElement>('input'), output = $<HTMLTextAreaElement>('output');
 let actions: Action[] = [], selected = '', active = '', generation = 0, dirty = false, ready = false;
 let lastStatus = 'ready';
+let shared = true, sharedModel = '';
+const modelPicker = document.createElement('select');
+modelPicker.id = 'shared-model'; modelPicker.setAttribute('aria-label', '共享 AI 模型');
+modelPicker.add(new Option(t('使用设置中的默认模型'), ''));
+const sourcePicker = document.createElement('select'); sourcePicker.setAttribute('aria-label', '模型配置来源');
+sourcePicker.add(new Option(t('共享模型'), 'shared')); sourcePicker.add(new Option(t('此插件的旧配置'), 'private'));
+document.querySelector('aside')!.prepend(sourcePicker, modelPicker);
+sourcePicker.onchange = () => { stop(); shared = sourcePicker.value === 'shared'; modelPicker.hidden = !shared; void nexlet.storage.set('shared-model', { enabled: shared, value: sharedModel }); };
+modelPicker.onchange = () => { stop(); sharedModel = modelPicker.value; void nexlet.storage.set('shared-model', { enabled: shared, value: sharedModel }); };
 function status(message: string, error = false) { lastStatus = message; $('status').textContent = t(message); $('status').dataset.error = String(error); }
 function controls() {
   for (const id of ['copy','paste','continue']) $<HTMLButtonElement>(id).disabled = !output.value || (id === 'continue' && !nexlet.results);
@@ -33,8 +42,19 @@ async function run() {
   if(dirty){status('unsaved',true);return;}
   stop(); const current=generation;
   try {
-    const action=draft(), request=buildActionRequest(action,input.value);
+    const action=draft();
     active=crypto.randomUUID(); const id=active; output.value='';status('running');controls();
+    if (shared) {
+      if (!input.value.trim() || input.value.length > 100000) throw Error('invalidInput');
+      const split = sharedModel.indexOf(':');
+      const result = await nexlet.ai.generate({ id, timeoutMs: 120000, request: {
+        ...(split < 0 ? {} : { providerId: sharedModel.slice(0, split), model: sharedModel.slice(split + 1) }),
+        messages: [{ role: 'system', content: action.prompt }, { role: 'user', content: input.value }],
+      } });
+      if (current === generation) { output.value = result.text; status('complete'); }
+      return;
+    }
+    const request=buildActionRequest(action,input.value);
     const key=await nexlet.secrets.get(await keyForEndpoint(action.baseUrl));
     if(current!==generation)return;
     await nexlet.ai.configure({baseUrl:action.baseUrl,apiKey:key});
@@ -45,6 +65,10 @@ async function run() {
   } catch(error){if(current===generation){ const message=error instanceof Error?error.message:String(error); if(message==='missingModel') document.querySelector('details')!.open=true; status(message,true); }}
   finally {if(current===generation){active='';controls();}}
 }
+nexlet.ai.onEvent(({ id, event }) => {
+  if (id !== active || event.type !== 'text') return;
+  output.value += event.delta; output.scrollTop = output.scrollHeight; controls();
+});
 nexlet.ai.onChunk(event=>{
   if(event.id!==active)return;
   const chunk=event.chunk as {choices?:{delta?:{content?:unknown}}[]};
@@ -81,6 +105,13 @@ nexlet.onEnter(async context=>{
   stop();const current=generation;
   try{
     const saved=await nexlet.storage.get('actions');
+    const preference = await nexlet.storage.get('shared-model') as { enabled?: boolean; value?: string } | null;
+    shared = preference ? preference.enabled !== false : !Array.isArray(saved);
+    sharedModel = typeof preference?.value === 'string' ? preference.value : '';
+    const catalog = await nexlet.ai.sharedModels();
+    modelPicker.replaceChildren(new Option(t('使用设置中的默认模型'), ''), ...catalog.providers.flatMap(provider => provider.models.map(model => new Option(provider.name + ' / ' + model, provider.id + ':' + model))));
+    if (sharedModel && ![...modelPicker.options].some(option => option.value === sharedModel)) modelPicker.add(new Option(t('已选模型不可用'), sharedModel));
+    modelPicker.value = sharedModel; modelPicker.hidden = !shared; sourcePicker.value = shared ? 'shared' : 'private';
     actions=Array.isArray(saved)?saved.map(validateAction):structuredClone(presets);
     const state=await nexlet.session?.read();
     if(current!==generation)return;
@@ -92,4 +123,9 @@ nexlet.onEnter(async context=>{
     ready=true;status(dirty?'unsaved':'ready');controls();
   }catch(error){status(error instanceof Error?error.message:String(error),true);}
 });
-void languageSetup(()=>{list();status(lastStatus);});controls();
+function sharedLabels(){
+ modelPicker.setAttribute('aria-label',t('共享 AI 模型'));
+ modelPicker.options[0].textContent=t('使用设置中的默认模型');
+ sourcePicker.options[0].textContent=t('共享模型');sourcePicker.options[1].textContent=t('此插件的旧配置');
+}
+void languageSetup(()=>{list();status(lastStatus);sharedLabels();});controls();

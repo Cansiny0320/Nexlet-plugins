@@ -3,7 +3,10 @@ import PaddleWorker from 'paddle-ocr-worker?worker';
 import {RecognitionTask} from './task';
 const task = new RecognitionTask();
 export const cancel = () => task.cancel();
-export function recognize(bytes: Uint8Array, progress: (value: number) => void) {
+export async function recognize(bytes: Uint8Array, progress: (value: number) => void) {
+  return (await recognizeResult(bytes, progress)).text;
+}
+export function recognizeResult(bytes: Uint8Array, progress: (value: number) => void) {
   return task.run(async own => {
     progress(.05);
     const engine = await PaddleOCR.create({
@@ -17,7 +20,8 @@ export function recognize(bytes: Uint8Array, progress: (value: number) => void) 
     progress(.35);
     try {
       const result = await engine.predict(new Blob([new Uint8Array(bytes)]));
-      return result[0]?.items.map(item => item.text).join('\n') || '';
+      const items = result[0]?.items ?? [];
+      return { text: items.map(item => item.text).join('\n'), blocks: items.map(item => ({ text: item.text, confidence: item.score, points: item.poly.map(([x, y]) => ({ x, y })) })) };
     } finally { await engine.dispose(); }
   });
 }

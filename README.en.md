@@ -6,7 +6,7 @@ Public catalog and source repository for [Nexlet](https://github.com/Cansiny0320
 
 ## Install
 
-Open Plugins → Marketplace in Nexlet and install a plugin. Current hosts install immediately after clicking; declared capabilities remain visible in details. You can also download `.nexlet` assets and use Installed → Import plugin package.
+In Nexlet 0.2.47, downloads appear in a task list with progress, cancellation and retry. Select Install after validation. First installs show declared permissions; updates adding permissions or changing an existing local provider to cloud require confirmation. Installation records change only after success. Failure preserves the previous version and data; development directories are not overwritten and downgrades are not automatic. Cached catalogs remain readable offline.
 
 | Plugin | Purpose | Permissions |
 | --- | --- | --- |
@@ -89,3 +89,19 @@ Protocol tests: `node --test tests/translation.test.mjs`. In the adjacent host, 
 ## Offline OCR
 
 OCR requires Nexlet 0.2.30+. Source and models live in `plugins/ocr`; locked build dependencies live in `integrations/ocr`. Run `npm run build:ocr`, then `python3 scripts/package.py --plugin-dir .build/plugins/ocr --output dist/ocr.nexlet`. A main push automatically discovers and publishes it like other plugins. Package limits are 32 MiB per file, 128 MiB extracted and 64 MiB compressed. Invalid metadata, duplicate IDs or missing builds stop publication and retain the previous index.
+
+## New local plugins and shared services
+
+These sources and local packages require Nexlet 0.2.47 and have not been published to the online catalog in this change.
+
+| Plugin | Features | Package |
+| --- | --- | --- |
+| [PDF tools](plugins/pdf-tools/README.en.md) | Merge, split, extract, reorder, rotate, image conversion | dist/pdf-tools.nexlet |
+| [Image batch](plugins/image-batch/README.en.md) | Compress, convert, resize, watermark, collage | dist/image-batch.nexlet |
+| [Batch rename](plugins/batch-rename/README.en.md) | Preview, replace, number, conflict checks, journal, undo | dist/batch-rename.nexlet |
+
+All three support Simplified Chinese, Traditional Chinese and English. Batch output uses new directories. Rename revalidates files before execution; undo refuses externally modified files. Each README documents limits and verification.
+
+AI Actions 1.1.0 and Translation 1.4.0 can select host shared models while preserving private configuration. OCR 1.2.0 registers a local provider; Translation registers Google and shared AI providers for screenshot tools and authorized plugins. Select defaults explicitly in host settings; failures never switch local processing to cloud automatically.
+
+Build selected sources with node scripts/build.mjs plugins/pdf-tools plugins/image-batch plugins/batch-rename plugins/ai-actions plugins/translate plugins/ocr, then package each with python scripts/package.py --plugin-dir .build/plugins/pdf-tools --output dist/pdf-tools.nexlet (substitute the plugin name). These commands do not change the published catalog. Nexlet 0.2.47 downloads and validates before installation; initial installs, new permissions and local-to-cloud updates require permission confirmation.

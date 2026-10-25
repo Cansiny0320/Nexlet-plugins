@@ -482,5 +482,21 @@
   "llm": {
     "en": "llm",
     "zh-Hant": "llm"
+  },
+  "共享模型": {
+    "en": "Shared model",
+    "zh-Hant": "共享模型"
+  },
+  "共享 AI 模型": {
+    "en": "Shared AI model",
+    "zh-Hant": "共享 AI 模型"
+  },
+  "使用设置中的默认模型": {
+    "en": "Use the default model from Settings",
+    "zh-Hant": "使用設定中的預設模型"
+  },
+  "已选模型不可用": {
+    "en": "Selected model is unavailable",
+    "zh-Hant": "已選模型不可用"
   }
 }

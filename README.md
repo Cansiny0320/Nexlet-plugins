@@ -6,7 +6,7 @@
 
 ## 安装
 
-在 Nexlet 中打开「插件管理 → 插件市场」，选择插件并安装。当前宿主点击安装后直接执行，插件声明的能力可在详情中查看。也可以下载 Releases 中的 `.nexlet` 文件，通过「已安装 → 导入插件包」安装。
+Nexlet 0.2.47 的市场下载进入任务列表，支持进度、取消和重试；校验完成后选择安装。首次安装会显示声明的权限，更新新增权限或把已有本地提供商改为云端时需要确认。成功后才替换安装记录，失败保留旧版本和独立数据。开发目录不会被市场覆盖，不自动降级；离线可查看已缓存目录。
 
 | 插件 | 用途 | 权限 |
 | --- | --- | --- |
@@ -93,3 +93,26 @@ Google 使用免 Key 网页接口，当前宿主首次联网也无需额外确�
 OCR 需要 Nexlet 0.2.30+，源码和模型位于 `plugins/ocr/`，独立构建依赖位于 `integrations/ocr/`。安装构建依赖后运行 `npm run build:ocr`，使用 `.build/plugins/ocr` 开发，或执行 `python3 scripts/package.py --plugin-dir .build/plugins/ocr --output dist/ocr.nexlet`。合入 main 后由同一自动发现流程发布到市场，不需要另行上架。详见 [OCR README](plugins/ocr/README.md)。
 
 发布包限制与宿主一致：单文件 32 MiB、解压总量 128 MiB、压缩包 64 MiB；校验失败时保留原产物和线上索引。无效元数据、重复 ID 或缺失构建会阻止整次发布，不生成不完整索引。
+
+## 新增本地插件与共享服务
+
+当前源码和本地构建包需要 Nexlet 0.2.47；本轮尚未发布到在线市场。
+
+| 插件 | 用途 | 包 |
+| --- | --- | --- |
+| [PDF 工具](plugins/pdf-tools/README.md) | 合并、拆分、提取、重排、旋转、图片转换 | dist/pdf-tools.nexlet |
+| [图片批处理](plugins/image-batch/README.md) | 压缩、转换、缩放、水印、拼图 | dist/image-batch.nexlet |
+| [批量重命名](plugins/batch-rename/README.md) | 预览、替换、编号、冲突检查、日志和撤销 | dist/batch-rename.nexlet |
+
+三个工具均提供简体、繁体和 English 界面。批量输出写入新目录，重命名执行前再次验证文件，撤销遇到外部修改会拒绝覆盖。详细限额和验证范围见各插件 README。
+
+AI 动作 1.1.0 与翻译 1.4.0 可选择宿主共享模型，也保留私有配置。OCR 1.2.0 注册本地 OCR 提供商；翻译注册 Google 和共享 AI 提供商，供截图、贴图及其他获授权插件调用。在宿主设置中明确选择默认提供商，不自动跨本地/联网边界降级。
+
+定向构建和打包不会修改市场目录：
+
+```sh
+node scripts/build.mjs plugins/pdf-tools plugins/image-batch plugins/batch-rename plugins/ai-actions plugins/translate plugins/ocr
+python scripts/package.py --plugin-dir .build/plugins/pdf-tools --output dist/pdf-tools.nexlet
+```
+
+其他插件替换上述目录名即可。Nexlet 0.2.47 市场先下载和校验，之后选择安装；首次安装以及更新新增权限/本地提供商转云时显示权限确认。

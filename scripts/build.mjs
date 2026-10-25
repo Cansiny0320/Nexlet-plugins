@@ -1,6 +1,6 @@
 import { build } from 'esbuild';
 import { watch } from 'node:fs';
-import { access, mkdir, readdir, readFile, writeFile, copyFile, rm } from 'node:fs/promises';
+import { access, mkdir, readdir, readFile, writeFile, copyFile, rm, cp } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { discoverPlugins } from './discover.mjs';
@@ -54,6 +54,14 @@ export async function buildPlugin(source, output) {
       backendResult = await build({ entryPoints: [backendEntry], outfile: path.join(output, manifest.backend), bundle: true, platform: 'node', format: 'cjs', target: 'node24', write: false, logLevel: 'silent' });
     }
     await copyAssets(source, output);
+    if (source === path.join(root,'plugins/pdf-tools')) {
+      const pdfjs = path.join(root,'node_modules/pdfjs-dist');
+      await mkdir(path.join(output,'pdfjs'),{recursive:true});
+      await copyFile(path.join(pdfjs,'build/pdf.worker.mjs'),path.join(output,'pdfjs/pdf.worker.mjs'));
+      for (const name of ['cmaps','standard_fonts','wasm']) await cp(path.join(pdfjs,name),path.join(output,'pdfjs',name),{recursive:true});
+      await copyFile(path.join(pdfjs,'LICENSE'),path.join(output,'PDFJS-LICENSE'));
+      await copyFile(path.join(root,'node_modules/pdf-lib/LICENSE.md'),path.join(output,'PDFLIB-LICENSE.md'));
+    }
     for (const file of [...(result?.outputFiles ?? []), ...(backendResult?.outputFiles ?? [])]) {
       await mkdir(path.dirname(file.path), { recursive: true });
       await writeFile(file.path, file.contents);

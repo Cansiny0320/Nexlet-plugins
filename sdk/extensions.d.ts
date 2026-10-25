@@ -1,6 +1,8 @@
 // Generated from Nexlet/src/shared/plugin-api.ts.
+import type { AIConfiguration, AIEvent, AIRequest, AIResult } from './ai';
+import type { CapabilityRequest, CapabilityState, OcrResult, TranslationResult } from './capability-providers';
 /** Public extension contract. No dependency on the host renderer API. */
-declare const SDK_PERMISSIONS: readonly ['files', 'process', 'backend', 'browser', 'screen', 'input.simulate', 'windows', 'notifications', 'ai', 'services', 'tools', 'mcp', 'media', 'runtime.compute'];
+declare const SDK_PERMISSIONS: readonly ['capabilities', 'files', 'process', 'backend', 'browser', 'screen', 'input.simulate', 'windows', 'notifications', 'ai', 'services', 'tools', 'mcp', 'media', 'runtime.compute'];
 export type SdkPermission = (typeof SDK_PERMISSIONS)[number];
 export type SdkJson = null | boolean | number | string | SdkJson[] | {
     [key: string]: SdkJson;
@@ -47,6 +49,16 @@ export interface BackendContext {
 /** Export an object named handlers from backend.cjs. Backend runs with full local Node privileges. */
 export type BackendHandlers = Record<string, (args: unknown, context: BackendContext) => unknown | Promise<unknown>>;
 export interface PluginSdkExtensions {
+    capabilities: {
+        list(): Promise<CapabilityState>;
+        run(options: TaskOptions & {
+            request: CapabilityRequest;
+        }): Promise<OcrResult | TranslationResult>;
+        onProgress(callback: (event: {
+            id: string;
+            value: number;
+        }) => void): () => void;
+    };
     results: {
         publish(result: PluginResult): Promise<true>;
     };
@@ -170,6 +182,15 @@ export interface PluginSdkExtensions {
         }>;
     };
     ai: {
+        /** Shared host settings. Credentials are never returned to plugins. */
+        sharedModels(): Promise<AIConfiguration>;
+        generate(options: TaskOptions & {
+            request: AIRequest;
+        }): Promise<AIResult>;
+        onEvent(callback: (event: {
+            id: string;
+            event: AIEvent;
+        }) => void): () => void;
         configure(config: ProviderConfig | null): Promise<{
             configured: boolean;
             persistent: boolean;

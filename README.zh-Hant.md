@@ -6,7 +6,7 @@
 
 ## 安裝
 
-在 Nexlet 中開啟「外掛管理 → 外掛市場」，選擇外掛並安裝。當前宿主點選安裝後直接執行，外掛宣告的能力可在詳情中檢視。也可以下載 Releases 中的 `.nexlet` 檔案，透過「已安裝 → 匯入外掛包」安裝。
+Nexlet 0.2.47 的市場下載進入任務列表，支持進度、取消和重試；校驗完成後選擇安裝。首次安裝會顯示聲明的權限，更新新增權限或把已有本地提供商改為雲端時需要確認。成功後才替換安裝記錄，失敗保留舊版本和獨立數據。開發目錄不會被市場覆蓋，不自動降級；離線可查看已緩存目錄。
 
 | 外掛 | 用途 | 許可權 |
 | --- | --- | --- |
@@ -91,3 +91,26 @@ Google 使用免 Key 網頁介面，當前宿主首次聯網也無需額外確�
 ## 離線 OCR
 
 OCR 需要 Nexlet 0.2.30+。原始碼與模型位於 `plugins/ocr`，鎖定的構建依賴位於 `integrations/ocr`。執行 `npm run build:ocr`，再用 `python3 scripts/package.py --plugin-dir .build/plugins/ocr --output dist/ocr.nexlet` 打包。提交至 main 後自動發現並發布，不需額外上架。限制為單檔 32 MiB、解壓總量 128 MiB、壓縮包 64 MiB。無效資料、重複 ID 或缺失構建會阻止發布，並保留既有索引。
+
+## 新增本地插件與共享服務
+
+當前源碼和本地構建包需要 Nexlet 0.2.47；本輪尚未發佈到在線市場。
+
+| 插件 | 用途 | 包 |
+| --- | --- | --- |
+| [PDF 工具](plugins/pdf-tools/README.zh-Hant.md) | 合併、拆分、提取、重排、旋轉、圖片轉換 | dist/pdf-tools.nexlet |
+| [圖片批處理](plugins/image-batch/README.zh-Hant.md) | 壓縮、轉換、縮放、水印、拼圖 | dist/image-batch.nexlet |
+| [批量重命名](plugins/batch-rename/README.zh-Hant.md) | 預覽、替換、編號、衝突檢查、日誌和撤銷 | dist/batch-rename.nexlet |
+
+三個工具均提供簡體、繁體和 English 界面。批量輸出寫入新目錄，重命名執行前再次驗證文件，撤銷遇到外部修改會拒絕覆蓋。詳細限額和驗證範圍見各插件 README。
+
+AI 動作 1.1.0 與翻譯 1.4.0 可選擇宿主共享模型，也保留私有配置。OCR 1.2.0 註冊本地 OCR 提供商；翻譯註冊 Google 和共享 AI 提供商，供截圖、貼圖及其他獲授權插件調用。在宿主設置中明確選擇默認提供商，不自動跨本地/聯網邊界降級。
+
+定向構建和打包不會修改市場目錄：
+
+```sh
+node scripts/build.mjs plugins/pdf-tools plugins/image-batch plugins/batch-rename plugins/ai-actions plugins/translate plugins/ocr
+python scripts/package.py --plugin-dir .build/plugins/pdf-tools --output dist/pdf-tools.nexlet
+```
+
+其他插件替換上述目錄名即可。Nexlet 0.2.47 市場先下載和校驗，之後選擇安裝；首次安裝以及更新新增權限/本地提供商轉雲時顯示權限確認。

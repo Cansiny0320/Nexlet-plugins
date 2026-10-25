@@ -1,0 +1,526 @@
+{
+  "PDF 工具": {
+    "en": "PDF tools",
+    "zh-Hant": "PDF 工具"
+  },
+  "添加文件": {
+    "en": "Add files",
+    "zh-Hant": "新增檔案"
+  },
+  "操作": {
+    "en": "Operation",
+    "zh-Hant": "操作"
+  },
+  "合并 PDF": {
+    "en": "Merge PDFs",
+    "zh-Hant": "合併 PDF"
+  },
+  "提取／重排页面": {
+    "en": "Extract / reorder pages",
+    "zh-Hant": "提取／重排頁面"
+  },
+  "拆分为单页": {
+    "en": "Split into single pages",
+    "zh-Hant": "拆分為單頁"
+  },
+  "旋转页面": {
+    "en": "Rotate pages",
+    "zh-Hant": "旋轉頁面"
+  },
+  "图片转 PDF": {
+    "en": "Images to PDF",
+    "zh-Hant": "圖片轉 PDF"
+  },
+  "PDF 转 PNG": {
+    "en": "PDF to PNG",
+    "zh-Hant": "PDF 轉 PNG"
+  },
+  "页码": {
+    "en": "Pages",
+    "zh-Hant": "頁碼"
+  },
+  "全部；或 1-3,5,2": {
+    "en": "All; or 1-3,5,2",
+    "zh-Hant": "全部；或 1-3,5,2"
+  },
+  "旋转": {
+    "en": "Rotation",
+    "zh-Hant": "旋轉"
+  },
+  "渲染比例": {
+    "en": "Render scale",
+    "zh-Hant": "渲染比例"
+  },
+  "处理并保存": {
+    "en": "Process and save",
+    "zh-Hant": "處理並儲存"
+  },
+  "取消": {
+    "en": "Cancel",
+    "zh-Hant": "取消"
+  },
+  "预览第一页": {
+    "en": "Preview first page",
+    "zh-Hant": "預覽第一頁"
+  },
+  "一次最多渲染 100 页": {
+    "en": "Render up to 100 pages at a time",
+    "zh-Hant": "一次最多渲染 100 頁"
+  },
+  "页面超过 3600 万像素，请降低渲染比例": {
+    "en": "Page exceeds 36 million pixels. Reduce the render scale",
+    "zh-Hant": "頁面超過 3600 萬畫素，請降低渲染比例"
+  },
+  "PNG 编码失败": {
+    "en": "PNG encoding failed",
+    "zh-Hant": "PNG 編碼失敗"
+  },
+  "已取消；已保存的文件保留在输出目录": {
+    "en": "Cancelled; files already saved remain in the output folder",
+    "zh-Hant": "已取消；已儲存的檔案保留在輸出目錄"
+  },
+  "请先添加文件": {
+    "en": "Add files first",
+    "zh-Hant": "請先新增檔案"
+  },
+  "处理中…": {
+    "en": "Processing…",
+    "zh-Hant": "處理中…"
+  },
+  "文件总大小超过 128 MiB": {
+    "en": "Total input exceeds 128 MiB",
+    "zh-Hant": "檔案總大小超過 128 MiB"
+  },
+  "已保存 {{v0}} 个文件": {
+    "en": "Saved {{v0}} file(s)",
+    "zh-Hant": "已儲存 {{v0}} 個檔案"
+  },
+  "\n已保存 {{v0}} 个文件，见下方。": {
+    "en": "\nSaved {{v0}} file(s); see below.",
+    "zh-Hant": "\n已儲存 {{v0}} 個檔案，見下方。"
+  },
+  "请先添加 PDF": {
+    "en": "Add a PDF first",
+    "zh-Hant": "請先新增 PDF"
+  },
+  "第一页预览": {
+    "en": "First page preview",
+    "zh-Hant": "第一頁預覽"
+  },
+  "已退出": {
+    "en": "Exited",
+    "zh-Hant": "已退出"
+  },
+  "PDF 页数必须为 1–1000": {
+    "en": "PDF must contain 1–1000 pages",
+    "zh-Hant": "PDF 頁數必須為 1–1000"
+  },
+  "页码格式示例：1-3,5,2": {
+    "en": "Page format example: 1-3,5,2",
+    "zh-Hant": "頁碼格式示例：1-3,5,2"
+  },
+  "页码超出范围": {
+    "en": "Page number out of range",
+    "zh-Hant": "頁碼超出範圍"
+  },
+  "输出页数超过 1000": {
+    "en": "Output exceeds 1000 pages",
+    "zh-Hant": "輸出頁數超過 1000"
+  },
+  "单个 PDF 必须小于 16 MiB": {
+    "en": "Each PDF must be smaller than 16 MiB",
+    "zh-Hant": "單個 PDF 必須小於 16 MiB"
+  },
+  "PDF 超过 1000 页": {
+    "en": "PDF exceeds 1000 pages",
+    "zh-Hant": "PDF 超過 1000 頁"
+  },
+  "最多处理 50 个文件，总计 128 MiB": {
+    "en": "Up to 50 files and 128 MiB in total",
+    "zh-Hant": "最多處理 50 個檔案，總計 128 MiB"
+  },
+  "旋转角度无效": {
+    "en": "Invalid rotation angle",
+    "zh-Hant": "旋轉角度無效"
+  },
+  "生成的 PDF 超过 16 MiB，请减少页数": {
+    "en": "Output PDF exceeds 16 MiB. Select fewer pages",
+    "zh-Hant": "生成的 PDF 超過 16 MiB，請減少頁數"
+  },
+  "最多处理 100 张图片": {
+    "en": "Up to 100 images",
+    "zh-Hant": "最多處理 100 張圖片"
+  },
+  "图片超过 3600 万像素": {
+    "en": "Image exceeds 36 million pixels",
+    "zh-Hant": "圖片超過 3600 萬畫素"
+  },
+  "生成的 PDF 超过 16 MiB": {
+    "en": "Output PDF exceeds 16 MiB",
+    "zh-Hant": "生成的 PDF 超過 16 MiB"
+  },
+  "图片批处理": {
+    "en": "Image batch",
+    "zh-Hant": "圖片批處理"
+  },
+  "添加图片": {
+    "en": "Add images",
+    "zh-Hant": "新增圖片"
+  },
+  "批量处理": {
+    "en": "Batch processing",
+    "zh-Hant": "批次處理"
+  },
+  "拼图": {
+    "en": "Collage",
+    "zh-Hant": "拼圖"
+  },
+  "格式": {
+    "en": "Format",
+    "zh-Hant": "格式"
+  },
+  "质量": {
+    "en": "Quality",
+    "zh-Hant": "質量"
+  },
+  "最大宽度": {
+    "en": "Maximum width",
+    "zh-Hant": "最大寬度"
+  },
+  "最大高度": {
+    "en": "Maximum height",
+    "zh-Hant": "最大高度"
+  },
+  "水印": {
+    "en": "Watermark",
+    "zh-Hant": "水印"
+  },
+  "可选": {
+    "en": "Optional",
+    "zh-Hant": "可選"
+  },
+  "拼图布局": {
+    "en": "Collage layout",
+    "zh-Hant": "拼圖佈局"
+  },
+  "列数": {
+    "en": "Columns",
+    "zh-Hant": "列數"
+  },
+  "单元格像素": {
+    "en": "Cell size (pixels)",
+    "zh-Hant": "單元格畫素"
+  },
+  "间距": {
+    "en": "Spacing",
+    "zh-Hant": "間距"
+  },
+  "预览第一张": {
+    "en": "Preview first image",
+    "zh-Hant": "預覽第一張"
+  },
+  "图片尺寸无效或超过 3600 万像素": {
+    "en": "Invalid dimensions or image larger than 36 million pixels",
+    "zh-Hant": "圖片尺寸無效或超過 3600 萬畫素"
+  },
+  "拼图布局无效": {
+    "en": "Invalid collage layout",
+    "zh-Hant": "拼圖佈局無效"
+  },
+  "拼图超过 3600 万像素": {
+    "en": "Collage exceeds 36 million pixels",
+    "zh-Hant": "拼圖超過 3600 萬畫素"
+  },
+  "水印文字过长": {
+    "en": "Watermark text is too long",
+    "zh-Hant": "水印文字過長"
+  },
+  "图片格式或质量无效": {
+    "en": "Invalid image format or quality",
+    "zh-Hant": "圖片格式或質量無效"
+  },
+  "图片编码失败": {
+    "en": "Image encoding failed",
+    "zh-Hant": "圖片編碼失敗"
+  },
+  "当前环境不支持所选编码格式": {
+    "en": "This environment does not support the selected format",
+    "zh-Hant": "當前環境不支援所選編碼格式"
+  },
+  "生成图片超过 16 MiB，请降低尺寸或质量": {
+    "en": "Output image exceeds 16 MiB. Reduce dimensions or quality",
+    "zh-Hant": "生成圖片超過 16 MiB，請降低尺寸或質量"
+  },
+  "请先添加图片": {
+    "en": "Add images first",
+    "zh-Hant": "請先新增圖片"
+  },
+  "正在处理 {{v0}} / {{v1}}": {
+    "en": "Processing {{v0}} / {{v1}}",
+    "zh-Hant": "正在處理 {{v0}} / {{v1}}"
+  },
+  "已保存 {{v0}} 个文件{{v1}}": {
+    "en": "Saved {{v0}} file(s){{v1}}",
+    "zh-Hant": "已儲存 {{v0}} 個檔案{{v1}}"
+  },
+  "，失败 {{v0}} 个": {
+    "en": ", {{v0}} failed",
+    "zh-Hant": "，失敗 {{v0}} 個"
+  },
+  "\n已保存 {{v0}} 个文件。": {
+    "en": "\nSaved {{v0}} file(s).",
+    "zh-Hant": "\n已儲存 {{v0}} 個檔案。"
+  },
+  "处理结果预览": {
+    "en": "Output preview",
+    "zh-Hant": "處理結果預覽"
+  },
+  "预览大小 {{v0}} KiB": {
+    "en": "Preview size: {{v0}} KiB",
+    "zh-Hant": "預覽大小 {{v0}} KiB"
+  },
+  "批量重命名": {
+    "en": "Batch rename",
+    "zh-Hant": "批次重新命名"
+  },
+  "查找": {
+    "en": "Find",
+    "zh-Hant": "查詢"
+  },
+  "替换为": {
+    "en": "Replace with",
+    "zh-Hant": "替換為"
+  },
+  "前缀": {
+    "en": "Prefix",
+    "zh-Hant": "字首"
+  },
+  "后缀": {
+    "en": "Suffix",
+    "zh-Hant": "字尾"
+  },
+  "追加编号": {
+    "en": "Append numbering",
+    "zh-Hant": "追加編號"
+  },
+  "起始": {
+    "en": "Start",
+    "zh-Hant": "起始"
+  },
+  "位数": {
+    "en": "Digits",
+    "zh-Hant": "位數"
+  },
+  "文件名模板": {
+    "en": "Filename template",
+    "zh-Hant": "檔名模板"
+  },
+  "模板": {
+    "en": "Template",
+    "zh-Hant": "模板"
+  },
+  "{name} 为替换后的名称，{n} 为编号，{ext} 包含扩展名前的点。填写后优先使用模板。": {
+    "en": "{name} is the replaced name, {n} is the number, and {ext} includes the extension dot. A filled template takes precedence.",
+    "zh-Hant": "{name} 為替換後的名稱，{n} 為編號，{ext} 包含副檔名前的點。填寫後優先使用模板。"
+  },
+  "预览": {
+    "en": "Preview",
+    "zh-Hant": "預覽"
+  },
+  "执行重命名": {
+    "en": "Rename files",
+    "zh-Hant": "執行重新命名"
+  },
+  "原名称": {
+    "en": "Original name",
+    "zh-Hant": "原名稱"
+  },
+  "新名称": {
+    "en": "New name",
+    "zh-Hant": "新名稱"
+  },
+  "操作日志／恢复": {
+    "en": "Operation history / recovery",
+    "zh-Hant": "操作日誌／恢復"
+  },
+  "刷新日志": {
+    "en": "Refresh history",
+    "zh-Hant": "重新整理日誌"
+  },
+  "另一个重命名操作正在进行": {
+    "en": "Another rename operation is running",
+    "zh-Hant": "另一個重新命名操作正在進行"
+  },
+  "文件列表无效": {
+    "en": "Invalid file list",
+    "zh-Hant": "檔案列表無效"
+  },
+  "操作正在进行": {
+    "en": "Operation in progress",
+    "zh-Hant": "操作正在進行"
+  },
+  "{{v0}} · {{v1}} 个文件 · {{v2}}{{v3}}": {
+    "en": "{{v0}} · {{v1}} file(s) · {{v2}}{{v3}}",
+    "zh-Hant": "{{v0}} · {{v1}} 個檔案 · {{v2}}{{v3}}"
+  },
+  "撤销": {
+    "en": "Undo",
+    "zh-Hant": "撤銷"
+  },
+  "恢复原名": {
+    "en": "Restore original names",
+    "zh-Hant": "恢復原名"
+  },
+  "已恢复原名称": {
+    "en": "Original names restored",
+    "zh-Hant": "已恢復原名稱"
+  },
+  "请选择具有本地路径的文件": {
+    "en": "Choose files with local paths",
+    "zh-Hant": "請選擇具有本地路徑的檔案"
+  },
+  "预览通过，{{v0}} 个文件将被重命名": {
+    "en": "Preview passed: {{v0}} file(s) will be renamed",
+    "zh-Hant": "預覽通過，{{v0}} 個檔案將被重新命名"
+  },
+  "没有需要更改的文件名": {
+    "en": "No filenames need changing",
+    "zh-Hant": "沒有需要更改的檔名"
+  },
+  "已重命名 {{v0}} 个文件": {
+    "en": "Renamed {{v0}} file(s)",
+    "zh-Hant": "已重新命名 {{v0}} 個檔案"
+  },
+  "准备": {
+    "en": "Preparing",
+    "zh-Hant": "準備"
+  },
+  "重命名": {
+    "en": "Renaming",
+    "zh-Hant": "重新命名"
+  },
+  "目标文件名无效：": {
+    "en": "Invalid target filename: ",
+    "zh-Hant": "目標檔名無效："
+  },
+  "仅支持普通文件：": {
+    "en": "Only regular files are supported: ",
+    "zh-Hant": "僅支援普通檔案："
+  },
+  "单个文件超过 256 MiB": {
+    "en": "File exceeds 256 MiB",
+    "zh-Hant": "單個檔案超過 256 MiB"
+  },
+  "已取消": {
+    "en": "Cancelled",
+    "zh-Hant": "已取消"
+  },
+  "文件在检查期间发生变化：": {
+    "en": "File changed during verification: ",
+    "zh-Hant": "檔案在檢查期間發生變化："
+  },
+  "请选择 1–500 个文件": {
+    "en": "Select 1–500 files",
+    "zh-Hant": "請選擇 1–500 個檔案"
+  },
+  "文件路径必须为绝对路径": {
+    "en": "File paths must be absolute",
+    "zh-Hant": "檔案路徑必須為絕對路徑"
+  },
+  "只能在原目录中重命名": {
+    "en": "Files can only be renamed in their original folders",
+    "zh-Hant": "只能在原目錄中重新命名"
+  },
+  "文件重复或目标名称冲突": {
+    "en": "Duplicate files or conflicting target names",
+    "zh-Hant": "檔案重複或目標名稱衝突"
+  },
+  "所选文件包含同一文件的硬链接，请分开处理": {
+    "en": "Selected files include hard links to the same file. Process them separately",
+    "zh-Hant": "所選檔案包含同一檔案的硬連結，請分開處理"
+  },
+  "文件总大小超过 1 GiB": {
+    "en": "Total input exceeds 1 GiB",
+    "zh-Hant": "檔案總大小超過 1 GiB"
+  },
+  "目标已存在：": {
+    "en": "Target already exists: ",
+    "zh-Hant": "目標已存在："
+  },
+  "重命名规则无效": {
+    "en": "Invalid rename rules",
+    "zh-Hant": "重新命名規則無效"
+  },
+  "操作 ID 无效": {
+    "en": "Invalid operation ID",
+    "zh-Hant": "操作 ID 無效"
+  },
+  "操作日志过大": {
+    "en": "Operation journal is too large",
+    "zh-Hant": "操作日誌過大"
+  },
+  "操作日志无效": {
+    "en": "Invalid operation journal",
+    "zh-Hant": "操作日誌無效"
+  },
+  "文件已被外部修改，拒绝移动：": {
+    "en": "File was changed externally; refusing to move: ",
+    "zh-Hant": "檔案已被外部修改，拒絕移動："
+  },
+  "移动未完成，操作日志可恢复：{{v0}} → {{v1}}；{{v2}}": {
+    "en": "Move incomplete; use the journal to recover: {{v0}} → {{v1}}; {{v2}}",
+    "zh-Hant": "移動未完成，操作日誌可恢復：{{v0}} → {{v1}}；{{v2}}"
+  },
+  "此预览已执行，请重新预览": {
+    "en": "This preview was already executed. Preview again",
+    "zh-Hant": "此預覽已執行，請重新預覽"
+  },
+  "临时路径已存在": {
+    "en": "Temporary path already exists",
+    "zh-Hant": "臨時路徑已存在"
+  },
+  "此操作无需恢复": {
+    "en": "This operation does not need recovery",
+    "zh-Hant": "此操作無需恢復"
+  },
+  "无法找到未修改的文件，停止恢复：": {
+    "en": "Cannot find an unchanged copy; recovery stopped: ",
+    "zh-Hant": "無法找到未修改的檔案，停止恢復："
+  },
+  "原名称已被其他文件占用：": {
+    "en": "Original name is occupied by another file: ",
+    "zh-Hant": "原名稱已被其他檔案佔用："
+  },
+  "恢复临时路径被占用": {
+    "en": "Recovery temporary path is occupied",
+    "zh-Hant": "恢復臨時路徑被佔用"
+  },
+  "恢复目标无效": {
+    "en": "Invalid recovery target",
+    "zh-Hant": "恢復目標無效"
+  },
+  "文件不可用": {
+    "en": "File is unavailable",
+    "zh-Hant": "檔案不可用"
+  },
+  "最多接收 100 个文件": {
+    "en": "Up to 100 files",
+    "zh-Hant": "最多接收 100 個檔案"
+  },
+  "单个文件不能超过 16 MiB": {
+    "en": "Each file must be no larger than 16 MiB",
+    "zh-Hant": "單個檔案不能超過 16 MiB"
+  },
+  "上移": {
+    "en": "Move up",
+    "zh-Hant": "上移"
+  },
+  "下移": {
+    "en": "Move down",
+    "zh-Hant": "下移"
+  },
+  "移除": {
+    "en": "Remove",
+    "zh-Hant": "移除"
+  }
+}

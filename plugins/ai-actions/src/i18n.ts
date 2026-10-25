@@ -1,4 +1,9 @@
 const messages = {
+  '共享 AI 模型': ['共享 AI 模型','共用 AI 模型','Shared AI model'],
+  '使用设置中的默认模型': ['使用设置中的默认模型','使用設定中的預設模型','Use the default model from Settings'],
+  '共享模型': ['共享模型','共用模型','Shared model'],
+  '此插件的旧配置': ['此插件的旧配置','此外掛的舊設定','Legacy plugin configuration'],
+  '已选模型不可用': ['已选模型不可用','已選模型無法使用','Selected model is unavailable'],
   title: ['AI 动作', 'AI 動作', 'AI actions'],
   subtitle: ['把一段内容交给常用 Prompt', '將一段內容交給常用 Prompt', 'Apply a reusable prompt to your text'],
   new: ['新建动作', '新增動作', 'New action'],

@@ -40,6 +40,7 @@ export function sourceHash(directory, workspace = root) {
     }
   };
   for (const group of ['plugins', 'integrations', 'vendor']) visit(`${group}/${directory}`);
+  if (['pdf-tools','image-batch','batch-rename'].includes(directory)) visit('shared');
   // Compiled plugins also depend on the shared SDK, compiler and locked tools.
   if (existsSync(path.join(workspace, 'plugins', directory, 'src')) || existsSync(path.join(workspace, 'integrations', directory))) {
     visit('sdk');
@@ -95,7 +96,13 @@ export function candidates(workspace = root) {
     const manifest = json(`plugins/${directory}/plugin.json`, workspace), built = json(`.build/plugins/${directory}/plugin.json`, workspace);
     check(JSON.stringify(manifest) === JSON.stringify(built), `Stale build: ${directory}`);
     const { id, name, description, version, author, category, platforms, minHostVersion } = manifest;
-    const entry = { id, name, description, version, author, category, platforms, ...(minHostVersion ? { minHostVersion } : {}), ...(manifest.locales ? { locales: manifest.locales } : {}) };
+    const entry = { id, name, description, version, author, category, platforms, ...(minHostVersion ? { minHostVersion } : {}), ...(manifest.locales ? { locales: manifest.locales } : {}), permissions: manifest.permissions };
+    for (const key of ['updatedAt','readme','source','screenshots','changelog']) if (manifest[key] !== undefined) entry[key] = manifest[key];
+    const readme = path.join(workspace,'plugins',directory,'README.md');
+    if (!entry.readme && existsSync(readme)) entry.readme = readFileSync(readme,'utf8').slice(0,30000);
+    if (entry.readme && (typeof entry.readme !== 'string' || entry.readme.length > 30000)) throw Error('Invalid plugin readme');
+    if (entry.screenshots && (!Array.isArray(entry.screenshots) || entry.screenshots.length > 6 || entry.screenshots.some(url => { try { const u = new URL(url); return u.protocol !== 'https:' || u.username || u.password || url.length > 2048; } catch { return true; } }))) throw Error('Invalid plugin screenshots');
+    if (entry.changelog && (!Array.isArray(entry.changelog) || entry.changelog.length > 20 || entry.changelog.some(item => !stableVersion(item.version) || typeof item.notes !== 'string' || item.notes.length > 4000))) throw Error('Invalid plugin changelog');
     if (manifest.icon) {
       check(/^[a-zA-Z0-9._-]+\.png$/.test(manifest.icon), 'Catalog icons must be root PNG files');
       const icon = 'data:image/png;base64,' + readFileSync(path.join(workspace, '.build/plugins', directory, manifest.icon)).toString('base64');
