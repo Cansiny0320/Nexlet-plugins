@@ -21,20 +21,22 @@ try {
   const page = await app.firstWindow();
   await page.waitForFunction(() => !!window.nexlet);
   const call = (action, payload) => page.evaluate(({ action, payload }) => window.nexlet.call(action, payload), { action, payload });
+  await app.evaluate(({ dialog }) => { dialog.showMessageBox = async () => ({ response: 1, checkboxChecked: false }); });
   if (market) {
     const state = await call('marketplace', true);
     assert.equal(state.error, null);
     const entry = state.entries.find(entry => entry.id === id);
     assert.equal(entry?.version, manifest.version);
-    assert.equal(entry.minHostVersion, '0.2.30');
+    assert.equal(entry.minHostVersion, manifest.minHostVersion);
     assert.match(entry.download, /Nexlet-plugins\/releases\/download\/org\.nexlet\.ocr-v/);
     // The real host's compatibility gate must reject an older host before download.
     await app.evaluate(({ app }) => { globalThis.__ocrVersion = app.getVersion; app.getVersion = () => '0.2.29'; });
-    try { await assert.rejects(call('marketInstall', id), /0\.2\.30/); }
+    try { await assert.rejects(call('marketInstall', id), /0\.2\.47/); }
     finally { await app.evaluate(({ app }) => { app.getVersion = globalThis.__ocrVersion; }); }
     assert.equal(await call('marketInstall', id), true);
   } else {
-    await app.evaluate(({ dialog }, file) => { dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [file] }); }, path.join(root, 'dist/ocr.nexlet'));
+    await app.evaluate(({ dialog }, file) => { dialog.showMessageBox = async () => ({ response: 1, checkboxChecked: false });
+    dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [file] }); }, path.join(root, 'dist/ocr.nexlet'));
     assert.equal(await call('pluginInstall', { development: false }), true);
   }
   const installed = await app.evaluate((_, id) => {

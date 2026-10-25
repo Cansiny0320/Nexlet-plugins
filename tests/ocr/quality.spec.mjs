@@ -37,6 +37,7 @@ test.beforeAll(async () => {
   app = await electron.launch({ executablePath, args: executablePath ? [] : [process.cwd()], env });
   main = await app.firstWindow();
   await app.evaluate(async ({ dialog, clipboard }, archive) => {
+    dialog.showMessageBox = async () => ({ response: 1, checkboxChecked: false });
     dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [archive] });
     const n = globalThis.__nexlet;
     globalThis.savedClipboard = await n.selectionPlatform.snapshot();
