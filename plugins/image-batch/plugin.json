@@ -2,7 +2,7 @@
   "id": "org.nexlet.image-batch",
   "name": "图片批处理",
   "description": "批量压缩、转格式、缩放、文字水印和拼图，输出到新目录。",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "apiVersion": 1,
   "main": "index.html",
   "permissions": [
@@ -72,8 +72,12 @@
   },
   "source": "https://github.com/Cansiny0320/Nexlet-plugins/tree/main/plugins/image-batch",
   "readme": "需要 Nexlet 0.2.47+。支持 PNG、JPEG、WebP 输出，按最大宽高等比例缩小、质量压缩、文字水印和网格拼图。通过启动器传入图片／文件，或添加本地图片。\n\n先预览第一张，再处理全部。最大宽／高填 0 表示该方向不限制；不放大小图片。JPEG 透明区域填白。水印固定在右下角，拼图保持每张图片的比例。\n\n最多 100 张，单张不超过 3600 万像素，输出不超过 16 MiB。保存到新目录，原文件不变；取消保留已生成文件，失败项目单独列出。处理在本机完成，无网络权限。\n",
-  "updatedAt": "2026-10-25T15:00:00Z",
+  "updatedAt": "2026-10-25T18:53:04.941Z",
   "changelog": [
+    {
+      "version": "1.0.1",
+      "notes": "统一文件列表、预览、参数与操作布局，改善窄窗口和深色模式，使用清晰的文件操作图标。"
+    },
     {
       "version": "1.0.0",
       "notes": "首次提供本地处理、取消与结果检查。"

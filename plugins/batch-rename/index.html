@@ -1,5 +1,19 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>批量重命名</title><link rel="stylesheet" href="main.css"></head><body><main><header><h1>批量重命名</h1><button id="add">添加文件</button></header><ol id="files"></ol>
-<div class="controls"><label>查找<input id="find" maxlength="200"></label><label>替换为<input id="replace" maxlength="200"></label><label>前缀<input id="prefix" maxlength="200"></label><label>后缀<input id="suffix" maxlength="200"></label></div><div class="controls"><label><input id="number" type="checkbox">追加编号</label><label>起始<input id="start" type="number" min="0" max="1000000000" value="1"></label><label>位数<input id="digits" type="number" min="1" max="12" value="3"></label></div>
-<details><summary>文件名模板</summary><label>模板<input id="template" maxlength="240" placeholder="{name}-{n}{ext}"></label><p>{name} 为替换后的名称，{n} 为编号，{ext} 包含扩展名前的点。填写后优先使用模板。</p></details>
-<div class="controls"><button id="preview">预览</button><button id="execute" class="primary" disabled>执行重命名</button><button id="cancel" hidden>取消</button></div><p id="status" role="status"></p><table><thead><tr><th>原名称</th><th>新名称</th></tr></thead><tbody id="preview-rows"></tbody></table><details><summary>操作日志／恢复</summary><button id="refresh-history">刷新日志</button><div id="history"></div></details>
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>批量重命名</title><link rel="stylesheet" href="main.css"></head>
+<body><main class="workbench">
+<header><h1>批量重命名</h1><button id="add" class="primary"><span aria-hidden="true">＋</span> 添加文件</button></header>
+<div class="workbench-body">
+<section class="workbench-source"><ol id="files" aria-label="待重命名文件"></ol>
+<div class="rename-preview"><table><thead><tr><th>原名称</th><th>新名称</th></tr></thead><tbody id="preview-rows"></tbody></table></div>
+<details><summary>操作日志／恢复</summary><button id="refresh-history">刷新日志</button><div id="history"></div></details></section>
+<aside class="workbench-options"><div class="controls">
+<label>查找<input id="find" maxlength="200"></label><label>替换为<input id="replace" maxlength="200"></label>
+<div class="control-pair"><label>前缀<input id="prefix" maxlength="200"></label><label>后缀<input id="suffix" maxlength="200"></label></div>
+<label class="check-label"><input id="number" type="checkbox">追加编号</label>
+<div class="control-pair"><label>起始<input id="start" type="number" min="0" max="1000000000" value="1"></label><label>位数<input id="digits" type="number" min="1" max="12" value="3"></label></div>
+</div><details><summary>文件名模板</summary><div class="controls"><label>模板<input id="template" maxlength="240" placeholder="{name}-{n}{ext}"></label></div><p class="hint">{name} 为替换后的名称，{n} 为编号，{ext} 包含扩展名前的点。填写后优先使用模板。</p></details>
+</aside></div>
+<div class="workbench-feedback"><p id="status" role="status"></p></div>
+<footer class="workbench-footer"><button id="cancel" hidden>取消</button><button id="preview">预览</button><button id="execute" class="primary" disabled>执行重命名</button></footer>
 </main><script src="main.js"></script></body></html>

@@ -522,5 +522,17 @@
   "移除": {
     "en": "Remove",
     "zh-Hant": "移除"
+  },
+  "待处理文件": {
+    "en": "Files to process",
+    "zh-Hant": "待處理檔案"
+  },
+  "待处理图片": {
+    "en": "Images to process",
+    "zh-Hant": "待處理圖片"
+  },
+  "待重命名文件": {
+    "en": "Files to rename",
+    "zh-Hant": "待重新命名檔案"
   }
 }
