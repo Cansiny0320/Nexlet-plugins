@@ -5,7 +5,7 @@
       "id": "org.nexlet.ai-actions",
       "name": "AI 动作",
       "description": "用自己的模型解释报错、润色文字、提炼待办或生成提交说明。支持自定义 Prompt、流式输出与继续处理。",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": "Nexlet",
       "category": "效率",
       "platforms": [
@@ -13,7 +13,7 @@
         "darwin",
         "linux"
       ],
-      "minHostVersion": "0.2.41",
+      "minHostVersion": "0.2.47",
       "locales": {
         "en": {
           "name": "AI actions",
@@ -24,13 +24,57 @@
           "description": "使用自己的模型解釋錯誤、潤飾文字、整理待辦或產生提交說明。支援自訂 Prompt 與串流輸出。"
         }
       },
-      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.ai-actions-v1.0.0/ai-actions.nexlet"
+      "permissions": [
+        "ai",
+        "secrets",
+        "clipboard.write",
+        "input.simulate"
+      ],
+      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.ai-actions-v1.1.0/ai-actions.nexlet"
+    },
+    {
+      "id": "org.nexlet.batch-rename",
+      "name": "批量重命名",
+      "description": "替换、编号、前后缀与文件名模板；先预览并检测冲突，提供操作日志和安全撤销。",
+      "version": "1.0.0",
+      "author": "Nexlet",
+      "category": "效率",
+      "platforms": [
+        "win32",
+        "darwin",
+        "linux"
+      ],
+      "minHostVersion": "0.2.47",
+      "locales": {
+        "en": {
+          "name": "Batch rename",
+          "description": "Preview replacement, numbering and filename rules; detect conflicts and undo safely."
+        },
+        "zh-Hant": {
+          "name": "批次重新命名",
+          "description": "取代、編號、前後綴與檔名範本；先預覽和檢查衝突，提供操作記錄與撤銷。"
+        }
+      },
+      "permissions": [
+        "backend",
+        "files"
+      ],
+      "updatedAt": "2026-10-25T15:00:00Z",
+      "readme": "需要 Nexlet 0.2.47+。支持查找替换、前后缀、追加编号及 `{name}-{n}{ext}` 文件名模板。先预览，再执行；只在文件原目录修改名称。\n\n执行前再次检查文件身份、内容和目标占用。操作日志写入插件数据目录；部分失败或取消后可用“恢复原名”，成功后可撤销。若文件被外部修改或原名被其他文件占用，恢复会停止并保留日志。关闭／禁用插件后，可重新打开查看恢复操作。\n\n界面最多接收 100 个文件，单个文件不超过 256 MiB，总计不超过 1 GiB。仅支持普通文件，不支持文件夹和符号链接。安全移动依赖文件系统硬链接支持；不支持的卷会报告失败。重命名过程中避免其他程序修改这些文件。无网络权限。\n",
+      "source": "https://github.com/Cansiny0320/Nexlet-plugins/tree/main/plugins/batch-rename",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "首次提供本地处理、取消与结果检查。"
+        }
+      ],
+      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.batch-rename-v1.0.0/batch-rename.nexlet"
     },
     {
       "id": "org.nexlet.ctool",
       "name": "Ctool 开发工具箱",
       "description": "集成 Ctool 完整开发工具：加解密、编码、JSON、代码、网络、图像、文本与转换。联网请求由插件后台执行。",
-      "version": "1.1.3",
+      "version": "1.1.4",
       "author": "Ctool / Nexlet",
       "category": "开发",
       "platforms": [
@@ -49,7 +93,16 @@
           "description": "整合 Ctool 開發工具；繁體介面暫以簡體顯示"
         }
       },
-      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.ctool-v1.1.3/ctool.nexlet"
+      "permissions": [
+        "backend",
+        "files",
+        "clipboard.read",
+        "clipboard.write",
+        "shell.openExternal",
+        "secrets"
+      ],
+      "readme": "[简体中文](README.md) · [繁體中文](README.zh-Hant.md) · [English](README.en.md)\n\n# Ctool 开发工具箱\n\n将 [baiy/Ctool](https://github.com/baiy/Ctool) 2.4.0 的全部 50 个工具、74 个功能页面集成到 Nexlet。保留上游界面、工具算法、分类、内部搜索、历史和设置。包括 JSON / JSON Schema / JSONPath / 类型生成、哈希和加解密、编解码、代码格式化、在线代码运行、IP 查询、WebSocket、ARM / HEX、二维码、条形码、文本、时间、单位换算等。\n\n## 构建和使用\n\n需要 Node.js 24+、npm、Python 3 和 tar。在插件仓库根目录执行：\n\n```sh\nnpm ci\nnpm run package:ctool\nnpm run test:ctool\n```\n\n第一次构建通过 npm 执行固定的 pnpm 9.15.9，按上游锁文件安装依赖；需要访问 npm registry 和 GitHub codeload。后续依赖使用本地缓存。源码快照在 `vendor/ctool/source.tar.gz`，构建先验证 SHA-256；适配源文件在 `integrations/ctool`，生成目录 `.build/ctool-source` 可删除重建，不能在那里修改长期代码。\n\n在 Nexlet「插件管理 → 导入插件包」选择 `dist/ctool.nexlet`，或加载开发目录 `.build/plugins/ctool`。`plugins/ctool` 是 manifest 和文档目录，不能直接作为开发目录运行。\n\n**宿主要求：** 插件市场最低要求 Nexlet 0.2.21，依赖 `backend`、`database`、`files`、图片剪贴板与文件对话框 API，以及 `onOut` 期间的数据库/凭据保存和后台停止支持。自动发布成功后，可在「插件管理 → 插件市场」直接安装 Ctool。插件随本仓库 main 自动发布，不需要再次发布 Nexlet 主程序；更早宿主不在当前市场兼容承诺内。\n\n搜索 `ctool` 打开全部工具，另提供 29 个常用入口。宿主单个插件最多 30 个入口，其余工具和子功能均可从 Ctool 内部分类/搜索进入。JSON 入口接受文本匹配，其余入口也支持宿主显式带入文本。原 uTools 专属关键词设置由 Nexlet 的指令管理承担。\n\n## 联网和本机能力\n\n- HTTP、二进制下载和 WebSocket 使用独立 Node 后台；插件页面保持沙箱，不直接联网。支持 HTTP/HTTPS、WS/WSS 与 WebSocket 子协议，HTTP 默认 30 秒超时、最高 120 秒，正文/响应或单条消息最高 8 MiB。退出或切换 WebSocket 页面会清理连接。\n- IP 查询使用 GeoJS；ARM/HEX 使用 armconverter.com；代码运行使用 JDoodle。JDoodle 的 Client ID / Client Secret 由用户配置，服务账户、额度和可用性仍由第三方决定。错误在界面中显示，不会伪造成功结果。\n- JDoodle 凭据通过 Nexlet `secrets` 保存；系统加密不可用时提示仅当前会话有效。历史与设置写入插件独立数据库（单条 1 MiB、总计 50 MiB），保存失败会显示可关闭的错误提示。\n- 文本和图片复制使用剪贴板桥接；下载使用保存对话框，仅写入用户选择的路径；文件输入仍使用原文件选择/粘贴交互。声明的 `backend` 本身具有 Node 本机权限，并非只能联网的受限权限。\n- 保留上游 MIT 署名、固定 commit 和依赖许可证。移除宿主无关的上游通知轮询、统计图片请求；更新随 Nexlet 插件包交付。\n\n## 验证\n\n```sh\n# 相邻宿主先执行 npm run build\nnpm run test:ctool:e2e\n```\n\nE2E 使用临时数据导入实际安装包，遍历 74 个功能页面，并验证离线计算、Worker、Monaco、联网桥接、文件和图片、持久化及会话行为。测试使用剪贴板 mock 和本地 HTTP / WebSocket fixture，不改日常 Nexlet 数据。JDoodle fixture 通过不代表账户已配置或完成实网代码执行。验收记录写入 `dist/ctool-validation.json`。\n\n上游源码：`4f9255f7caa1049786c98a28fbd7bdcc1aef17dd`。许可证见包内 `LICENSE` 和 `THIRD_PARTY_NOTICES.txt`。\n\n## 界面语言\n\n跟随 Nexlet 设置，复用上游 English 与简体中文；繁体中文明确回退简体，并非完整繁体翻译。宿主入口名称提供三语。适配层更新语言时不重载页面，保留输入；上游独立语言选择改为跟随 Nexlet 的说明，请在宿主设置中更改。上游源码归档保持不变。\n",
+      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.ctool-v1.1.4/ctool.nexlet"
     },
     {
       "id": "org.nexlet.hello",
@@ -74,14 +127,55 @@
           "description": "在本機自動儲存便箋，一鍵複製"
         }
       },
+      "permissions": [
+        "clipboard.write"
+      ],
       "icon": "data:image/png;base64,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qeZb/6/P1rX9vQEeBgD0UOdT/6dl69r+Uz4PAEABq10358/9XjRb1/ZvDPBgAGCTbqT37ZDxeQAAJube/0nZurZ/d4CHBADrdDe9XxcRnwcAYCJ1v+9/3vhQIACT8KG/88YhAICFs/wvGocAABbK8r9srl3dv3Lt6v4xACxI7Z/5XVdODgEHAzxQAHiSA8t/zbl2df8phwAABrbaUd7230QcAgAYlOW/6TgEADAYy79nrl3dvzvAQwegNr/wl8i1q/t3Bnj4ANTkt/2TuXZ1/4YrAQA6Wu0c/6rfCDn5XMDeAE0BwNz23PcPGFcCAGyQt/xHjh8NAmDN/LjPkuLdAADWwF/9S8zJuwE+GwDAee35q3+CXLu6f9u1AABnsNoVt9N7S9Yc1wIAPIG3+2fOyVcGHQQAeOCOr/YVioMAQHkWf/VcfXr/9tWn9w+uPr1/DMDUVrPeHb+8Nlef3r9y9en9uwM0KADrtZrtPtUvT87Vp/efOnlXYG+ApgXgYvZOZrm3+eX8cRgAWBRLXzaTq0/v37j69P4dBwKAIeydzGT/Op/0zcmB4PbJ/ZIPEgJszsHJrL1t4cuQOfkw4cMHg7s+XAhwJg/PzNsns9SH90REREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREZE35fxaTxCzN2q7wAAAAAElFTkSuQmCC",
       "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.hello-v1.1.1/hello-nexlet.nexlet"
+    },
+    {
+      "id": "org.nexlet.image-batch",
+      "name": "图片批处理",
+      "description": "批量压缩、转格式、缩放、文字水印和拼图，输出到新目录。",
+      "version": "1.0.0",
+      "author": "Nexlet",
+      "category": "图像",
+      "platforms": [
+        "win32",
+        "darwin",
+        "linux"
+      ],
+      "minHostVersion": "0.2.47",
+      "locales": {
+        "en": {
+          "name": "Image batch",
+          "description": "Resize, compress, convert, watermark and combine images locally."
+        },
+        "zh-Hant": {
+          "name": "圖片批次處理",
+          "description": "批次壓縮、轉換格式、縮放、文字浮水印和拼圖。"
+        }
+      },
+      "permissions": [
+        "files",
+        "media"
+      ],
+      "updatedAt": "2026-10-25T15:00:00Z",
+      "readme": "需要 Nexlet 0.2.47+。支持 PNG、JPEG、WebP 输出，按最大宽高等比例缩小、质量压缩、文字水印和网格拼图。通过启动器传入图片／文件，或添加本地图片。\n\n先预览第一张，再处理全部。最大宽／高填 0 表示该方向不限制；不放大小图片。JPEG 透明区域填白。水印固定在右下角，拼图保持每张图片的比例。\n\n最多 100 张，单张不超过 3600 万像素，输出不超过 16 MiB。保存到新目录，原文件不变；取消保留已生成文件，失败项目单独列出。处理在本机完成，无网络权限。\n",
+      "source": "https://github.com/Cansiny0320/Nexlet-plugins/tree/main/plugins/image-batch",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "首次提供本地处理、取消与结果检查。"
+        }
+      ],
+      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.image-batch-v1.0.0/image-batch.nexlet"
     },
     {
       "id": "org.nexlet.ocr",
       "name": "离线 OCR",
       "description": "本机识别图片和截图中的中英文文字。模型随插件提供，无需联网。",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "author": "Nexlet",
       "category": "效率",
       "platforms": [
@@ -89,7 +183,7 @@
         "darwin",
         "linux"
       ],
-      "minHostVersion": "0.2.41",
+      "minHostVersion": "0.2.47",
       "locales": {
         "en": {
           "name": "Offline OCR",
@@ -100,13 +194,60 @@
           "description": "在本機辨識圖片與截圖中的中英文文字，無需連線。"
         }
       },
-      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.ocr-v1.1.0/ocr.nexlet"
+      "permissions": [
+        "runtime.compute",
+        "screen",
+        "windows",
+        "clipboard.read",
+        "clipboard.write"
+      ],
+      "readme": "# 离线 OCR\n\n需要 Nexlet 0.2.30+。支持图片识别、识别并复制、截图识别、截图识别并复制，界面跟随简体中文、繁体中文和 English。模型与运行时随包提供，识别不需要联网。此仓库独立维护插件，宿主主程序无需同步发版。\n\n```sh\nnpm ci\nnpm ci --prefix integrations/ocr --ignore-scripts\nnpm run build:ocr\npython3 scripts/package.py --plugin-dir .build/plugins/ocr --output dist/ocr.nexlet\n```\n\n开发时加载 `.build/plugins/ocr`，本地安装使用 `dist/ocr.nexlet`。`plugin.json` 同时包含市场元数据，合入 main 后由 CI 自动发现、构建、校验并更新市场。\n\n图片支持选择、拖放、粘贴或宿主输入，上限为 20 MB、3600 万像素。可编辑、旋转、复制结果并返回主搜索；取消及 60 秒超时会终止 Worker。自动复制前检查剪贴板是否变化，避免覆盖新内容。\n\n权限为 `runtime.compute`、`screen`、`windows`、`clipboard.read`、`clipboard.write`；不包含网络、任意文件或 Node 后台权限。`@paddleocr/paddleocr-js@0.4.2` 的 Worker 内嵌 ONNX Runtime 1.24.3，配套固定相同版本 JSEP WASM。模型清单和许可证位于 `models/`，构建先校验 SHA-256。\n\n1.0.1 在宿主 Release 附件 1.0.0 的基础上接入独立插件仓库与自动发现，识别行为保持一致。\n\n端到端验证使用相邻 Nexlet 仓库的 Playwright 和公开截图 fixture；可通过 `NEXLET_HOST_DIR` 指定仓库、`NEXLET_HOST_EXECUTABLE` 指定正式版宿主。`npm run test:ocr:e2e` 检查本地包安装、中文和 English 识别、取消及回填搜索；发布后运行 `npm run test:ocr:e2e -- --market`，验证实际市场下载、安装来源和最低宿主版本限制。测试使用临时用户目录，不替换日常安装。\n\nOCR 专属测试也在本仓库维护：`npm test` 包含识别任务的取消、超时、空结果和 Worker 清理测试；`npm run test:ocr:quality` 运行四张截图识别、沙箱隔离、剪贴板保护、截图、偏好保留、文件错误和缺失模型等 12 项完整集成场景。运行前构建 `dist/ocr.nexlet` 及相邻 Nexlet 宿主，或用 `NEXLET_HOST_EXECUTABLE` 指定已构建宿主。宿主仓库只保留插件 SDK、权限边界、旧命令迁移和通用截图能力的测试。\n\n本仓库 CI 在 Windows 上使用最低支持版本 `v0.2.30` 的宿主运行完整 OCR 场景；验证对象为本次流水线已构建的插件包。集成测试通过后才执行市场发布，无需在宿主仓库安装或构建 OCR 依赖。\n",
+      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.ocr-v1.2.0/ocr.nexlet"
+    },
+    {
+      "id": "org.nexlet.pdf-tools",
+      "name": "PDF 工具",
+      "description": "合并、拆分、提取、重排、旋转 PDF，支持图片与 PDF 互转。",
+      "version": "1.0.0",
+      "author": "Nexlet",
+      "category": "效率",
+      "platforms": [
+        "win32",
+        "darwin",
+        "linux"
+      ],
+      "minHostVersion": "0.2.47",
+      "locales": {
+        "en": {
+          "name": "PDF tools",
+          "description": "Merge, split, extract, reorder and rotate PDFs; convert images and PDF pages."
+        },
+        "zh-Hant": {
+          "name": "PDF 工具",
+          "description": "合併、拆分、提取、重排、旋轉 PDF，支援圖片與 PDF 互轉。"
+        }
+      },
+      "permissions": [
+        "files",
+        "media",
+        "runtime.compute"
+      ],
+      "updatedAt": "2026-10-25T15:00:00Z",
+      "readme": "需要 Nexlet 0.2.47+。支持合并、拆分、提取／重排、旋转页面、图片转 PDF 和 PDF 转 PNG。通过启动器传入文件或图片，或在插件内添加文件。\n\n页码支持 `1-3,5,2` 和倒序；留空表示全部。旋转只改变选定页面的方向，保留其他页面。拆分和渲染处理列表中的第一个 PDF。图片转 PDF 会将图片转为 PNG 后嵌入。\n\n单文件不超过 16 MiB；PDF 不超过 1000 页；单次渲染不超过 100 页、单页不超过 3600 万像素。生成文件不覆盖已有路径；拆分／渲染写入新目录。取消后保留已经输出的文件，并显示结果路径。加密、损坏或超限文件会报错，不承诺保留数字签名和 PDF 表单功能。\n\n处理在本机完成，无网络权限。依赖 pdf-lib（MIT）和 PDF.js（Apache-2.0），构建包保留第三方许可证。\n",
+      "source": "https://github.com/Cansiny0320/Nexlet-plugins/tree/main/plugins/pdf-tools",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "首次提供本地处理、取消与结果检查。"
+        }
+      ],
+      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.pdf-tools-v1.0.0/pdf-tools.nexlet"
     },
     {
       "id": "org.nexlet.text-image",
       "name": "文字表格转图片",
       "description": "复制文字或 Excel 单元格，预览并生成高清 PNG，支持复制图片和保存文件，全部本地处理。",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "author": "Nexlet",
       "category": "效率",
       "platforms": [
@@ -125,14 +266,20 @@
           "description": "複製文字或 Excel 儲存格，預覽並產生高清 PNG，支援複製圖片及儲存檔案，全部本機處理。"
         }
       },
+      "permissions": [
+        "clipboard.read",
+        "clipboard.write",
+        "files"
+      ],
+      "readme": "# 文字表格转图片\n\n复制文字或 Excel 单元格，在 Nexlet 搜索「转图片」，预览后选择「复制图片」或「保存 PNG」。也可在插件中粘贴，普通文字可以编辑。`Ctrl/Cmd+Enter` 复制当前图片。\n\n通过搜索输入或选区带入的文字，以带入内容为准，不混入系统剪贴板中的其他格式。需要保留 Excel 原始单元格样式时，使用「读取剪贴板」或直接在插件内粘贴。\n\n支持图片宽度、字号（表格中按原字号比例调整）、内边距和背景色，默认白底、2 倍像素 PNG。Excel HTML 会保留支持的单元格字体、颜色、边框、对齐、宽高及合并关系；只有 TSV 时还原基础表格。图表、浮动图片、公式计算、局部富文本及完全复刻 Excel 排版不在支持范围。\n\n内容只在内存中处理，不上传、不保存历史。`clipboard.read` 用于用户打开/读取时访问剪贴板；`clipboard.write` 用于主动复制 PNG；`files` 用于用户选择文件后保存 PNG。\n\n## 宿主兼容\n\n最低 Nexlet 0.2.30。复制后自动保留表格样式需要 Nexlet 0.2.36 新增的 `nexlet.clipboard.readHTML()`；旧版宿主仍能读取纯文字，并可直接粘贴 HTML 表格保留样式。缺少能力时界面会提示。\n\n## 限制\n\n- 最多 100,000 字符，HTML 最多 2 MiB；单表最多 5,000 个网格位置、1,000 行、200 列，不支持嵌套表格。\n- 输出最长边 8192 像素、总计 2400 万像素、PNG 最多 16 MiB。超限明确报错，不截断内容。\n- Excel CSS 仅保留安全的排版属性；脚本、事件、外部资源和嵌入内容被丢弃。\n- 字体依赖本机安装情况，Windows、macOS、Linux 的排版可能不同。\n\n## 本地构建与验证\n\n在插件仓库执行：\n\n```sh\nnpm run typecheck\nnode --test tests/text-image.test.mjs\nnode scripts/build.mjs plugins/text-image\npython scripts/package.py --plugin-dir .build/plugins/text-image --output dist/text-image.nexlet\nnode tests/text-image.e2e.mjs\n```\n\nE2E 需要相邻 Nexlet 仓库完成构建，或通过 `NEXLET_HOST_DIR` 指定宿主。发布产物验证可设置 `NEXLET_TEST_EXECUTABLE` 指向解包后的宿主可执行文件，并用 `NEXLET_TEXT_IMAGE_BUNDLE` 指定下载的插件安装包。测试使用临时用户目录，并在剪贴板仍属于测试时恢复原内容。构建不发布市场，安装包生成于 `dist/text-image.nexlet`。\n",
       "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAACXBIWXMAAAsTAAALEwEAmpwYAAAKQElEQVR4nO1da2xUxxVeKWmSJv3VpD+atn9aKen/pEp+tFrPXbCiNsGFdoVUhceM3e1DkJrErZqq7YIxLp5ZWwUbbGOqyCiBYCAJhlSCCoxDaBtiU0jaNIQWYrsNGLAd/LbBTHUumNq7d3fv7t575z7OJx3J3r27O+ecb84587hzQyEEAoFAIBAIGxCOx+8uouIJjYoXCOMthIm3COXnNSoGNcqnNSZkkIUwMQW2AJvotmG8BWwFNgPbeZKU0Wj8Ho3yxYSJ1zQqhlUb2atCGL+mUb5PY4nvgk1Dbsc36YYvECaqCBNXVRvPb0LAppSvD8cSD4XchvBPGz5HKN9IGB9VbSi/CwEbU1698FnxQMgNgPBEGO9VbZigCaGip2glL1Hm+PCK+H0a45tUGyLwQvmOp2Px+511ftnGL2uMnw688Zk7CEgoP7WA1TzsiPPJcv41jYl/qVYaRcy3AeUfE1bzqK3OD69IfF1j4jIaX7iSgITx/khZ4hFbnK8tr/2SxsQF1UqiiMw2oKKveGXiK3YUfJjzmTcISJjofmr1pnstI4DGeLNqpVBEriRosMb5lC9G4wtvErBUPFOQ82F8iXlfeHqyqKAZQ5jeVa0EiiiMBExU5eX8yLLqBzXKR9ABwvNrB3ktIBHKN6huPIqwigTrcnI+rD3jkq7wDwEpv5LTfgJSKpYobzSKtNIGhCUWmScA7ORBB0hf2YCKNlPOh31o+lYk1Q1GkdbagA9Fo213ZSdAWe2TaHzhSwKGWc3jWQkAO1JVNxRF2GIDQsUaE/mfb3fCAT9PtMk3O9+TvRcH5OTUtPQ6JiandV1Ap4pEm0tJzJvNEOC4nY1Y8as/yDNn+6TfcfrDXrnsxe0ucPo8OZY9Bdi45l++cZccHpuQQcHw2ISuswscrwvcfJI9AlA+YMePL39xe6CcPwvQ2TWRgPIrJlKAmLLjx4MQ9jOlA5dEgEkzKcDyH4aiKOioELuVEwBECQGgMjbC9PUbsv6VI3LRqs3KDaMVKKBDw84juk5GONh5JrgE6Ls0aGgUcL5qg2gWC5DACD2fDASXAOOTxuN8P/R8LUlKVtUb6jo2MRVcAqSDamNoNomb9UUCIAEyI2g9QguYvlncjwTQkADB6hFawPTFCIAEyIyg9QgtYPp6igDFsTq551CX0kWk4bEJvQ3QFiSAwwTYe7hLugV7D3chAZwmwPCoe5aPh0cnkABIAIE1AKYAgUUgFoECRwF+GRZpLhr1OCGeGgZ6VdJBdbuQAEgAiREAI0BmBC0kagHTN4v7kQAaEiBYPUILmL4YARww8rDBFHYuU8lIAAdWA/NZ5dNMitEiVi6LSUiADIa0GnttcMxc4tpJNN+nACdWA4ddEpqRAEgAiRHARC61GntdkpsxAvioCNRcLJ6qAVAEEgBJIDAC2E2C76/ZKtc3HZBbX+2Q2/Z0KpWtrx7V2wJtwhRgs+N/vG6HPPn+BXnz5k3pNkCbTr5/XsbWtmIEsMP5da2H5I2ZGel2zMzc1CMDFoEWOn/LrqPSa2jYac1pKoEfBUBIhV7lNdyYmbEkHQSeAJBXjdB7cUCfFNr1x3eUCsxNQFuMAG0PFAHymQjKNMEDlbVRwffG0b/JBWUJW2qNfATa0t5xOqWd0PbvlW8JDgEKmQo2muKtbDqQcl3vxQFXOX9WFpbVGp6uVtnYHhwCFLIaaLTK17i7I+W6PYfcuxZg1AFgrgIJkCcBWvefSLmudf8J5Y5OJ3a0N9ApQBUBllY0yc6us/pZgSBvnzqnH5uPBHC4CFRBgKUVTcZ7BMcm9PcwAng8pGpZBHp+Ohx790MkgN8JMDYxlZYAY+OZj48NfA3gdwKMjk8iAbwWAX5T/7q8OjSiC/yd7Xoo+NKh4ySmAE8R4Lnf7ZRT09fvfBb+XlX1csbPQLVvVMReGxmXS1/AItAzBPjBL7bJoWtjKZ8f+HQ0azUP70PBBzkfBHp+NudbFbE8PQ/gFgKUrK5P+9ALwLmefvntn/zeNe1FAlho0OIf1spTH/TIbDje/ZGMlFq7poAEUNyjIqVCHjrx95TPHP7zP+Rb3R+lvP7ygb8gAfyUAl56/W3DR8DBLCOEfAj9cwErzRu2HczYhrVb9t8ZRcDfGAFcSoDKxnbdoXPx3/4hueRn/1+Pjz7fKK8Mjsy7JtPIYN3W9nn7EGFnUnXLm5gC3EaA55KGe7PDNqMngMLO4uSHXxuNDJKdb4YEWAMoIMCyX7bIT0fG510DzwIEUqT7Xgj7ydFi7sgANqJk2oEM78E1viVAuulQpx8bl82gJQbDPT2vN2fO6yBQACYDCsWq5lTnw/9GryWTwDcESLfJ0aqtzlYQoDhWpxd4yYBC0Mx3wxDQaGSQjFlHG0WFZBL4hgCZHh0LJICHLaokQCTNcA9eg/fMfr/RyCCTg7ORwDcEcOLh0WZu905n0JcyDPdy1RWKPygCzeb5TCTwDQFAjMKr0wc+GBm0s+tsSgEHdQDUA/nqCsPAuaOIdM7PRoKOk//0DwFgCOXEs38ynfljRICxpAIVRgAwEihU319vfs30hE86EhgVz7YTgDAxZRcJyjfusp0EhRBgOstwz25JJoHVBCCUT2YnAOUDdioJkcDOdJBrCjjy1w/u9FTotaqcPyu/bXjjTnugbVYSQKP8ipkUcMEJRSvEbnmw84zs+eRq2sfLW10Eeu3GkH1/6k5pL+iQ7/cRys+bSAH8uGrF7RI4eSMZfZcGXXtr2H+svzXsmBkCtKhW3i5Jd3Noe8dpV5EAnG/HzaGEiqasBIgw/rxqA6i4Pbzv0qAeclWfEQRtSLf76J33Crw9nPLyrAQoouIJ1U6yU360bocnjoax44AIUpZ4LCsBwvH43YTxa6odZad48YiY+lcKXTfhQ9Fo210hM9Ao36faSU4cEnX9RpAOieK7TTn/NgEWq3aQExJb26rnVbceEwdts+yYuFLxjGkCRKPxewgTV1U7yClZUr5Fn4WDQxpVnxEEbYChHrTJQh0vPxZr/oxpAtyOAutVOwZFWGIDQsXaUK6ILKt+UKN8BJ0gPE1EwvhoOJZ4KGcC3I4C1aoVQBGF2qAylC+ejsXvd2ptAEVY3/up6Fn4rHggVAiKVvISdI7wJEGLmPhOyAoQyhtVK4MicrMBFZtDViG8In4fofwUOkF4g4hUvPvU6k33hqzEAlbzMNYDwvUCa/7fitV9MWQHCKt5lDDer1pJFGHsfMb7I2WJR0J2IkLrvqpRfg6dINxGxAvQQUNOANIBYaLbBUqjsFs537awnw5QZGiMb0InCMUk5M2WF3y5AFaZNMo/RiIIx4s9y8b5hQJmDAkTVbh2IOx3PhXDML37ZLT2syG3QV9AYqIS9p9jRBBWO/8yrOoVl9Z+PuR23NpPkFikUdEGW5GQDCLf3j4IO3kgzea8nu8WwD60yErxDULFGihYYG86YfzfcAeSnbeheUUIE1O3bKHbpEO3EeXlYVbzuOk9fAgEAoFAIBCh3PA/45XhtdaD44wAAAAASUVORK5CYII=",
-      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.text-image-v1.1.0/text-image.nexlet"
+      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.text-image-v1.1.1/text-image.nexlet"
     },
     {
       "id": "org.nexlet.translate",
       "name": "翻译",
       "description": "Google 免 Key 翻译与可配置的 LLM 翻译，支持自动识别语言、段落翻译和一键复制。",
-      "version": "1.3.0",
+      "version": "1.4.0",
       "author": "Nexlet",
       "category": "效率",
       "platforms": [
@@ -140,7 +287,7 @@
         "darwin",
         "linux"
       ],
-      "minHostVersion": "0.2.41",
+      "minHostVersion": "0.2.47",
       "locales": {
         "en": {
           "name": "Translate",
@@ -151,8 +298,15 @@
           "description": "使用 Google 或自訂 LLM 服務翻譯"
         }
       },
+      "permissions": [
+        "clipboard.write",
+        "network.request",
+        "secrets",
+        "ai",
+        "capabilities"
+      ],
       "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAB5UlEQVR4nO3XwU1DMRRE0dRGLRRKJWypAsGODQHFP7af7TlXmiXJj30UlNtNkiRJkiRJkn56//j8sn6rvs/mqg/stFXfZ3PVB3baqu+zueoDO23V99lc9YGdtur7bK76wE5b9X0299cHeXl9s38GQPgACB8A4QMgfACED4DwARA+AMIHwITdq/qZAAAAAAAAAAAAAAAAAAAAAAAAgLwBED4AwgdA+AC4sx0DAAAAAAAAAAAAAMCvAAAAAGAKgJ5fxyNfEwAAAAAAAAAAAAAAAAAAAAAAAAAAgAUvC4ALVQF49AJbmvmsAAAAAAAAAAAAAAAEDoDwAdC4GV/jM/9VALDg5QBwIQAAAAAAAADwKwAAAAB4CsCsr99ez7JrAAAAAAAAAADA488y631nfJZlAaw0AAAAAAAAAAAAAAAAGP76M98LAAAAAAAAAAAAAIAJAFovuTcKAAAAAAAAAAAAAAAAAAAAAAAAAIChAHYfAABcvoDRF/js8wAAAACzAfQOAAAAAGABAKcGQHgAhNcbQMvf9349AC4EQHgAhAdAeACEB0B4AIQHQHgAhAdAeD0vsHoAXAiA8AAID4DwAAjv16kdVPXZblH1JY2s+my3qPqSRlZ9tltUfUkjqz5bSZIkSZIkLdQ3mqJaUmpP1wYAAAAASUVORK5CYII=",
-      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.translate-v1.3.0/translate.nexlet"
+      "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.translate-v1.4.0/translate.nexlet"
     },
     {
       "id": "org.nexlet.word-count",
@@ -177,6 +331,7 @@
           "description": "在本機統計字數、字元、行數與段落"
         }
       },
+      "permissions": [],
       "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAChUlEQVR4nO3VTW4UMRSF0V4ra8gOsxwkFpBJojBqQeevyq777HdK+qbG7XuA223y9+f3y6uON3ufYV/6obqV3vvvl34EhTCkf7BCENI/UEEI6R+lIIL0j1EQQfpHKIggfXkFEaQvrSCC9GUVRJC+pMII0hdUEED6cgojSF9MQQDpSymMIH0hAaAUgPRlFEaQvogAEAACQADoYgDpSyiMIH0BASAABIAAEAACQK0BPP16dk5HAO8P9G/OAcA5HQA8eqQjj7XrOQA0PweA5ucA0PwcAJqfA0CDc1IoAAifk/7XAYDQOVX+ewCgIIArEQBQEMCVbw8AAADMOKf68ABMOmeV4QEYfM5qwwMw6Jwjw1cZH4AT5xwdHoDFAYwq/eYAAADATAAj7wNAoXN+8jcbgELDzQYw8z4AXHTOqOEBWAzA6OEBWATArOEBKA7gyPAAbADgzPAALA5gVABsDuCq+6TfHIBP/hwAGgFI3Sf95lsBGDU8AIsBGD08AIsAmDU8AMUBHBkegA0AnBkegMUBjAoAAADYFUDV4QCYDKD6cABMGn+V4QC4aPiqwwFw0fBVhwPg5PCrDwcAAACcGX/14QAYgGDl4QD44jGqPni1c7YAcP8o1R+82jlbAVjhwaudsz2Ajx7LOQA4pwuA+wdzTmMAAkAACAABIAAEgAAQAAJAAAgAASAABIAAEAA6CeD9S19CwfEB6BsAzQOgeQA0D4Dm3e6/9GUUHB+AfgHQvP8AQNCnh+MD0KcPAUCwf5+OD8D+fQkAgn371vgQ7NmPxodgrw6ND8EenRofgrUbMj4EazZ0fAjWasr4INRv+vAg1Ozy4R996UfoVnrvb3/ph1q92fu8AWB9+82S2KVsAAAAAElFTkSuQmCC",
       "download": "https://github.com/Cansiny0320/Nexlet-plugins/releases/download/org.nexlet.word-count-v1.1.2/word-count.nexlet"
     }
