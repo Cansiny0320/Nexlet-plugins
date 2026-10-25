@@ -16,8 +16,10 @@ const read = (script) => app.evaluate(async (_, script2) => {
 async function launch(file, code = "recognize") {
   const previousImage = await read('document.querySelector("#image")?.src');
   const data = "data:image/png;base64," + (await readFile(path.join("docs/screenshots", file))).toString("base64");
-  const input = await host("launchInput", { type: "image", from: "paste", data });
-  await host("launch", { id: `plugin:${id}:${code}`, inputId: input.id });
+  // Publish through the renderer's content flow so refreshes cannot clear a
+  // host-only input that the launcher does not know about.
+  await host("continueResult", { type: "image", data });
+  await main.locator(`[data-command-id="plugin:${id}:${code}"]`).click();
   // onEnter/load briefly cancel the previous task before decoding the next image.
   // Wait for this input's preview instead of mistaking that transition for done.
   await expect.poll(async () => {
@@ -29,6 +31,12 @@ async function done() {
   await expect.poll(() => read('document.querySelector("#stop").hidden'), { timeout: 6e4 }).toBe(true);
   return read('document.querySelector("#result").value');
 }
+const captureWindow = () => app.waitForEvent("window", async (page) => {
+  await page.waitForURL((url) => url.href !== "about:blank");
+  // The plugin SDK picker is a data URL; the plugin view also emits "window".
+  return page.url().startsWith("data:text/html") &&
+    await page.getByText("拖动选择区域 · Esc 取消").isVisible();
+});
 test.beforeAll(async () => {
   const folder = await mkdtemp(path.join(tmpdir(), "nexlet-ocr-quality-"));
   const env = { ...Object.fromEntries(Object.entries(process.env).filter((entry) => entry[1] !== void 0)), NEXLET_TEST_MODE: "1", NEXLET_USER_DATA: folder };
@@ -143,7 +151,7 @@ test("截图入口取消不改剪贴板，选区识别复制可用", async () =>
     await app.evaluate(async ({ clipboard }) => {
       await clipboard.writeText("capture-original");
     });
-    let waiting = app.waitForEvent("window");
+    let waiting = captureWindow();
     await host("launch", { id: `plugin:${id}:capture` });
     let overlay = await waiting;
     await expect(overlay.getByText("拖动选择区域 · Esc 取消")).toBeVisible();
@@ -152,7 +160,7 @@ test("截图入口取消不改剪贴板，选区识别复制可用", async () =>
     });
     await expect.poll(() => read("nexlet.window.info().then(x=>x.visible)")).toBe(true);
     expect(await app.evaluate(({ clipboard }) => clipboard.readText())).toBe("capture-original");
-    waiting = app.waitForEvent("window");
+    waiting = captureWindow();
     await host("launch", { id: `plugin:${id}:capture-copy` });
     overlay = await waiting;
     await expect(overlay.getByText("拖动选择区域 · Esc 取消")).toBeVisible();
