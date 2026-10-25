@@ -30,16 +30,16 @@
       "sourceHash": "24d11b451bd0111715162b494625ca257319ebce9341bb0b7b637d2a7423b9ec"
     },
     "org.nexlet.batch-rename": {
-      "version": "1.0.0",
-      "sourceHash": "29b8d25ad2499c172f788c307f6894c0349710f62072f90830cea3de3cc81d36"
+      "version": "1.0.1",
+      "sourceHash": "f9d16c0d8f6697be7baf5301c5475b14056f2c46f453a20e0085b3015ec70adb"
     },
     "org.nexlet.image-batch": {
-      "version": "1.0.0",
-      "sourceHash": "ff6e6b24340dda063473144e7ce3190bf857ecc393e85a79a99eb79356e1a359"
+      "version": "1.0.1",
+      "sourceHash": "527c04fad5f8220e53f0ce760ba6ddd0e669267e514267423b5939609c711883"
     },
     "org.nexlet.pdf-tools": {
-      "version": "1.0.0",
-      "sourceHash": "c221ce34366efc5b2de81199bc8bc705a40e09a57485f714fc86680999cb66bf"
+      "version": "1.0.1",
+      "sourceHash": "79cba1be79ec98f27dc63ff6cec6d7aa78731c1a6f0d08d59e2a38e71f4607dc"
     }
   }
 }
